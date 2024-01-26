@@ -1,0 +1,121 @@
+# FlyPay Widget
+
+The FlyPay Widget integrates with FlyPay using a WebView component. This handles the communication between FlyPay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
+
+## iOS
+
+## How to use the FlyPayWidget
+
+This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` SwiftUI view in your application. The widget facilitates the payment using FlyPay services.
+
+The following sample code demonstrates the definition of the `FlyPayWidget`:
+
+```Swift
+FlyPayWidget(
+    flyPayToken: (@escaping (String) -> Void) -> Void,
+    completion: (Result<ChargeResponse, FlyPayError>) -> Void)
+```
+
+The following sample code demonstrates how you can use the widget in your application:
+
+```Swift
+struct FlyPayExampleView: View {
+    @StateObject private var viewModel = FlyPayExampleVM()
+    var body: some View {
+        FlyPayWidget { onFlyPayButtonTap in
+            // Example: Initiate Wallet Transaction to retrieve the wallet token
+            viewModel.initializeWalletCharge(completion: onFlyPayButtonTap)
+        } completion: { result in
+            switch result {
+            case .success(let chargeResponse): // Handle success
+            case .failure(let error): // Handle error
+            }
+        }
+    }
+}
+```
+
+## Definitions
+
+This subsection describes the parameters required by the `FlyPayWidget` SwiftUI view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `FlyPayWidget`.
+
+#### FlyPayWidget
+
+| Name        | Definition                                                               | Type                                            | Mandatory/Optional |
+| :---------- | :----------------------------------------------------------------------- | :---------------------------------------------- | :----------------- |
+| flyPayToken | A callback to obtain the wallet token asynchronously                     | `(@escaping (String) -> Void) -> Void`          | Mandatory          |
+| completion  | Result callback with the _FlyPayOrderId_ if successful, or error if not. | `(Result<ChargeResponse, FlyPayError>) -> Void` | Mandatory          |
+
+## Callback Explanation
+
+### Token Callback
+
+The `flyPayToken` callback obtains the wallet token asynchronously. It receives a callback function `(@escaping (String) -> Void) -> Void` as a parameter, which you must invoke with the wallet token once it is obtained.
+
+### Completion Callback
+
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse, FlyPayError>` where ChargeResponse contains the _FlyPayOrderId_ if the payment is successful. The callback handles the outcome of the payment operation.
+
+## Android
+
+### How to use the FlyPayWidget
+
+This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` composable in your application. The widget facilitates the payment using FlyPay services.
+
+The following sample code demonstrates the definition of the `FlyPayWidget`:
+
+```Kotlin
+fun FlyPayWidget(
+    modifier: Modifier,
+    token: (onTokenReceived: (String) -> Unit) -> Unit,
+    completion: (Result<String>) -> Unit
+) {...}
+```
+
+The following sample code demonstrates how you can use the widget in your application:
+
+```Kotlin
+// Initialize the FlyPayWidget
+FlyPayWidget(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp), // optional
+    token = { callback ->
+        // Obtain Wallet Token asynchronously using the callback
+        // Example: Initiate Wallet Transaction to retrieve the wallet token
+        val walletToken = // ... retrieve the token
+        callback(walletToken)
+    }
+) { result ->
+    // Handle the result of the payment operation
+    result.onSuccess { flyPayOrderId ->
+        // Handle success - Update UI or perform actions
+        Log.d("FlyPayWidget", "Payment successful. Order ID: $flyPayOrderId")
+    }.onFailure { exception ->
+        // Handle failure - Show error message or take appropriate action
+        Log.e("FlyPayWidget", "Payment failed. Error: ${exception.message}")
+    }
+}
+```
+
+### Definitions
+
+This subsection describes the various parameters required by the `FlyPayWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `FlyPayWidget`.
+
+#### FlyPayWidget
+
+| Name       | Definition                                                               | Type                                          | Mandatory/Optional |
+| :--------- | :----------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
+| modifier   | Compose modifier for container modifications                             | `androidx.compose.ui.Modifier`                | Optional           |
+| token      | A callback to obtain the wallet token asynchronously                     | `(onTokenReceived: (String) -> Unit) -> Unit` | Mandatory          |
+| completion | Result callback with the _FlyPayOrderId_ if successful, or error if not. | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
+
+### Callback Explanation
+
+#### Token Callback
+
+The `token` callback obtains the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which you must invoke with the wallet token once it is obtained.
+
+#### Completion Callback
+
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String>` where String represents the _FlyPayOrderId_ if the payment is successful. The callback handles the outcome of the payment operation.
