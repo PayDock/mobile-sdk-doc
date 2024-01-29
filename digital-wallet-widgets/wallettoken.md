@@ -4,11 +4,7 @@ Generating your wallet token and embedding the wallet button are mandatory steps
 
 ## Overview
 
-To use your Digital Wallets, you must first generate a `wallet_token`. The `wallet_token` forms a part of the request body for your Applepay, GooglePay, FlyPay and Paypal initialisation.
-
- 1. Initialize your Wallet
-
-Perform a wallet initialization request to receive your ```wallet_token```. For the request you must:
+When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. For the request you must:
 
 1. Ensure that you have your `x-user-secret-key`. You can generate this by following the instructions in our [integration guide](https://docs.paydock.com/#getting-started). 
 

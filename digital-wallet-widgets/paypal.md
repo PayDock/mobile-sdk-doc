@@ -12,9 +12,11 @@ The MobileSDK provides a PayPal Widget that integrates with PayPal using a WebVi
 
 The iOS SDK supports payments using PayPal. The component's logic is contained in a Single View, and so you must initialize and embed this logic within your payment flow.
 
-1. Before using your PayPal widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets.md/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+> **Note**:
+>
+> When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
 
-2. Use the following to initialize the **PayPalView**:
+Use the following to initialize the **PayPalView**:
 
 ```Swift
 PayPalWidget(
@@ -22,8 +24,6 @@ PayPalWidget(
     completion: @escaping (Result<ChargeResponse, PayPalError>) -> Void)
 ```
 In case of successful charge, the **PayPalView** returns a `ChargeResponse` that contains all the relevant information. In case of an error, the **PayPalError** object is returned with information regarding the failure.
-
-3. Before initializing the view, you must obtain your PayPal `wallet_token`. You can receive a PayPal token when you initialize your wallet charge. Follow the [Generate wallet token guide](/digital-wallet-widgets/walletttoken) to generate your `wallet_token`.
 
 The following is an example of a full PayPalView initialization:
 
@@ -69,7 +69,9 @@ The following definitions provide a more detailed overview of the parameters use
 
 This section provides a step-by-step guide on how to initialize and use the `PayPalWidget` composable in your application. The widget facilitates the payment using PayPal services.
 
-Note: Before using your PayPal widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+> **Note**:
+>
+> When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
 
 The following sample code demonstrates the definition of the `PayPalWidget`:
 
