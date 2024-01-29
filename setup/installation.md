@@ -1,6 +1,10 @@
-# Installing the SDK
+---
+title: Install the SDK
+description: To begin using the SDK, you must first add it as a dependency to your app, integrating it into your existing application. A pre-requisite to using the SDK is setting up the Paydock API, the instructions for which are linked in this guide.  
+---
 
-To begin using the SDK, you must first add it as a dependency to your app, integrating it into your existing application. A pre-requisite to using the SDK is setting up the Paydock API, the instructions for which are linked in this guide.
+# {% $markdoc.frontmatter.title %}
+{% $markdoc.frontmatter.description %}
 
 ## Setup the Paydock API Integration
 
@@ -14,27 +18,24 @@ Get up and running using the PayDock API in just a few minutes.
 
 ## Setup the Paydock iOS SDK
 
-This guide walks you through how to integrate the Paydock Android SDK into your Android application.
+This guide walks you through how to integrate the Paydock Android SDK into your Android application. 
 
-### Step 1: Configure Respository Access
+### Step 1: Configure Repository Access
 
 You can configure repository access using either Swift Package Manager or CocoaPods.
 
-> **Note**:
->
-> Before you can access the Paydock SDK, you need to create a **Private-Token** for your merchant account. This token provides access to our private GitLab repository's package registry. Replace `<private_token>` in the instructions with your pre-generated **Private-Token**.
+Note:
+Before you can access the Paydock SDK, you need to create a **Private-Token** for your merchant account. This token provides access to our private GitLab repository's package registry. Replace `<private_token>` in the instructions with your pre-generated **Private-Token**.
 
 #### Swift Package Manager
 
 1. In Xcode, select _File > Add Packages_. Enter the following:
-
 ```
 https://gitlab.paydock.com/envoyrecharge/mobile-sdk-ios.git
 ```
+2. Select the latest version number from our release page. 
 
-2. Select the latest version number from our release page.
-
-3. Add the version number when you are prompted and click _Add Package_.
+3. Add the version number when you are prompted and click _Add Package_. 
 
 #### CocoaPods
 
@@ -57,8 +58,7 @@ pod 'MobileSDK', :git => 'git@gitlab.paydock.com:envoyrecharge/mobile-sdk-ios.gi
 ```bash
 pod install
 ```
-
-5. Now that the SDK is installed, use the .xcworkspace file to open your project in Xcode instead of the .xcodeproj file.
+5. Now that the SDK is installed, use the .xcworkspace file to open your project in Xcode instead of the .xcodeproj file. 
 
 ### Step 2: Add SDK Dependency
 
@@ -72,17 +72,17 @@ import MobileSDK
 
 ## Setup the Paydock Android SDK
 
-This guide walks you through the steps to add the Paydock Android MobileSDK into your Android application.
+This guide walks you through the steps to add the Paydock Android MobileSDK into your Android application. 
 
 ### Step 1: Configure Repository Access
 
 Before you can access the MobileSDK, you need to:
 
-1. Create a **Private-Token** for your merchant account. This is your authentication, enabling you to access the MobileSDK private GitLab repository's package registry, which is where the dependencies for the MobileSDK are located.
+1. Create a **Private-Token** for your merchant account. This is your authentication, enabling you to access the MobileSDK private GitLab repository's package registry, which is where the dependencies for the MobileSDK are located. 
 
-2. Replace `<private_token>` in the instructions with the **Private-Token** you have created in the previous step.
+2. Replace `<private_token>` in the instructions with the **Private-Token** you have created in the previous step. 
 
-The following examples in both Groovy and Kotlin demonstrate how this looks like.
+The following examples in both Groovy and Kotlin demonstrate how this looks like. 
 
 #### Project Level `build.gradle`
 
@@ -106,7 +106,6 @@ repositories {
 ```
 
 #### Kotlin DSL
-
 ```kotlin
 repositories {
     maven {
@@ -127,22 +126,18 @@ repositories {
 
 In your app/module level _build.gradle_, add the Paydock SDK dependency. Replace `<latest_version>` with the latest version of the SDK.
 
-> **Note**:
->
-> You can find the latest version of the SDK in our documentation or on GitLab.
+Note:
+You can find the latest version of the SDK in our documentation or on GitLab.
 
 #### Project Level `build.gradle`
 
 #### Groovy
-
 ```groovy
 dependencies {
   implementation 'com.paydock:paydock-sdk:<latest_version>'
 }
 ```
-
 #### Kotlin DSL
-
 ```kotlin
 dependencies {
   implementation("com.paydock:paydock-sdk:<latest_version>")

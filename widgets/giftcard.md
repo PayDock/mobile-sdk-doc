@@ -1,14 +1,24 @@
-# Gift Card Tokenisation Widget
+---
+title: Gift Card Tokenisation Widget
+description: The Gift Card Tokenisation Widget securely collects gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
+---
 
-The Gift Card Tokenisation Widget securely collects gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
+# {% $markdoc.frontmatter.title %}
+
+{% $markdoc.frontmatter.description %}
+
+![Giftcard View](/img/Gift_Card.png)
 
 ## iOS
 
-### How to use the GiftCardView widget in iOS
+## How to use the GiftCardView widget in iOS
+
+### 1. Overview
 
 The `GiftCardView` captures gift card details and facilitates the tokenisation of your card within your iOS app. This section provides a step-by-step guide on how to initialize and use the `GiftCardView` in your application.
 
 The following sample code demonstrates how to use the `GiftCardView` composable in your application:
+
 
 ```Swift
 GiftCardWidget(
@@ -35,18 +45,20 @@ struct GiftCardExampleView: View {
 }
 ```
 
-### Definitions
+### 2. Parameter Definitions
 
 #### MobileSDK.GiftCardView
+| Name         | Definition                                                         | Type                            | Mandatory/Optional |
+| :----------- | :----------------------------------------------------------------- | :------------------------------ | :----------------  |
+| storePin     |  A flag to be able to use a PIN value for the initial transaction. | String (default = true)         | Optional           |
+| completion   |  A completion block that returns result with token or error.       | (Result<String, Error>) -> Void | Mandatory          |
 
-| Name       | Definition                                                        | Type                            | Mandatory/Optional |
-| :--------- | :---------------------------------------------------------------- | :------------------------------ | :----------------- |
-| storePin   | A flag to be able to use a PIN value for the initial transaction. | String (default = true)         | Optional           |
-| completion | A completion block that returns result with token or error.       | (Result<String, Error>) -> Void | Mandatory          |
 
 ## Android
 
-### How to use the GiftCardWidget
+## How to use the GiftCardWidget
+
+### 1. Overview
 
 This section provides a step-by-step guide on how to initialize and use the `GiftCardWidget` composable in your application. The widget performs tokenisation of gift card details.
 
@@ -82,19 +94,19 @@ GiftCardWidget(
 )
 ```
 
-### Definitions
+### 2. Parameter definitions
 
 This subsection describes the various parameters required by the `GiftCardWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `GiftCardWidget`.
 
 #### GiftCardWidget
 
-| Name       | Definition                                                                                           | Type                       | Mandatory/Optional |
-| :--------- | :--------------------------------------------------------------------------------------------------- | :------------------------- | :----------------- |
-| modifier   | Compose modifier for container modifications                                                         | `Modifier`                 | Optional           |
-| storePin   | A flag to be able to use a PIN value for the initial transaction.                                    | String (default = true)    | Optional           |
-| completion | Result callback with the gift card details tokenisation API response if successful, or error if not. | `(Result<String>) -> Unit` | Mandatory          |
+| Name                | Definition                                                                                                | Type                        | Mandatory/Optional |
+| :------------------ | :-------------------------------------------------------------------------------------------------------- | :-------------------------- | :----------------  |
+| modifier            |  Compose modifier for container modifications                                                             | `Modifier`                  | Optional           |
+| storePin            |  A flag to be able to use a PIN value for the initial transaction.                                        | String (default = true)     | Optional           |
+| completion          |  Result callback with the gift card details tokenisation API response if successful, or error if not.     | `(Result<String>) -> Unit`  | Mandatory          |
 
-### Callback Explanation
+### 3. Callback Explanation
 
 #### Completion Callback
 

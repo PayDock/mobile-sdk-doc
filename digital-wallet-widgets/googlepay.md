@@ -1,10 +1,21 @@
-# Google Pay Widget
+---
+title: Google Pay Widget
+description: The MobileSDK provides a GooglePayWidget composable widget that you can use to interact with GooglePay. The button initializes GooglePay, handles the payment requests, and finalizes the charge through Paydock. The final result is then returned as a callback.
+---
 
-The MobileSDK provides a GooglePayWidget composable widget that you can use to interact with GooglePay. The button initializes GooglePay, handles the payment requests, and finalizes the charge through Paydock. The final result is then returned as a callback.
+# {% $markdoc.frontmatter.title %}
 
-## How to use the GooglePayWidget
+{% $markdoc.frontmatter.description %}
 
-This section provides a step-by-step guide on how to initialize and use the `GooglePayWidget` composable in your application. The widget facilitates the payment using GooglePay services.
+![GooglePay View](/img/GPay.png)
+
+## How to use the GooglePay widget
+
+### 1. Overview
+
+The GooglePay widget facilitates payments using GooglePay services. This section provides a step-by-step guide on how to initialize and use the `GooglePayWidget` composable in your application. The widget facilitates the payment using GooglePay services.
+
+Note: Before using your GooglePay widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
 
 The following sample code demonstrates the definition of the `GooglePayWidget`:
 
@@ -55,7 +66,7 @@ GooglePayWidget(
 }
 ```
 
-## Definition
+### 2. Parameter definitions
 
 This subsection describes the parameters required by the `GooglePayWidget` composable. It defines the purpose of each parameter and its significance in configuring the behavior of the `GooglePayWidget`.
 
@@ -65,17 +76,17 @@ This subsection describes the parameters required by the `GooglePayWidget` compo
 | :-------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
 | modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                    | Optional           |
 | token                 |  A callback to obtain the wallet token asynchronously                                    | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
-| isReadyToPayRequest   |  Google Pay request for determining if a user is considered ready to pay.                | `JSONObject` → `IsReadyToPayRequest`              | Mandatory          |
-| paymentRequest        |  Google Pay request for providing necessary information to support a payment.            | `JSONObject` → `PaymentDataRequest`               | Mandatory          |
+| isReadyToPayRequest   |  GooglePay request for determining if a user is considered ready to pay.                | `JSONObject` → `IsReadyToPayRequest`              | Mandatory          |
+| paymentRequest        |  GooglePay request for providing necessary information to support a payment.            | `JSONObject` → `PaymentDataRequest`               | Mandatory          |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
 
-### How to create GooglePay request objects 
+### 3. How to create GooglePay request objects 
 
 Create Google Pay request objects and mappings, which are required by the `GooglePayWidget` widget. Simply use the `util` provided by the MobileSDK (`PaymentsUtil`) with the accompanying helper methods. 
 
 The following sample code example demonstrates how to create request objects:
 
-### How to create an IsReadyToPayRequest
+### 4. How to create an IsReadyToPayRequest
 
 You can create a request to check if the user is ready to pay with GooglePay.
 
@@ -101,7 +112,7 @@ PaymentsUtil.createIsReadyToPayRequest()
 PaymentsUtil.createIsReadyToPayRequest(billingAddressRequired = false)
 ```
 
-### How to create a PaymentDataRequest
+### 5. How to create a PaymentDataRequest
 
 You can create a GooglePay payment request based on provided paramaters. 
 
@@ -149,7 +160,9 @@ PaymentsUtil.createGooglePayRequest(
 )
 ```
 
-### Definitions
+### 6. Request object definitions
+
+The following references provide more detailed definitions of the IsReadyToPayRequest and PaymentDataRequest used in your GooglePay widget.
 
 #### IsReadyToPayRequest (JSONObject): PaymentsUtil.createIsReadyToPayRequest()
 Reference: [IsReadyToPayRequest](https://developers.google.com/pay/api/android/reference/request-objects#IsReadyToPayRequest)
@@ -177,7 +190,7 @@ Reference: [PaymentDataRequest](https://developers.google.com/android/reference/
 | shippingAddressRequired     |  Indicates whether shipping address is required                                   | Boolean            | Optional           |
 | shippingAddressParameters   |  Parameters for shipping address, if required.                                    | `JSONObject`       | Optional           |
 
-#### ChargeResponse
+#### 7. ChargeResponse
 
 This subsection outlines the structure of the result or response object returned by the `GooglePayWidget` composable. It details the format and components of the object, enabling you to handle the response effectively within your application.
 
@@ -223,7 +236,7 @@ data class ChargeResponse(
 | amount         |  Charge amount that was charged           | `BigDecimal`         |
 | currency       |  Charge currency that was used            | String               |
 
-### Callback Explanation
+### 7. Callback Explanation
 
 #### Token Callback
 

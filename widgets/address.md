@@ -1,37 +1,49 @@
-# Standalone Address Widget
+---
+title: Standalone Address Widget
+description: The Address capture Widget uses a prebuilt form to capture an address. Your customer can prefill the form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
+---
 
-The Address capture Widget uses a prebuilt form to capture an address. Your customer can prefill the form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
+# {% $markdoc.frontmatter.title %}
+
+{% $markdoc.frontmatter.description %}
 
 ## Overview
 
-The Address capture Widget captures the following fields. These fields are mandatory for your customer to add, and optional for the merchant to provide.
+![Address-search](/img/Address_search.png)
 
-| Name         | Definition                           | Mandatory/Optional                               |
-| ------------ | ------------------------------------ | ------------------------------------------------ |
-| firstName    | First name of the customer           | Optional to provide / Mandatory for the customer |
-| lastName     | Last name of the customer            | Optional to provide / Mandatory for the customer |
-| addressLine1 | First line of the customer's address | Optional to provide / Mandatory for the customer |
-| addressLine2 | Secondary optional address line      | Optional to provide and for the customer         |
-| city         | City of residence of the customer    | Optional to provide / Mandatory for the customer |
-| state        | State of residence of the customer   | Optional to provide / Mandatory for the customer |
-| postcode     | Address postcode of the customer     | Optional to provide / Mandatory for the customer |
-| country      | Country of residence of the customer | Optional to provide / Mandatory for the customer |
+![Address-manual](/img/Address_manual.png)
+
+
+The Address capture Widget captures the following fields. These fields are mandatory for your customer to add, and optional for the merchant to provide.   
+
+| Name          | Definition                         | Mandatory/Optional                           |
+| ------------- | ---------------------------------- | -------------------------------------------  |
+| firstName     |  First name of the customer            | Optional to provide / Mandatory for the customer |
+| lastName      |  Last name of the customer             | Optional to provide / Mandatory for the customer |
+| addressLine1  |  First line of the customer's address  | Optional to provide / Mandatory for the customer |
+| addressLine2  |  Secondary optional address line   | Optional to provide and for the customer         |
+| city          |  City of residence of the customer     | Optional to provide / Mandatory for the customer |
+| state         |  State of residence of the customer    | Optional to provide / Mandatory for the customer |
+| postcode      |  Address postcode of the customer      | Optional to provide / Mandatory for the customer |
+| country       |  Country of residence of the customer  | Optional to provide / Mandatory for the customer |
 
 ## iOS
 
-### Initializing the Address widget sheet in iOS
+### How to initialize the Address widget sheet in iOS
 
-The Address Capture Widget collects your customer's billing location. This standalone widget manages all required inputs and validations, and provides address autocomplete using Apple MapKit SDK.
+### 1. Overview
 
-The Address Widget displays as a SwiftUI sliding bottom sheet. Once your customer has confirmed their address, the widget returns the Address object back to the application.
+The Address Capture Widget collects your customer's billing location. As a standalone widget it manages all required inputs and validations, and provides an address autocomplete function using Apple MapKit SDK.
+
+The widget displays as a SwiftUI sliding bottom sheet. Once your customer has confirmed their address, the widget returns the Address object back to the application.
 
 The Address Widget view is as follows:
 
 ```Swift
 AddressSheetView(address: Address, isPresented: Binding<Bool>, onCompletion: Binding<MobileSDK.Address>)
-```
+``` 
 
-The following example demonstrates the Widget before any customer details have been populated. It is in a SwiftUI View:
+An example of the widget before any customer details have been populated is as follows. The widget is in a SwiftUI View:
 
 ```Swift
 import SwiftUI
@@ -43,41 +55,43 @@ struct AddressExampleView: View {
             switch result {
             case .success(let address):
                 // Handle the address result
-            case .failure(let error):
+            case .failure(let error): 
                 // Handle the error
             }
         }
     }
 }
 ```
+### 2. Parameter definitions
 
-### Definitions
+The following definitions provide a more detailed overview of the parameters included in the Address widget:
 
 #### MobileSDK.AddressWidget
-
-| Name       | Definition                                                                                           | Type                            | Mandatory/Optional |
-| :--------- | :--------------------------------------------------------------------------------------------------- | :------------------------------ | :----------------- |
-| address    | Used for passing in the information to the address sheet to pre-populate the address fields          | MobileSDK.Address               | Optional           |
-| completion | Completion block that returns result. Either Address in case of success, or Error in case of failure | Result<Address, Error>) -> Void | Mandatory          |
+| Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
+| :------------ | :---------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------  |
+| address       |  Used for passing in the information to the address sheet to pre-populate the address fields          | MobileSDK.Address                | Optional           |
+| completion    |  Completion block that returns result. Either Address in case of success, or Error in case of failure | Result<Address, Error>) -> Void  | Mandatory          |
 
 #### MobileSDK.Address
+| Name          | Definition                         | Type          | Mandatory/Optional                           |
+| :------------ | :--------------------------------- | :------------ | :------------------------------------------  |
+| firstName     |  First name of the customer            | Swift.String  | Optional to provide / Mandatory for the user |
+| lastName      |  Last name of the customer             | Swift.String  | Optional to provide / Mandatory for the user |
+| addressLine1  |  Full address line with            | Swift.String  | Optional to provide / Mandatory for the user |
+| addressLine2  |  Secondary optional address line   | Swift.String  | Optional to provide and for the user         |
+| city          |  City of residence of the customer     | Swift.String  | Optional to provide / Mandatory for the user |
+| state         |  State of residence of the customer    | Swift.String  | Optional to provide / Mandatory for the user |
+| postcode      |  Address postcode of the customer      | Swift.String  | Optional to provide / Mandatory for the user |
+| country       |  Country of residence of the customer  | Swift.String  | Optional to provide / Mandatory for the user |
 
-| Name         | Definition                           | Type         | Mandatory/Optional                           |
-| :----------- | :----------------------------------- | :----------- | :------------------------------------------- |
-| firstName    | First name of the customer           | Swift.String | Optional to provide / Mandatory for the user |
-| lastName     | Last name of the customer            | Swift.String | Optional to provide / Mandatory for the user |
-| addressLine1 | Full address line with               | Swift.String | Optional to provide / Mandatory for the user |
-| addressLine2 | Secondary optional address line      | Swift.String | Optional to provide and for the user         |
-| city         | City of residence of the customer    | Swift.String | Optional to provide / Mandatory for the user |
-| state        | State of residence of the customer   | Swift.String | Optional to provide / Mandatory for the user |
-| postcode     | Address postcode of the customer     | Swift.String | Optional to provide / Mandatory for the user |
-| country      | Country of residence of the customer | Swift.String | Optional to provide / Mandatory for the user |
 
 ## Android
 
-### How to use the AddressDetailsWidget
+## How to use the AddressDetailsWidget
 
-This section provides a step-by-step guide on how to initialize and use the `AddressDetailsWidget` composable in your application. The widget allows for capturing billing address details.
+### 1. Overview
+
+The Address widget captures billing address details. This section details how to initialize and use the `AddressDetailsWidget` composable in your application. 
 
 The following sample code demonstrates the definition of the `AddressDetailsWidget`:
 
@@ -106,30 +120,29 @@ AddressDetailsWidget(
 )
 ```
 
-### Definitions
+### 2. Parameter definitions
 
 This subsection describes the various parameters required by the `AddressDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AddressDetailsWidget`.
 
 #### AddressDetailsWidget
 
-| Name       | Definition                                              | Type                                                      | Mandatory/Optional |
-| :--------- | :------------------------------------------------------ | :-------------------------------------------------------- | :----------------- |
-| modifier   | Compose modifier for container modifications            | `Modifier`                                                | Optional           |
-| address    | The preset address to pre-fill the input fields.        | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
-| completion | Callback function to execute when the address is saved. | `(BillingAddress) -> Unit`                                | Mandatory          |
+| Name             | Definition                                               | Type                                                      | Mandatory/Optional |
+| :--------------- | :------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
+| modifier         |  Compose modifier for container modifications            | `Modifier`                                                | Optional           |
+| address          |  The preset address to pre-fill the input fields.        | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
+| completion       |  Callback function to execute when the address is saved. | `(BillingAddress) -> Unit`                                | Mandatory          |
 
 #### BillingAddress
+| Name          | Definition                                                                           | Type       | Mandatory/Optional                           |
+| :------------ | :----------------------------------------------------------------------------------- | :--------- | :------------------------------------------  |
+| addressLine1  |  The first line of the billing address, typically containing street information      | String     | Optional to provide / Mandatory for the user |
+| addressLine2  |  The optional second line of the billing address, often used for additional details  | String     | Optional to provide and for the user         |
+| city          |  The city or locality of the billing address                                         | String     | Optional to provide / Mandatory for the user |
+| state         |  The state or region of the billing address                                          | String     | Optional to provide / Mandatory for the user |
+| postalCode    |  The Postal or ZIP code of the billing address                                       | String     | Optional to provide / Mandatory for the user |
+| country       |  Country of residence of the user                                                    | String     | Optional to provide / Mandatory for the user |
 
-| Name         | Definition                                                                         | Type   | Mandatory/Optional                           |
-| :----------- | :--------------------------------------------------------------------------------- | :----- | :------------------------------------------- |
-| addressLine1 | The first line of the billing address, typically containing street information     | String | Optional to provide / Mandatory for the user |
-| addressLine2 | The optional second line of the billing address, often used for additional details | String | Optional to provide and for the user         |
-| city         | The city or locality of the billing address                                        | String | Optional to provide / Mandatory for the user |
-| state        | The state or region of the billing address                                         | String | Optional to provide / Mandatory for the user |
-| postalCode   | The Postal or ZIP code of the billing address                                      | String | Optional to provide / Mandatory for the user |
-| country      | Country of residence of the user                                                   | String | Optional to provide / Mandatory for the user |
-
-### Callback Explanation
+### 3. Callback Explanation
 
 #### Completion Callback
 

@@ -1,10 +1,19 @@
-# FlyPay Widget
+---
+title: FlyPay Widget
+description: The FlyPay Widget integrates with FlyPay using a WebView component. This handles the communication between FlyPay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
+---
 
-The FlyPay Widget integrates with FlyPay using a WebView component. This handles the communication between FlyPay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
+# {% $markdoc.frontmatter.title %}
+
+{% $markdoc.frontmatter.description %}
+
+![FlyPay View](/img/FlyPay.png)
 
 ## iOS
 
 ## How to use the FlyPayWidget
+
+### 1. Overview
 
 This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` SwiftUI view in your application. The widget facilitates the payment using FlyPay services.
 
@@ -35,30 +44,32 @@ struct FlyPayExampleView: View {
 }
 ```
 
-## Definitions
+### 2. Parameter definitions
 
 This subsection describes the parameters required by the `FlyPayWidget` SwiftUI view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `FlyPayWidget`.
 
 #### FlyPayWidget
 
-| Name        | Definition                                                               | Type                                            | Mandatory/Optional |
-| :---------- | :----------------------------------------------------------------------- | :---------------------------------------------- | :----------------- |
-| flyPayToken | A callback to obtain the wallet token asynchronously                     | `(@escaping (String) -> Void) -> Void`          | Mandatory          |
-| completion  | Result callback with the _FlyPayOrderId_ if successful, or error if not. | `(Result<ChargeResponse, FlyPayError>) -> Void` | Mandatory          |
+| Name                  | Definition                                                                        | Type                                              | Mandatory/Optional |
+| :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
+| flyPayToken           |  A callback to obtain the wallet token asynchronously                             | `(@escaping (String) -> Void) -> Void`            | Mandatory          |
+| completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse, FlyPayError>) -> Void`   | Mandatory          |
 
-## Callback Explanation
+### 3. Callback Explanation
 
-### Token Callback
+#### Token Callback
 
 The `flyPayToken` callback obtains the wallet token asynchronously. It receives a callback function `(@escaping (String) -> Void) -> Void` as a parameter, which you must invoke with the wallet token once it is obtained.
 
-### Completion Callback
+#### Completion Callback
 
-The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse, FlyPayError>` where ChargeResponse contains the _FlyPayOrderId_ if the payment is successful. The callback handles the outcome of the payment operation.
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse, FlyPayError>` where ChargeResponse contains the *FlyPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation.
 
 ## Android
 
-### How to use the FlyPayWidget
+## How to use the FlyPayWidget
+
+### 1. Overview
 
 This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` composable in your application. The widget facilitates the payment using FlyPay services.
 
@@ -98,19 +109,19 @@ FlyPayWidget(
 }
 ```
 
-### Definitions
+### 2. Parameter definitions
 
 This subsection describes the various parameters required by the `FlyPayWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `FlyPayWidget`.
 
 #### FlyPayWidget
 
-| Name       | Definition                                                               | Type                                          | Mandatory/Optional |
-| :--------- | :----------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
-| modifier   | Compose modifier for container modifications                             | `androidx.compose.ui.Modifier`                | Optional           |
-| token      | A callback to obtain the wallet token asynchronously                     | `(onTokenReceived: (String) -> Unit) -> Unit` | Mandatory          |
-| completion | Result callback with the _FlyPayOrderId_ if successful, or error if not. | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
+| Name                  | Definition                                                                        | Type                                              | Mandatory/Optional |
+| :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
+| modifier              |  Compose modifier for container modifications                                     | `androidx.compose.ui.Modifier`                    | Optional           |
+| token                 |  A callback to obtain the wallet token asynchronously                             | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
+| completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.       | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
 
-### Callback Explanation
+### 3. Callback Explanation
 
 #### Token Callback
 
@@ -118,4 +129,4 @@ The `token` callback obtains the wallet token asynchronously. It receives a call
 
 #### Completion Callback
 
-The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String>` where String represents the _FlyPayOrderId_ if the payment is successful. The callback handles the outcome of the payment operation.
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String>` where String represents the *FlyPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation.

@@ -1,10 +1,19 @@
-# Card Tokenisation Widget
+---
+title: Card Tokenisation Widget
+description: The Card Tokenisation Widget's prebuilt card form securely collects card details and transforms them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment, Save Card to Vault, and so on.
+---
 
-The Card Tokenisation Widget's prebuilt card form securely collects card details and transforms them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment, Save Card to Vault, and so on.
+# {% $markdoc.frontmatter.title %}
+
+{% $markdoc.frontmatter.description %}
+
+![Creditcard View](/img/Credit_card.png)
 
 ## iOS
 
-### How to use the Card Tokenisation widget in iOS
+## How to use the Card Tokenisation widget in iOS
+
+### 1. Overview
 
 The Card Tokenisation Widget collects your customer's payment information. This is a standalone widget that manages required inputs and validations. 
 
@@ -48,7 +57,7 @@ struct CardDetailsWidgetView: View {
 }
 ```
 
-### Definitions
+### 2. Parameter definitions
 
 #### MobileSDK.CardDetailsSheetView
 | Name         | Definition                                                                                     | Type             | Mandatory/Optional |
@@ -60,7 +69,9 @@ struct CardDetailsWidgetView: View {
 
 ## Android
 
-### How to use the CardDetailsWidget
+## How to use the CardDetailsWidget
+
+### 1. Overview
 
 This section provides a step-by-step guide on how to initialize and use the `CardDetailsWidget` composable in your application. The widget performs tokenisation of card details.
 
@@ -96,7 +107,7 @@ CardDetailsWidget(
 )
 ```
 
-### Definitions
+### 2. Parameter definitions
 
 This subsection describes the various parameters required by the `CardDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `CardDetailsWidget`.
 
@@ -107,7 +118,7 @@ This subsection describes the various parameters required by the `CardDetailsWid
 | gatewayId           |  Gateway ID used for the card tokenisation                                                                | String                      | Optional           |
 | completion          |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<String>) -> Unit`  | Mandatory          |
 
-### Callback Explanation
+### 3. Callback Explanation
 
 #### Completion Callback
 

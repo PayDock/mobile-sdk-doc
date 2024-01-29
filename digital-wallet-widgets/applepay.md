@@ -1,10 +1,19 @@
-# Apple Pay Widget
+---
+title: ApplePay Widget
+description: Use the iOS SDK to make payments using ApplePay. The logic of this widget exists as a single view that you can initialise and embed in your payment flow.
+---
 
-Use the iOS SDK to make payments using Apple Pay. The logic of this widget exists as a single view that you can initialise and embed in your payment flow.
+# {% $markdoc.frontmatter.title %}
 
-## How to use the Apple Pay widget
+{% $markdoc.frontmatter.description %}
 
-The **ApplePayView** can be initialised as follows:
+![ApplePay View](/img/ApplePay.png)
+
+## How to use the ApplePay widget
+
+1. Before using your ApplePay widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+
+2. Use the following to initialise the **ApplePayView**:
 
 ```Swift
 ApplePayWidget(
@@ -12,9 +21,9 @@ ApplePayWidget(
     completion: @escaping (Result<ChargeResponse, ApplePayError>) -> Void)
 ```
 
-If the charge is successful, the **ApplePayView** returns a ChargeResponse that contains all the relevant information. In case of an error, the **ApplePayError** object is returned with information regarding the failure.
+If the charge is successful, the **ApplePayView** returns a `ChargeResponse` that contains all the relevant information. In case of an error, the `ApplePayError` object is returned with information regarding the failure.
 
-The **ApplePayRequest** contains all of the required data to enable Apple Pay.
+3. The **ApplePayRequest** contains all of the required data to enable ApplePay.
 
 ```Swift
 public struct ApplePayRequest {
@@ -23,12 +32,11 @@ public struct ApplePayRequest {
 
     public init(token: String, request: PKPaymentRequest) {
         self.token = token
-        self.request = request
-    }
+        public let request: PKPaymentRequest
 }
 ```
 
-The Mobile SDK provides convenient helper methods to initialise the **PKPaymentRequest** object. You can configure this in various ways, depending on your use case:
+4. The Mobile SDK provides convenient helper methods to initialise the `PKPaymentRequest` object. You can configure this in various ways, depending on your use case:
 
 ```Swift
     public static func createApplePayRequest(
@@ -57,7 +65,7 @@ The Mobile SDK provides convenient helper methods to initialise the **PKPaymentR
     }
 ```
 
-The following is an example of an **ApplePayView** initialisation:
+5. The following is an example of the full **ApplePayView** initialisation. Ensure that you have your `wallet_token`, which you can generate by following the instructions [here](/digital-wallet-widgets/wallettoken):
 
 ```Swift
 struct ApplePayExampleView: View {
@@ -78,10 +86,19 @@ func getApplePayRequest() -> ApplePayRequest {
         amount: 0.01,
         amountLabel: "Amount",
         countryCode: "AU",
+<<<<<<< HEAD:markdoc/pages/digital-wallet-widgets/applepay.mdoc
+        currencyCode: "AUD",
+        merchantIdentifier: <merchant_identifier>)
+
+    let applePayRequest = ApplePayRequest(
+        token: <wallet_token>,
+        merchantIdentifier: <merchant_identifier>),
+=======
         currencyCode: "AUD")
 
     let applePayRequest = ApplePayRequest(
         token: <Merchant wallet token>,
+>>>>>>> main:markdoc/pages/widgets/applepay.mdoc
         request: paymentRequest)
 
     return applePayRequest
@@ -89,6 +106,8 @@ func getApplePayRequest() -> ApplePayRequest {
 ```
 
 ## Definitions
+
+More in depth definitions of the parameters, as well as potential errors and responses, are as follows:
 
 ### MobileSDK.ApplePayRequest
 | Name               | Definition                                                                                                               | Type                     | Mandatory/Optional |
