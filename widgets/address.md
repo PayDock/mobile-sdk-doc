@@ -1,11 +1,6 @@
----
-title: Standalone Address Widget
-description: The Address capture Widget uses a prebuilt form to capture an address. Your customer can prefill the form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
----
+# Standalone Address Widget
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+The Address capture Widget uses a prebuilt form to capture an address. Your customer can prefill the form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
 
 ## Overview
 

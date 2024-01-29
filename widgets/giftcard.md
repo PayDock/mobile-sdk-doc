@@ -1,11 +1,7 @@
----
-title: Gift Card Tokenisation Widget
-description: The Gift Card Tokenisation Widget securely collects gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
----
+# Gift Card Tokenisation Widget
 
-# {% $markdoc.frontmatter.title %}
+ The Gift Card Tokenisation Widget securely collects gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
 
-{% $markdoc.frontmatter.description %}
 
 ![Giftcard View](/img/Gift_Card.png)
 

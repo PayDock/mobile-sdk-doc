@@ -198,11 +198,10 @@ MobileSDK.shared.configureMobileSDK(config: config)
 
 ### How to Customize the SDK visuals for Android
 
-{% callout %}
  **Note**
  
  Customizing the SDK theme, referred to as the `MobileSDKTheme`,  is broken up into 3 parts. Each item is optional and customizable based on what you intend to target and change.
- {% /callout %}
+
 
  Use the `MobileSDKTheme` helper functions to create the various theming components used by the SDK. These functions can create the default values, which you can override if you need to make updates. You can also use them to change properties without having to specify every value.
  

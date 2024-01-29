@@ -1,11 +1,6 @@
----
-title: 3DS Widget
-description: Use Paydock's 3DS Widget to complete 3DS challenges. The 3DS Widget integrates with the Paydock JS client-sdk within a WebView component. Through this integration, your customer can authenticate the charge using the 3DS widget, which then communicates with the client-sdk, completes authentication and returns the charge event result. This also caters for both the Integrated 3DS and the Standalone 3DS flow.
----
+# 3DS Widget
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+Use Paydock's 3DS Widget to complete 3DS challenges. The 3DS Widget integrates with the Paydock JS client-sdk within a WebView component. Through this integration, your customer can authenticate the charge using the 3DS widget, which then communicates with the client-sdk, completes authentication and returns the charge event result. This also caters for both the Integrated 3DS and the Standalone 3DS flow.
 
 ## iOS
 
@@ -86,22 +81,10 @@ This subsection describes the various parameters required by the `ThreeDSWidget`
 
 #### ThreeDSWidget 
 
-{% table %}
-* Name {% align="left" %}
-* Definition {% align="left" %}
-* Type {% align="left" %}
-* Mandatory/Optional {% align="left" %}
----
-* token
-* The 3DS token used for 3DS widget initialization.
-* String
-* Mandatory
----
-* completion
-* Result callback with the 3DS authentication if successful, or error if not. 
-* `(Result<ThreeDSResult>) -> Unit`
-* Mandatory
-{% /table %}
+| Name                | Definition                                                         | Type                        | Mandatory/Optional |
+| :------------------ | :----------------------------------------------------------------- | :---------------------------- | :----------------  |
+| token  |  The 3DS token used for 3DS widget initialization.                  | String                      | Mandatory          |
+| completion    |  Result callback with the 3DS authentication if successful, or error if not.                    | `(Result<ThreeDSResult>) -> Unit`                      | Mandatory          |
 
 #### ThreeDSResult
 
@@ -118,52 +101,22 @@ data class ThreeDSResult(
 
 #### Definition
 
-{% table %}
-* Name {% align="left" %}
-* Definition {% align="left" %}
-* Type {% align="left" %}
----
-* event
-* The type of event that occurred during 3DS processing
-* `EventType`
----
-* charge3dsId
-* The Charge ID associated with the 3DS transaction to return to the merchant
-* String
-{% /table %}
-
+| Name                | Definition                                                         | Type                        | 
+| :------------------ | :----------------------------------------------------------------- | :---------------------------- | 
+| event  |  The type of event that occurred during 3DS processing                  | `EventType`                      | 
+| charge3dsId    |  The Charge ID associated with the 3DS transaction to return to the merchant                    | String                     | 
 
 #### EventType
 
-{% table %}
-* Name {% align="left" %}
-* Definition {% align="left" %}
----
-* CHARGE_AUTH_SUCCESS
-* Represents a successful 3DS charge authorization
----
-* CHARGE_AUTH_REJECT
-* Represents a rejected 3DS charge authorization
----
-* CHARGE_AUTH_CHALLENGE
-* Represents a 3DS charge authorization with a challenge
----
-* CHARGE_AUTH_DECOUPLED
-* Represents a decoupled 3DS charge authorization
----
-* CHARGE_AUTH_CHALLENGE
-* Represents an informational event related to a 3DS charge
----
-* CHARGE_AUTH_INFO
-* Represents an error event related to a 3DS charge
----
-* CHARGE_ERROR
-* Represents an unknown or unrecognized event type
----
-* UNKNOWN
-* Represents an unknown or unrecognized event type (default)
-{% /table %}
-
+| Name                | Definition                                                         | 
+| :------------------ | :----------------------------------------------------------------- |
+| CHARGE_AUTH_SUCCESS  |  Represents a successful 3DS charge authorization                  |
+| CHARGE_AUTH_REJECT  |  Represents a rejected 3DS charge authorization                  |
+| CHARGE_AUTH_CHALLENGE  |  Represents a 3DS charge authorization with a challenge                 |
+| CHARGE_AUTH_DECOUPLED  |  Represents a decoupled 3DS charge authorization                 |
+| CHARGE_AUTH_INFO  |  Represents an informational event related to a 3DS charge                 |
+| CHARGE_ERROR  |  Represents an error event related to a 3DS charge                 |
+| UNKNOWN  |  Represents an unknown or unrecognised event type (default)                 |
 
 ### 3. Callback Explanation
 

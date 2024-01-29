@@ -1,11 +1,6 @@
----
-title: Card Tokenisation Widget
-description: The Card Tokenisation Widget's prebuilt card form securely collects card details and transforms them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment, Save Card to Vault, and so on.
----
+# Card Tokenisation Widget
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+The Card Tokenisation Widget's prebuilt card form securely collects card details and transforms them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment, Save Card to Vault, and so on.
 
 ![Creditcard View](/img/Credit_card.png)
 
