@@ -6,7 +6,7 @@ Use the iOS SDK to make payments using ApplePay. The logic of this widget exists
 
 ## How to use the ApplePay widget
 
-1. Before using your ApplePay widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+1. Before using your ApplePay widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken.md). The `wallet_token` forms a part of the request body for your widget. 
 
 2. Use the following to initialise the **ApplePayView**:
 

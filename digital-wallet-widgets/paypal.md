@@ -12,7 +12,7 @@ The MobileSDK provides a PayPal Widget that integrates with PayPal using a WebVi
 
 The iOS SDK supports payments using PayPal. The component's logic is contained in a Single View, and so you must initialize and embed this logic within your payment flow.
 
-1. Before using your PayPal widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+1. Before using your PayPal widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets.md/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
 
 2. Use the following to initialize the **PayPalView**:
 
