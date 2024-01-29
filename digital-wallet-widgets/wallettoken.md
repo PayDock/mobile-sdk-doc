@@ -4,11 +4,7 @@ Generating your wallet token and embedding the wallet button are mandatory steps
 
 ## Overview
 
-To use your Digital Wallets, you must first generate a `wallet_token`. The `wallet_token` forms a part of the request body for your Applepay, GooglePay, FlyPay and Paypal initialisation.
-
-## 1. Initialize your Wallet
-
-Perform a wallet initialization request to receive your ```wallet_token```. For the request you must:
+When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. For the request you must:
 
 1. Ensure that you have your `x-user-secret-key`. You can generate this by following the instructions in our [integration guide](https://docs.paydock.com/#getting-started). 
 
@@ -16,22 +12,6 @@ Perform a wallet initialization request to receive your ```wallet_token```. For 
 
 3. Add the relevant `"<gateway_id>"` to the `"payment_source"` section.
 
-{% 	apiTable 
-	endpoint="/v1/charges/wallet" 
-	method="POST" 
-	headers=[
-    {
-        "key": "x-user-secret-key",
-        "value": "This is your API Secret Key."
-    },
-    {
-        "key": "Content-Type",
-        "value": "application/json"
-    }
-] /%}
-
-{% apiRequestResponse %}
-{% apiRequestResponseTab language="request" %}
 ```json
 { 
     "customer": {
@@ -100,78 +80,5 @@ Perform a wallet initialization request to receive your ```wallet_token```. For 
         }
     }
 }
-```
-
-## 2. Load the WalletButton
-
-Using the ```resource.data.token``` from the wallet initialization response, create a ```WalletButtons``` widget using the client-sdk.
-
-```
-<div id="widget-applepay"></div>
-
-<script src="https://yoururl.com/sdk/latest/widget.umd.js"></script>
-
-<script>
-   let button = new paydock.WalletButtons("#widget", charge_token, {
-        amount_label: "Total",
-        country: charge_country,
-        wallets: ["apple"], // optional to display multiple wallet buttons in 1 widget
-        request_shipping: true,
-            style: {
-                button_type: 'buy',
-            },
-            shipping_options: [
-                {
-                    id: "FreeShip",
-                    label: "Free Shipping",
-                    detail: "Arrives in 5 to 7 days",
-                    amount: "0.00"
-                },
-                {
-                    id: "FastShip",
-                    label: "Fast Shipping",
-                    detail: "Arrives in 1 day",
-                    amount: "10.00"
-                }
-            ]
-    });
-
-    button.setEnv('environment');
-    button.onUnavailable(() => console.log("No wallet buttons available"));
-    button.onPaymentSuccessful((data) => {
-        console.log("The payment was successful");
-        console.log(data)
-    });
-    button.onPaymentError((data) => {
-        console.log("The payment was not successful");
-        console.log(data)
-    });
-    
-    button.onUpdate((data) => {
-    console.log("Updating amount via a backend to backend call to POST charges/:id");
-	button.update({
-        success: true,
-        body: {
-            amount: 15,
-            shipping_options: [
-                {
-                    id: "NEW-FreeShip",
-                    label: "NEW - Free Shipping",
-                    detail: "Arrives in 3 to 5 days",
-                    amount: "0.00"
-                },
-                {
-                    id: "NEW - FastShip",
-                    label: "NEW - Fast Shipping",
-                    detail: "Arrives in less than 1 day",
-                    amount: "10.00"
-                }
-            ]
-        }
-    });
-});
-    button.load();
-
-</script>
 ```
 

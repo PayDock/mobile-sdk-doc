@@ -6,10 +6,10 @@ Once you have setup and initialized the MobileSDK in your application, you can u
 
 ## Next steps
 
-1. Begin by [adding the SDK](/setup/installation) as a dependency to your app for either iOS or Android.
+1. Begin by [adding the SDK](/setup/installation.md) as a dependency to your app for either iOS or Android.
 
 2. Once the SDK is added, you can [initialize the SDK](/setup/initialise) by passing the configuration objects such as your `public_key` and `environment` variable. 
 
-3. After the SDK is initialized, you can optionally customise the appearance of your UI elements using the [theming parameters](/setup/theming).
+3. After the SDK is initialized, you can optionally customise the appearance of your UI elements using the [theming parameters](/setup/theming.md).
 
 4. Use our widget guides to setup [GooglePay](/widgets/googlepay.mdoc), [ApplePay](/widgets/applepay.mdoc), and [PayPal](/widgets/paypal) - or access features such as [Card Tokenisation](/widgets/card.mdoc), [Address capture](/widgets/address.mdoc), [3DS](/widgets/threeds.mdoc), and [Gift Cards](/widgets/threeds.mdoc). 

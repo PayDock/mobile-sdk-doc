@@ -6,9 +6,11 @@ Use the iOS SDK to make payments using ApplePay. The logic of this widget exists
 
 ## How to use the ApplePay widget
 
-1. Before using your ApplePay widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+> **Note**:
+>
+> When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section.  
 
-2. Use the following to initialise the **ApplePayView**:
+1. Use the following to initialise the **ApplePayView**:
 
 ```Swift
 ApplePayWidget(
@@ -18,7 +20,7 @@ ApplePayWidget(
 
 If the charge is successful, the **ApplePayView** returns a `ChargeResponse` that contains all the relevant information. In case of an error, the `ApplePayError` object is returned with information regarding the failure.
 
-3. The **ApplePayRequest** contains all of the required data to enable ApplePay.
+2. The **ApplePayRequest** contains all of the required data to enable ApplePay.
 
 ```Swift
 public struct ApplePayRequest {
@@ -31,7 +33,7 @@ public struct ApplePayRequest {
 }
 ```
 
-4. The Mobile SDK provides convenient helper methods to initialise the `PKPaymentRequest` object. You can configure this in various ways, depending on your use case:
+3. The Mobile SDK provides convenient helper methods to initialise the `PKPaymentRequest` object. You can configure this in various ways, depending on your use case:
 
 ```Swift
     public static func createApplePayRequest(
@@ -60,7 +62,7 @@ public struct ApplePayRequest {
     }
 ```
 
-5. The following is an example of the full **ApplePayView** initialisation. Ensure that you have your `wallet_token`, which you can generate by following the instructions [here](/digital-wallet-widgets/wallettoken):
+4. The following is an example of the full **ApplePayView** initialisation. Ensure that you have your `wallet_token`, which you can generate by following the instructions [here](/digital-wallet-widgets/wallettoken):
 
 ```Swift
 struct ApplePayExampleView: View {

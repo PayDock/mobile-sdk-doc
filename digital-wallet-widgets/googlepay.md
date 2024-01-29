@@ -10,7 +10,9 @@ The MobileSDK provides a GooglePayWidget composable widget that you can use to i
 
 The GooglePay widget facilitates payments using GooglePay services. This section provides a step-by-step guide on how to initialize and use the `GooglePayWidget` composable in your application. The widget facilitates the payment using GooglePay services.
 
-Note: Before using your GooglePay widget, ensure that you have [generated a wallet_token](/digital-wallet-widgets/wallettoken). The `wallet_token` forms a part of the request body for your widget. 
+> **Note**:
+>
+> When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.   
 
 The following sample code demonstrates the definition of the `GooglePayWidget`:
 

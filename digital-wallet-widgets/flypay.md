@@ -54,7 +54,9 @@ This subsection describes the parameters required by the `FlyPayWidget` SwiftUI 
 
 #### Token Callback
 
-The `flyPayToken` callback obtains the wallet token asynchronously. It receives a callback function `(@escaping (String) -> Void) -> Void` as a parameter, which you must invoke with the wallet token once it is obtained.
+> **Note**:
+>
+> The `flyPayToken` callback obtains the wallet token asynchronously. It receives a callback function `(@escaping (String) -> Void) -> Void` as a parameter, which you must invoke with the `wallet_token` once it is obtained. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
 
 #### Completion Callback
 
@@ -120,8 +122,9 @@ This subsection describes the various parameters required by the `FlyPayWidget` 
 
 #### Token Callback
 
-The `token` callback obtains the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which you must invoke with the wallet token once it is obtained.
+The `token` callback obtains the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which you must invoke with the wallet token once it is obtained. 
 
 #### Completion Callback
 
-The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String>` where String represents the *FlyPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation.
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String>` where String represents the *FlyPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
+
