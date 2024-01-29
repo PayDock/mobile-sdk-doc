@@ -1,11 +1,6 @@
----
-title: Google Pay Widget
-description: The MobileSDK provides a GooglePayWidget composable widget that you can use to interact with GooglePay. The button initializes GooglePay, handles the payment requests, and finalizes the charge through Paydock. The final result is then returned as a callback.
----
+# Google Pay Widget
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+The MobileSDK provides a GooglePayWidget composable widget that you can use to interact with GooglePay. The button initializes GooglePay, handles the payment requests, and finalizes the charge through Paydock. The final result is then returned as a callback.
 
 ![GooglePay View](/img/GPay.png)
 

@@ -1,10 +1,6 @@
----
-title: Generating your Wallet Token
-description: Generating your wallet token and embedding the wallet button are mandatory steps to use the GooglePay, ApplePay, FlyPay and PayPal widgets. 
----
+# Generating your Wallet Token
 
-# {% $markdoc.frontmatter.title %} 
-{% $markdoc.frontmatter.description %} 
+Generating your wallet token and embedding the wallet button are mandatory steps to use the GooglePay, ApplePay, FlyPay and PayPal widgets. 
 
 ## Overview
 
@@ -57,8 +53,6 @@ Perform a wallet initialization request to receive your ```wallet_token```. For 
     }
 }
 ```
-{% /apiRequestResponseTab %}
-{% apiRequestResponseTab language="response" %}
 
 ```json
 {
@@ -107,8 +101,6 @@ Perform a wallet initialization request to receive your ```wallet_token```. For 
     }
 }
 ```
-{% /apiRequestResponseTab %}
-{% /apiRequestResponse %}
 
 ## 2. Load the WalletButton
 

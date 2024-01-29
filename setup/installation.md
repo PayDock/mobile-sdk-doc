@@ -1,10 +1,6 @@
----
-title: Install the SDK
-description: To begin using the SDK, you must first add it as a dependency to your app, integrating it into your existing application. A pre-requisite to using the SDK is setting up the Paydock API, the instructions for which are linked in this guide.  
----
+# Install the SDK
 
-# {% $markdoc.frontmatter.title %}
-{% $markdoc.frontmatter.description %}
+To begin using the SDK, you must first add it as a dependency to your app, integrating it into your existing application. A pre-requisite to using the SDK is setting up the Paydock API, the instructions for which are linked in this guide.  
 
 ## Setup the Paydock API Integration
 

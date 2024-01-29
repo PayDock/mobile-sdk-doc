@@ -1,11 +1,6 @@
----
-title: Integrate the Widgets into your application
-description: You have downloaded and initialized the SDK dependency to your app or project during the installation stage of this setup. This guide demonstrates some example flows that integrate the SDK's widgets into your project.   
----
+# Integrate the Widgets into your application
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+You have downloaded and initialized the SDK dependency to your app or project during the installation stage of this setup. This guide demonstrates some example flows that integrate the SDK's widgets into your project.   
 
 ## Card payments
 

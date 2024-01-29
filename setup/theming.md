@@ -1,11 +1,6 @@
----
-title: Theming the SDK
-description: Customize the appearance of your UI elements to match the look and feel of your app. This step is optional, and if you choose not to customize the theming parameters, the SDK's default values will be used.
----
+# Theming the SDK
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+Customize the appearance of your UI elements to match the look and feel of your app. This step is optional, and if you choose not to customize the theming parameters, the SDK's default values will be used.
 
 Although the layout of these elements is fixed to remain consistent, you can modify colors, fonts, and other parameters such as corner radius and spacing.
 
@@ -326,12 +321,12 @@ MobileSDKTheme(
 )
 ```
 
-{% callout %}
+
  **Note**  
 
  This must be added/applied using the MobileSDK → MobileSDK.Builder...applyTheme(updatedTheme)
 
- {% /callout %}
+
 
 ### Definitions
 #### com.paydock.MobileSDKTheme

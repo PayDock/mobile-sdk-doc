@@ -1,11 +1,6 @@
----
-title: FlyPay Widget
-description: The FlyPay Widget integrates with FlyPay using a WebView component. This handles the communication between FlyPay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
----
+# FlyPay Widget
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+The FlyPay Widget integrates with FlyPay using a WebView component. This handles the communication between FlyPay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
 
 ![FlyPay View](/img/FlyPay.png)
 

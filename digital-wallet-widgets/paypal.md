@@ -1,11 +1,6 @@
----
-title: PayPal Widget
-description: The MobileSDK provides a PayPal Widget that integrates with PayPal using a WebView component. This handles the communication between PayPal and the SDK. Once completed, the WebView component returns the charge result.
----
+# PayPal Widget
 
-# {% $markdoc.frontmatter.title %}
-
-{% $markdoc.frontmatter.description %}
+The MobileSDK provides a PayPal Widget that integrates with PayPal using a WebView component. This handles the communication between PayPal and the SDK. Once completed, the WebView component returns the charge result.
 
 ![PayPal View](/img/PayPal.png)
 

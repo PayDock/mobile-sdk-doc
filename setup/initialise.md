@@ -38,13 +38,9 @@ MobileSDK.shared.configureMobileSDK(config: config)
 
 ## Initialize the Android SDK
 
-{% callout %}
-
-Note:
-
-You can only initialize the MobileSDK once per app launch. 
-
-{% /callout %}
+> **Note**:
+>
+> You can only initialize the MobileSDK once per app launch.
 
 You must use a builder pattern in the Android Application class to manage and setup the MobileSDK. 
 
