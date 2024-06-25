@@ -1,8 +1,10 @@
-# ApplePay Widget
+# Apple Pay Widget
 
-Use the iOS SDK to make payments using ApplePay. The logic of this widget exists as a single view that you can initialise and embed in your payment flow.
+> 
+>
+>Use the iOS SDK to make payments using ApplePay. 
 
-![ApplePay View](/img/ApplePay.png)
+The logic of this widget exists as a single view that you can initialise and embed in your payment flow.
 
 ## How to use the ApplePay widget
 
