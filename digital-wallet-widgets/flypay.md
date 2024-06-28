@@ -1,6 +1,6 @@
-# FlyPay Widget
+# Flypay Widget
 
-The FlyPay Widget integrates with FlyPay using a WebView component. This handles the communication between FlyPay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
+The FlyPay Widget integrates with Flypay using a WebView component. This handles the communication between Flypay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
 
 ![FlyPay View](/img/FlyPay.png)
 
@@ -10,7 +10,7 @@ The FlyPay Widget integrates with FlyPay using a WebView component. This handles
 
 ### 1. Overview
 
-This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` SwiftUI view in your application. The widget facilitates the payment using FlyPay services.
+This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` SwiftUI view in your application. The widget facilitates the payment using Flypay services.
 
 The following sample code demonstrates the definition of the `FlyPayWidget`:
 
@@ -68,7 +68,7 @@ The `completion` callback is invoked after the payment operation is completed. I
 
 ### 1. Overview
 
-This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` composable in your application. The widget facilitates the payment using FlyPay services.
+This section provides a step-by-step guide on how to initialize and use the `FlyPayWidget` composable in your application. The widget facilitates the payment using Flypay services.
 
 The following sample code demonstrates the definition of the `FlyPayWidget`:
 
@@ -130,7 +130,7 @@ The `completion` callback is invoked after the payment operation is completed. I
 
 ### 4. Error/Exceptions Mapping
 
-The following describes FlyPay exceptions that can be thrown. 
+The following describes Flypay exceptions that can be thrown. 
 
 ```Kotlin
 FetchingUrlException(error: ApiErrorResponse) : FlyPayException(error.displayableMessage)
