@@ -405,3 +405,28 @@ This is used in conjunction with the AfterPay SDK `AfterpayCheckoutV2Handler.onS
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback handles the outcome of the payment operation.
+
+#### Error/Exceptions Mapping
+
+The following describes Afterpay exceptions that can be thrown. 
+
+```Kotlin
+FetchingUrlException(error: ApiErrorResponse) : AfterPayException(error.displayableMessage)
+CapturingChargeException(error: ApiErrorResponse) : AfterPayException(error.displayableMessage)
+TokenException(displayableMessage: String) : AfterPayException(displayableMessage)
+ConfigurationException(displayableMessage: String) : AfterPayException(displayableMessage)
+CancellationException(displayableMessage: String) : AfterPayException(displayableMessage)
+InvalidResultException(displayableMessage: String) : AfterPayException(displayableMessage)
+UnknownException(displayableMessage: String) : AfterPayException(displayableMessage)
+```
+
+| Exception                 | Description                                                                                   | Error Model       |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- |
+| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for Afterpay.                       |  AfterPayError    |
+| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for Afterpay.                   |  AfterPayError    |
+| TokenException            |  Exception thrown when there is an error with the Afterpay token.                             |  AfterPayError    |
+| ConfigurationException    |  Exception thrown when there is a configuration error related to Afterpay.                    |  AfterPayError    |
+| CancellationException     |  Exception thrown when there is a cancellation error related to Afterpay.                     |  AfterPayError    |
+| InvalidResultException    |  Exception thrown when there is an invalid intent result error related to Afterpay.           |  AfterPayError    |
+| UnknownException          |  Exception thrown when there is an unknown error related to Afterpay.                         |  AfterPayError    |
+
