@@ -141,10 +141,10 @@ UnknownException(displayableMessage: String) : FlyPayException(displayableMessag
 
 | Exception                 | Description                                                                                   | Error Model       |
 | :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- |
-| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for FlyPay.                         |  FlyPayError      |
+| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for Flypay.                         |  FlyPayError      |
 | WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  FlyPayError      |
-| CancellationException     |  Exception thrown when there is a cancellation error related to FlyPay.                       |  FlyPayError      |
-| UnknownException          |  Exception thrown when there is an unknown error related to FlyPay.                           |  FlyPayError      |
+| CancellationException     |  Exception thrown when there is a cancellation error related to Flypay.                       |  FlyPayError      |
+| UnknownException          |  Exception thrown when there is an unknown error related to Flypay.                           |  FlyPayError      |
 
 
 
