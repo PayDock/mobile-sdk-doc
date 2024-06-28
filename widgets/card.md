@@ -1,6 +1,8 @@
 # Card Tokenisation Widget
 
-The Card Tokenisation Widget's prebuilt card form securely collects card details and transforms them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment, Save Card to Vault, and so on.
+> 
+>
+>Securely collect card details and transform them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment, Save Card to Vault, and so on.
 
 ![Creditcard View](/img/Credit_card.png)
 
@@ -9,6 +11,8 @@ The Card Tokenisation Widget's prebuilt card form securely collects card details
 ## How to use the Card Tokenisation widget in iOS
 
 ### 1. Overview
+
+Overview
 
 The Card Tokenisation Widget collects your customer's payment information. This is a standalone widget that manages required inputs and validations. 
 
@@ -55,12 +59,13 @@ struct CardDetailsWidgetView: View {
 ### 2. Parameter definitions
 
 #### MobileSDK.CardDetailsSheetView
-| Name         | Definition                                                                                     | Type             | Mandatory/Optional |
-| :----------- | :--------------------------------------------------------------------------------------------- | :--------------- | :----------------  |
-| isPresented  |  Binding that is used for control if the sheet is presented on the screen                      | Binding<Bool>    | Mandatory          |
+
+| Name          | Definition                         | Type | Mandatory/Optional                           |
+| ------------- | ---------------------------------- | ------|-------------------------------------------  |
+ isPresented  |  Binding that is used for control if the sheet is presented on the screen |   | Mandatory          |
 | gatewayId    |  Gateway ID that the merchant needs to input into the sheet to allow for tokenisation          | Swift.String     | Mandatory          |
-| onCompletion |  Returns the card token to the app once the user is finished with inputing info into the sheet | Binding<String>  | Mandatory          |
-| onFailure    |  Returns the error message to the app in case the tokenisation process fails                   | Binding<String>  | Mandatory          |
+| onCompletion |  Returns the card token to the app once the user is finished with inputing info into the sheet |   | Mandatory          |
+| onFailure    |  Returns the error message to the app in case the tokenisation process fails                   |   | Mandatory          |
 
 ## Android
 
@@ -81,7 +86,7 @@ fun CardDetailsWidget(
 ) {...}
 ```
 
-The following sample code example demonstrates the usage within your application:
+The following sample code example demonstrates how to use the widget in your application:
 
 ```Kotlin
 // Initialize the CardDetailsWidget
@@ -118,3 +123,4 @@ This subsection describes the various parameters required by the `CardDetailsWid
 #### Completion Callback
 
 The `completion` callback is invoked after the card tokenisation operation is completed. It receives a `Result<String>` if the card details was tokenised successfully.
+
