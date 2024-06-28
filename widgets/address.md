@@ -1,13 +1,16 @@
 # Standalone Address Widget
 
-The Address capture Widget uses a prebuilt form to capture an address. Your customer can prefill the form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
+> 
+>
+> Use a prebuilt form to capture an address. 
 
 ## Overview
 
-![Address-search](/img/Address_search.png)
+Paydock's Address Widget enables your customer to prefill a form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
 
-![Address-manual](/img/Address_manual.png)
+![Address-search](@site/docs/sdk/mobile-sdk/img/Address_search.png) 
 
+![Address-manual](@site/docs/sdk/mobile-sdk/img/Address_manual.png) 
 
 The Address capture Widget captures the following fields. These fields are mandatory for your customer to add, and optional for the merchant to provide.   
 
@@ -65,7 +68,6 @@ The following definitions provide a more detailed overview of the parameters inc
 | Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
 | :------------ | :---------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------  |
 | address       |  Used for passing in the information to the address sheet to pre-populate the address fields          | MobileSDK.Address                | Optional           |
-| completion    |  Completion block that returns result. Either Address in case of success, or Error in case of failure | Result<Address, Error>) -> Void  | Mandatory          |
 
 #### MobileSDK.Address
 | Name          | Definition                         | Type          | Mandatory/Optional                           |
@@ -127,18 +129,49 @@ This subsection describes the various parameters required by the `AddressDetails
 | address          |  The preset address to pre-fill the input fields.        | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
 | completion       |  Callback function to execute when the address is saved. | `(BillingAddress) -> Unit`                                | Mandatory          |
 
+The following sample code example demonstrates how to use the widget in your application:
+
+```Kotlin
+// Initialize the AddressDetailsWidget
+AddressDetailsWidget(
+   modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp), // optional
+    address = null, // optional (pre-populate fields)
+    completion = { billingAddress ->
+        // Handle captured address - Update UI or perform actions
+       Log.d("CardDetailsWidget", "Billing address returned. $billingAddress")
+    }
+)
+```
+
+### 2. Parameter definitions
+
+This subsection describes the various parameters required by the `AddressDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AddressDetailsWidget`.
+
+#### AddressDetailsWidget
+
+| Name             | Definition                                               | Type                                                      | Mandatory/Optional |
+| :--------------- | :------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
+| modifier         |  Compose modifier for container modifications            | `Modifier`                                                | Optional           |
+| address          |  The preset address to pre-fill the input fields.        | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
+| completion       |  Callback function to execute when the address is saved. | `(BillingAddress) -> Unit`                                | Mandatory          |
+
 #### BillingAddress
 | Name          | Definition                                                                           | Type       | Mandatory/Optional                           |
 | :------------ | :----------------------------------------------------------------------------------- | :--------- | :------------------------------------------  |
+| name          |  The name associated with the billing address                                        | String     | Optional to provide and for the user         |
 | addressLine1  |  The first line of the billing address, typically containing street information      | String     | Optional to provide / Mandatory for the user |
 | addressLine2  |  The optional second line of the billing address, often used for additional details  | String     | Optional to provide and for the user         |
 | city          |  The city or locality of the billing address                                         | String     | Optional to provide / Mandatory for the user |
 | state         |  The state or region of the billing address                                          | String     | Optional to provide / Mandatory for the user |
 | postalCode    |  The Postal or ZIP code of the billing address                                       | String     | Optional to provide / Mandatory for the user |
-| country       |  Country of residence of the user                                                    | String     | Optional to provide / Mandatory for the user |
+| country       |  The country of the billing address                                                  | String     | Optional to provide / Mandatory for the user |
+| phoneNumber   |  The phone number associated with the billing address                                | String     | Optional to provide and for the user         |
 
 ### 3. Callback Explanation
 
 #### Completion Callback
 
 The `completion` callback is invoked after the address details is captured. It receives a `BillingAddress` once the address details have been saved.
+
