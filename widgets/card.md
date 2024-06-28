@@ -12,8 +12,6 @@
 
 ### 1. Overview
 
-Overview
-
 The Card Tokenisation Widget collects your customer's payment information. This is a standalone widget that manages required inputs and validations. 
 
 When the card information is input, the widget tokenises the card data, returning the One Time Token to the merchant.
