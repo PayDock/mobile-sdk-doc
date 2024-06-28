@@ -1,7 +1,3 @@
----
-title: Mastercard SRC
----
-
 # Mastercard SRC (Secure Remote Commerce)
 
 > 
@@ -65,7 +61,7 @@ The following table describes the parameters for the `MastercardSRCClickToPayWid
 | meta                |  Object that contains additional data used for the SRC Checkout.                                          | `MastercardSRCMeta`         | Optional           |
 | completion          |  Result callback with the SRC OTT if successful, or error if not.                                         | `(Result<String>) -> Unit`  | Mandatory          |
 
-This following tables describe the properties of the `MastercardSRCMeta` object that are used by the `client-sdk`. The tables describe the data related to Mastercard's Digital Payment Application (DPA).
+The following tables describe the properties of the `MastercardSRCMeta` object that are used by the `client-sdk`. The tables describe the data related to Mastercard's Digital Payment Application (DPA).
 
 #### MastercardSRCMeta
 | Name          | Definition                                                                                            | Type                    | Mandatory/Optional   |
@@ -196,3 +192,19 @@ The following tables describe the properties of the `MastercardSRCMeta` object u
 ### Callback Explanation
 
 The `completion` callback is invoked after the SRC tokenisation flow is completed. The SRC flow receives a `MastercardResult` and, after the successful tokenisation of the SRC details, generates an OTT.
+
+### 4. Error/Exceptions Mapping
+
+The following describes Mastercard SRC exceptions that can be thrown. 
+
+```Kotlin
+CheckoutErrorException(displayableMessage: String) : MastercardSRCException(error.displayableMessage)
+WebViewException(code: Int?, displayableMessage: String) : MastercardSRCException(displayableMessage)
+CancellationException(displayableMessage: String) : MastercardSRCException(displayableMessage)
+```
+
+| Exception                 | Description                                                                                   | Error Model           |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :-------------------- |
+| CheckoutErrorException    |  Exception thrown when there is an error during the checkout process for Mastercard SRC.      |  MastercardSRCError   |
+| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  MastercardSRCError   |
+| CancellationException     |  Exception thrown when there is a cancellation error related to Mastercard SRC.               |  MastercardSRCError   |
