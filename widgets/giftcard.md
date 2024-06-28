@@ -1,9 +1,10 @@
-# Gift Card Tokenisation Widget
+# Gift Card
 
- The Gift Card Tokenisation Widget securely collects gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
+> 
+>
+> Securely collect gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
 
-
-![Giftcard View](/img/Gift_Card.png)
+![Giftcard View](@site/docs/sdk/mobile-sdk/img/Gift_Card.png) 
 
 ## iOS
 
@@ -44,15 +45,14 @@ struct GiftCardExampleView: View {
 ### 2. Parameter Definitions
 
 #### MobileSDK.GiftCardView
-| Name         | Definition                                                         | Type                            | Mandatory/Optional |
-| :----------- | :----------------------------------------------------------------- | :------------------------------ | :----------------  |
-| storePin     |  A flag to be able to use a PIN value for the initial transaction. | String (default = true)         | Optional           |
-| completion   |  A completion block that returns result with token or error.       | (Result<String, Error>) -> Void | Mandatory          |
-
+| Name         | Definition                                                         | Type                              | Mandatory/Optional |
+| :----------- | :----------------------------------------------------------------- | :-------------------------------- | :----------------  |
+| storePin     |  A flag to be able to use a PIN value for the initial transaction. | String (default = true)           | Optional           |
+| completion   |  A completion block that returns result with token or error.       | `(Result<String, Error>) -> Void` | Mandatory          |
 
 ## Android
 
-## How to use the GiftCardWidget
+## How to use the GiftCardWidget in Android
 
 ### 1. Overview
 
@@ -107,3 +107,17 @@ This subsection describes the various parameters required by the `GiftCardWidget
 #### Completion Callback
 
 The `completion` callback is invoked after the gift card tokenisation operation is completed. It receives a `Result<String>` if the gift card details was tokenised successfully.
+
+### 4. Error/Exceptions Mapping
+
+The following describes Gift Card Detail exceptions that can be thrown. 
+
+```Kotlin
+TokenisingCardException(error: ApiErrorResponse) : GiftCardException(error.displayableMessage)
+UnknownException(displayableMessage: String) : GiftCardException(displayableMessage)
+```
+
+| Exception                 | Description                                                                            | Error Model      |
+| :------------------------ | :------------------------------------------------------------------------------------- | :--------------- |
+| TokenisingCardException   |  Exception thrown when there is an error tokenising a gift card.                       |  GiftCardError   |
+| UnknownException          |  Exception thrown when there is an unknown error related to Gift Card Details.         |  GiftCardError   |
