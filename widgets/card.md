@@ -71,7 +71,7 @@ struct CardDetailsWidgetView: View {
 
 ### 1. Overview
 
-This section provides a step-by-step guide on how to initialize and use the `CardDetailsWidget` composable in your application. The widget performs tokenisation of card details.
+This section provides a step-by-step guide on how to initialize and use the `CardDetailsWidget` composable in your application. The widget tokenises card details.
 
 The following sample code demonstrates the definition of the `CardDetailsWidget`:
 
@@ -80,7 +80,10 @@ The following sample code demonstrates the definition of the `CardDetailsWidget`
 fun CardDetailsWidget(
     modifier: Modifier,
     gatewayId: String?,
-    completion: (Result<String>) -> Unit
+    actionText: String,
+    showCardTitle: Boolean,
+    allowSaveCard: SaveCardConfig?,
+    completion: (Result<CardResult>) -> Unit
 ) {...}
 ```
 
@@ -93,10 +96,15 @@ CardDetailsWidget(
         .fillMaxWidth()
         .padding(16.dp), // optional
     gatewayId = GATEWAY_ID, // optional
+    allowSaveCard = SaveCardConfig(
+        privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
+            privacyPolicyURL = "https://www.privacypolicy.com"
+        )
+    ),
     completion = { result ->
-        result.onSuccess { token ->
+        result.onSuccess { cardResult ->
             // Handle success - Update UI or perform actions
-            Log.d("CardDetailsWidget", "Tokenisation successful. Card token: $token")
+            Log.d("CardDetailsWidget", "Tokenisation successful. Card token: ${cardResult.token}")
         }.onFailure { throwable ->
             // Handle failure - Show error message or take appropriate action
             Log.e("CardDetailsWidget", "Tokenisation failed. Error: ${exception.message}")
@@ -107,18 +115,52 @@ CardDetailsWidget(
 
 ### 2. Parameter definitions
 
-This subsection describes the various parameters required by the `CardDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `CardDetailsWidget`.
+This subsection describes the parameters required by the `CardDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `CardDetailsWidget`.
 
 #### CardDetailsWidget
-| Name                | Definition                                                                                                | Type                        | Mandatory/Optional |
-| :------------------ | :-------------------------------------------------------------------------------------------------------- | :-------------------------- | :----------------  |
-| modifier            |  Compose modifier for container modifications                                                             | `Modifier`                  | Optional           |
-| gatewayId           |  Gateway ID used for the card tokenisation                                                                | String                      | Optional           |
-| completion          |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<String>) -> Unit`  | Mandatory          |
+| Name                | Definition                                                                                                | Type                           | Mandatory/Optional |
+| :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
+| modifier            |  Compose modifier for container modifications.                                                            | `Modifier`                     | Optional           |
+| gatewayId           |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
+| actionText          |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
+| showCardTitle       |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
+| allowSaveCard       |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |
+| completion          |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
+
+#### SaveCardConfig
+| Name                | Definition                                                                                                   | Type                     | Mandatory/Optional |
+| :------------------ | :----------------------------------------------------------------------------------------------------------- | :----------------------- | :----------------  |
+| consentText         |  The text displayed to the user for card saving consent. (default is "Remember this card for next time.")    | `Modifier`               | Optional           |
+| privacyPolicyConfig |  The configuration for the privacy policy, if applicable.                                                    | `PrivacyPolicyConfig`    | Optional           |
+
+#### PrivacyPolicyConfig
+| Name                | Definition                                                                                            | Type             | Mandatory/Optional |
+| :------------------ | :---------------------------------------------------------------------------------------------------- | :--------------- | :----------------  |
+| privacyPolicyText   |  The text displayed to the user for the privacy policy link. (default is "Read our privacy policy")   | String           | Optional           |
+| privacyPolicyURL    |  The URL of the privacy policy document.                                                              | String           | Mandatory          |
+
+#### CardResult
+| Name                | Definition                                                                                           | Type             | Mandatory/Optional |
+| :------------------ | :--------------------------------------------------------------------------------------------------- | :--------------- | :----------------  |
+| token               |  The token associated with the card.                                                                 | String           | Mandatory          |
+| saveCard            |  A boolean flag indicating whether the card should be saved for future use. (default is false).      | String           | Optional           |
 
 ### 3. Callback Explanation
 
 #### Completion Callback
 
-The `completion` callback is invoked after the card tokenisation operation is completed. It receives a `Result<String>` if the card details was tokenised successfully.
+The `completion` callback is invoked after the card tokenisation operation is completed. It receives a `Result<CardResult>`. The `Result<CardResult>` contains the token and the toggled state flag of the user selection to save the card details.
 
+### 4. Error/Exceptions Mapping
+
+The following describes Card Details exceptions that can be thrown. 
+
+```Kotlin
+TokenisingCardException(error: ApiErrorResponse) : CardDetailsException(error.displayableMessage)
+UnknownException(displayableMessage: String) : CardDetailsException(displayableMessage)
+```
+
+| Exception                 | Description                                                                       | Error Model         |
+| :------------------------ | :-------------------------------------------------------------------------------- | :------------------ |
+| TokenisingCardException   |  Exception thrown when there is an error tokenising a card.                       |  CardDetailsError   |
+| UnknownException          |  Exception thrown when there is an unknown error related to Card Details.         |  CardDetailsError   |
