@@ -128,3 +128,23 @@ The `token` callback obtains the wallet token asynchronously. It receives a call
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String>` where String represents the *FlyPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
 
+### 4. Error/Exceptions Mapping
+
+The following describes FlyPay exceptions that can be thrown. 
+
+```Kotlin
+FetchingUrlException(error: ApiErrorResponse) : FlyPayException(error.displayableMessage)
+WebViewException(code: Int?, displayableMessage: String) : FlyPayException(displayableMessage)
+CancellationException(displayableMessage: String) : FlyPayException(displayableMessage)
+UnknownException(displayableMessage: String) : FlyPayException(displayableMessage)
+```
+
+| Exception                 | Description                                                                                   | Error Model       |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- |
+| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for FlyPay.                         |  FlyPayError      |
+| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  FlyPayError      |
+| CancellationException     |  Exception thrown when there is a cancellation error related to FlyPay.                       |  FlyPayError      |
+| UnknownException          |  Exception thrown when there is an unknown error related to FlyPay.                           |  FlyPayError      |
+
+
+
