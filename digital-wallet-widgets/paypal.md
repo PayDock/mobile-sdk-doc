@@ -179,3 +179,24 @@ The `token` callback is used to obtain the wallet token asynchronously. It recei
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.
+
+#### 4. Error/Exceptions Mapping
+
+The following describes PayPal exceptions that can be thrown. 
+
+```Kotlin
+FetchingUrlException(error: ApiErrorResponse) : PayPalException(error.displayableMessage)
+CapturingChargeException(error: ApiErrorResponse) : PayPalException(error.displayableMessage)
+WebViewException(code: Int?, displayableMessage: String) : PayPalException(displayableMessage)
+CancellationException(displayableMessage: String) : PayPalException(displayableMessage)
+UnknownException(displayableMessage: String) : PayPalException(displayableMessage)
+```
+
+| Exception                 | Description                                                                                   | Error Model       |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- |
+| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for PayPal.                         |  PayPalError      |
+| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for PayPal.                     |  PayPalError      |
+| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  PayPalError      |
+| CancellationException     |  Exception thrown when there is a cancellation error related to PayPal.                       |  PayPalError      |
+| UnknownException          |  Exception thrown when there is an unknown error related to PayPal.                           |  PayPalError      |
+
