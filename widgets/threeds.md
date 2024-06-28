@@ -1,6 +1,10 @@
-# 3DS Widget
+# 3D Secure
 
-Use Paydock's 3DS Widget to complete 3DS challenges. The 3DS Widget integrates with the Paydock JS client-sdk within a WebView component. Through this integration, your customer can authenticate the charge using the 3DS widget, which then communicates with the client-sdk, completes authentication and returns the charge event result. This also caters for both the Integrated 3DS and the Standalone 3DS flow.
+> 
+>
+> Complete 3D Secure (3DS) challenges with the Paydock 3DS Widget. 
+
+The 3DS Widget integrates with the Paydock JS client-sdk within a WebView component. Through this integration, your customer can authenticate the charge using the 3DS widget, which then communicates with the client-sdk, completes authentication and returns the charge event result. This also caters for both the Integrated 3DS and the Standalone 3DS flow.
 
 ## iOS
 
@@ -122,4 +126,21 @@ data class ThreeDSResult(
 
 #### Completion Callback
 
-The `completion` callback is invoked after the 3DS is completed. It receives a `Result<ThreeDSResult>` if the payment is authenticated. The callback is used to handle the outcome of the payment operation.
+The `completion` callback is invoked after the 3DS is completed. It receives a `Result<ThreeDSResult>` if the payment is authenticated. The callback handles the outcome of the payment operation.
+
+### 4. Error/Exceptions Mapping
+
+The following describes 3DS exceptions that can be thrown. 
+
+```Kotlin
+ChargeErrorException(displayableMessage: String) : ThreeDSException(displayableMessage)
+WebViewException(code: Int?, displayableMessage: String) : ThreeDSException(displayableMessage)
+CancellationException(displayableMessage: String) : ThreeDSException(displayableMessage)
+```
+
+| Exception               | Description                                                                              | Error Model          |
+| :---------------------- | :--------------------------------------------------------------------------------------- | :------------------- |
+| ChargeErrorException    |  Exception thrown when there is an error during the charge process for 3D Secure.        |  ThreeDSError        |
+| WebViewException        |  Exception thrown when there is an error while communicating with a WebView.             |  ThreeDSError        |
+| CancellationException   |  Exception thrown when there is a cancellation error related to 3D Secure.               |  ThreeDSError        |
+
