@@ -239,6 +239,30 @@ data class ChargeResponse(
 
 The `token` callback is used to obtain the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which should be invoked with the wallet token once it's obtained.
 
+### 8. Error/Exceptions Mapping
+
+The following describes the Google Pay exceptions that can be thrown. 
+
+```Kotlin
+CapturingChargeException(error: ApiErrorResponse) : GooglePayException(error.displayableMessage)
+PaymentRequestException(exception: Exception?) : GooglePayException(exception?.message ?: defaultMessage)
+InitialisationException(displayableMessage: String) : GooglePayException(displayableMessage)
+ResultException(displayableMessage: String) : GooglePayException(displayableMessage)
+CancellationException(displayableMessage: String) : GooglePayException(displayableMessage)
+UnknownException(displayableMessage: String) : GooglePayException(displayableMessage)
+```
+
+| Exception                 | Description                                                                                   | Error Model          |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :------------------- |
+| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for Google Pay.                 |  GooglePayError      |
+| PaymentRequestException   |  Exception thrown when there is an error during the payment request process for Google Pay.   |  GooglePayError      |
+| InitialisationException   |  Exception thrown when there is an initialization error related to Google Pay.                |  GooglePayError      |
+| ResultException           |  Exception thrown when there is a result error related to Google Pay.                         |  GooglePayError      |
+| CancellationException     |  Exception thrown when there is a cancellation error related to Google Pay.                   |  GooglePayError      |
+| UnknownException          |  Exception thrown when there is an unknown error related to Google Pay.                       |  GooglePayError      |
+
+
+
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.
