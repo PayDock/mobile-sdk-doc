@@ -8,9 +8,9 @@
 
 Paydock's Address Widget enables your customer to prefill a form with either an address or a partial address if available. They can then use the autocomplete field to look up their address by searching for key parts such as their postcode, zip code and so on.
 
-![Address-search](@site/docs/sdk/mobile-sdk/img/Address_search.png) 
+[Address-search](img/Address_search.png) 
 
-![Address-manual](@site/docs/sdk/mobile-sdk/img/Address_manual.png) 
+[Address-manual](img/Address_manual.png) 
 
 The Address capture Widget captures the following fields. These fields are mandatory for your customer to add, and optional for the merchant to provide.   
 
