@@ -4,7 +4,7 @@
 >
 > Securely collect gift card details using a prebuilt form, before transforming them into a One Time Token. You can use this Token with other Paydock API calls, such as Capture Payment.
 
-![Giftcard View](@site/docs/sdk/mobile-sdk/img/Gift_Card.png) 
+![Giftcard View](/img/Gift_Card.png) 
 
 ## iOS
 
