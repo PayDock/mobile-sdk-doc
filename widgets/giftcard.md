@@ -64,6 +64,7 @@ The following sample code demonstrates the definition of the `GiftCardWidget`:
 @Composable
 fun GiftCardWidget(
     modifier: Modifier,
+    accessToken: String,
     storePin: Boolean,
     completion: (Result<String>) -> Unit
 ) {...}
@@ -77,6 +78,7 @@ GiftCardWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
+    accessToken = ACCESS_TOKEN, // required
     storePin: false, // optional (default: true)
     completion = { result ->
         result.onSuccess { token ->
@@ -99,6 +101,7 @@ This subsection describes the various parameters required by the `GiftCardWidget
 | Name                | Definition                                                                                                | Type                        | Mandatory/Optional |
 | :------------------ | :-------------------------------------------------------------------------------------------------------- | :-------------------------- | :----------------  |
 | modifier            |  Compose modifier for container modifications                                                             | `Modifier`                  | Optional           |
+| accessToken         |  The access token used for authentication with the backend service.                                       | String                      | Mandatory          |
 | storePin            |  A flag to be able to use a PIN value for the initial transaction.                                        | String (default = true)     | Optional           |
 | completion          |  Result callback with the gift card details tokenisation API response if successful, or error if not.     | `(Result<String>) -> Unit`  | Mandatory          |
 

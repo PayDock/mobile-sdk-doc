@@ -79,6 +79,7 @@ The following sample code demonstrates the definition of the `CardDetailsWidget`
 @Composable
 fun CardDetailsWidget(
     modifier: Modifier,
+    accessToken: String,
     gatewayId: String?,
     actionText: String,
     showCardTitle: Boolean,
@@ -95,6 +96,7 @@ CardDetailsWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
+    accessToken = ACCESS_TOKEN, // required
     gatewayId = GATEWAY_ID, // optional
     allowSaveCard = SaveCardConfig(
         privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
@@ -121,6 +123,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | Name                | Definition                                                                                                | Type                           | Mandatory/Optional |
 | :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
 | modifier            |  Compose modifier for container modifications.                                                            | `Modifier`                     | Optional           |
+| accessToken         |  The access token used for authentication with the backend service.                                       | String                         | Mandatory          |
 | gatewayId           |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
 | actionText          |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
 | showCardTitle       |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |

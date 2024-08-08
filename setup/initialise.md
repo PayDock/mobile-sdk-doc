@@ -45,8 +45,7 @@ MobileSDK.shared.configureMobileSDK(config: config)
 You must use a builder pattern in the Android Application class to manage and setup the MobileSDK. 
 
 ```Kotlin
-MobileSDK
-  .Builder(<public_key>) // required
+MobileSDK.Builder()
   .environment(Environment.<environment>) // optional -> default to Production
   .applyTheme(<MobileSDkTheme>) // optional
   .build(Application@this) // required (context)
@@ -54,20 +53,17 @@ MobileSDK
 
 1. Initialize the SDK from the Android Application class. The SDK can only be initialized once per app launch.
 
-2. Add your Paydock account `public key` to `.Builder(<public_key>)`. This value is required and your MobileSDK will not work internally without it. If you do not have a public_key, you can generate it in the [Authentication instructions](https://docs.paydock.com/#authentication).
+2. Set the SDK `environment`. This step is optional. (defaults to `production`)
 
-3. Set the SDK `environment`. This step is optional.
+3. Apply a custom theme to the SDK. This step is also optional.
 
-4. Apply a custom theme to the SDK. This step is also optional.
-
-5. Add the context `.build(Application@this)`. This is mandatory. 
+4. Add the context `.build(Application@this)`. This is mandatory. 
 
 ### Definitions
 #### MobileSDKConfig
 | Name        | Definition                                                                                | Type                                              | Mandatory/Optional |
 | :---------- | :---------------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------  |
 | context     |  The Android context used for initializing the Mobile SDK and its dependencies.           | `android.content.Context`                         | Mandatory          |
-| publicKey   |  The Paydock public key used for authentication with the backend services within the SDK. | String                                            | Mandatory          |
-| environment |  The target environment that will be used within the SDK                                  | Enum: `com.paydock.core.domain.model.Environment` | Mandatory          |
-| theme       |  The theme to be applied across the Mobile SDK (colors, dimensions and font)             | `com.paydock.MobileSDKTheme`                      | Optional           |****
+| environment |  The target environment that will be used within the SDK                                  | Enum: `com.paydock.core.domain.model.Environment` | Optional           |
+| theme       |  The theme to be applied across the Mobile SDK (colors, dimensions and font)              | `com.paydock.MobileSDKTheme`                      | Optional           |****
 

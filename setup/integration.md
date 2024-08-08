@@ -117,7 +117,7 @@ Content-Type: application/json;charset=utf-8
   "currency": <ISO 4217 Currency (for example USD, AUD)>,
   "amount": <Amount to charge (Decimal)>,
   "meta":{
-     "store_name": <Ypur store name>,
+     "store_name": <Your store name>,
      "merchant_name": <Your merchant name>,
      "store_id": <Your store ID (String)>
   },
@@ -215,7 +215,7 @@ Content-Type: application/json;charset=utf-8
   "currency": <ISO 4217 Currency (for example USD, AUD)>,
   "amount": <Amount to charge (Decimal)>,
   "meta":{
-     "store_name": <Ypur store name>,
+     "store_name": <Your store name>,
      "merchant_name": <Your merchant name>,
      "store_id": <Your store ID (String)>
   },
