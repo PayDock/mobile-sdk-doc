@@ -56,10 +56,12 @@ The following definitions provide a more detailed overview of the parameters use
 | currency |  Currency of the charge.                         | Swift.String  | Mandatory          |
 
 #### MobileSDK.PayPalError
-| Name          | Error message                                    | Type  |
-| :------------ | :----------------------------------------------- | :---- |
-| requestFailed |  Failure of SDK of internal rest API call.       | Error | 
-| webViewFailed |  Internal error of the PayPal WebView widget.    | Error |
+| Exception                 | Description                                                                                   | Error Model       | Assigned Error Response |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- | :---------------------- |
+| errorFetchingPayPalUrl    |  Exception thrown when there is an error fetching the URL for PayPal.                         |  PayPalError      |  ErrorRes               |
+| errorCapturingCharge      |  Exception thrown when there is an error capturing the charge for PayPal.                     |  PayPalError      |  ErrorRes               |
+| webViewFailed             |  Exception thrown when there is an error while communicating with a WebView.                  |  PayPalError      |  nil                    |
+| UnknownException          |  Exception thrown when there is an unknown error related to PayPal.                           |  PayPalError      |  nil                    |
 
 ## Android
 

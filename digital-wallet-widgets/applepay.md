@@ -73,7 +73,7 @@ struct ApplePayExampleView: View {
             onApplePayButtonTap(<Your ApplePayRequest>)
         } completion: { result in 
             switch result {
-                case .success(let chargeResponse): // Handle successfull result
+                case .success(let chargeResponse): // Handle successful result
                 case .failure(let error): // Handle error
             }
         }
@@ -85,19 +85,10 @@ func getApplePayRequest() -> ApplePayRequest {
         amount: 0.01,
         amountLabel: "Amount",
         countryCode: "AU",
-<<<<<<< HEAD:markdoc/pages/digital-wallet-widgets/applepay.mdoc
-        currencyCode: "AUD",
-        merchantIdentifier: <merchant_identifier>)
-
-    let applePayRequest = ApplePayRequest(
-        token: <wallet_token>,
-        merchantIdentifier: <merchant_identifier>),
-=======
         currencyCode: "AUD")
 
     let applePayRequest = ApplePayRequest(
         token: <Merchant wallet token>,
->>>>>>> main:markdoc/pages/widgets/applepay.mdoc
         request: paymentRequest)
 
     return applePayRequest
@@ -123,7 +114,9 @@ More in depth definitions of the parameters, as well as potential errors and res
 
 ### MobileSDK.ApplePayError
 
-| Name          | Error message                                    | Type  |
-| :------------ | :----------------------------------------------- | :---- |
-| initFailed    |  Initialisation of Apple Pay has failed          | Error | 
-| paymentFailed |  Processing the payment has failed.              | Error |
+| Exception                 | Description                                                                | Error Model         | Assigned Error Response |
+| :------------------------ | :------------------------------------------------------------------------- | :------------------ | :---------------------- |
+| invalidApplePayRequest    |  Exception thrown when provided ApplePayRequest object is not valid.       |  ApplePayError      |  nil                    |
+| errorInitializingPayment  |  Exception thrown when there is an error initializing payment request.     |  ApplePayError      |  nil                    |
+| errorCompletingPayment    |  Exception thrown when there is an error while capturing the charge.       |  ApplePayError      |  ErrorRes               |
+| unknownError              |  Exception thrown when there is an unknown error related to ApplePay.      |  ApplePayError      |  nil                    |
