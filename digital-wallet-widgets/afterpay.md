@@ -9,11 +9,11 @@ Use the Afterpay Widget to integrate with the Afterpay SDK. This handles the com
 
 ## iOS
 
-## How to use the AfterPayWidget
+## How to use the AfterpayWidget
 
 ### Overview
 
-Follow this guide to initialize and then use the `AfterPayWidget` widget in your application. This widget enables you to use Afterpay in your Payment flow.
+Follow this guide to initialize and then use the `AfterpayWidget` widget in your application. This widget enables you to use Afterpay in your Payment flow.
 
 For reference: [Afterpay SDK](https://github.com/afterpay/sdk-ios)
 
@@ -21,29 +21,29 @@ For reference: [Afterpay SDK](https://github.com/afterpay/sdk-ios)
 >
 > When the customer taps the Payment button in your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](overview.md) section of this guide.
 
-The code for the `AfterPayWidget` is as follows. None of the values are populated in this example as this is a definition.
+The code for the `AfterpayWidget` is as follows. None of the values are populated in this example as this is a definition.
 
 
 
 ```Swift
-AfterPayWidget(
+AfterpayyWidget(
     configuration: AfterpaySdkConfig,
     afterPayToken: @escaping (_ afterPayToken: @escaping (String) -> Void) -> Void,
     selectAddress: ((_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void)?,
     selectShippingOption: ((_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void)?,
     buttonWidth: CGFloat,
-    completion: @escaping (Result<ChargeResponse, AfterPayError>) -> Void)
+    completion: @escaping (Result<ChargeResponse, AfterpayError>) -> Void)
 ) {...}
 ```
 
-The following is the `AfterPayWidget` code populated with example values. This demonstrates how to use the widget in your application: 
+The following is the `AfterpayWidget` code populated with example values. This demonstrates how to use the widget in your application: 
 
 
 ```Swift
-AfterPayWidget(
+AfterpayWidget(
     configuration: viewModel.getAfterpayConfig(),
-    afterPayToken: { onAfterPayButtonTap in
-        viewModel.initializeWalletCharge(completion: onAfterPayButtonTap)
+    afterPayToken: { onAfterpayButtonTap in
+        viewModel.initializeWalletCharge(completion: onAfterpayButtonTap)
     }, selectAddress: { address, provideShippingOptions in
         // Based on the received `address` provide the available shipping options using `provideShippingOptions` completion block
     }, selectShippingOption: { shippingOption, provideShippingOptionUpdateResult in
@@ -59,27 +59,27 @@ AfterPayWidget(
 
 ### 2. Parameter Definitions
 
-This subsection describes the parameters required by the `AfterPayWidget` view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AfterPayWidget`.
+This subsection describes the parameters required by the `AfterpayWidget` view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AfterpayWidget`.
 
-#### AfterPayWidget
+#### AfterpayWidget
 
-| Name                  | Definition                                                                               | Type                                                                                                                  | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
-| configuration         |  Configuration for the Afterpay SDK.                                                 | `AfterPaySdkConfig`                                                                                                   | Mandatory          |
-| afterPayToken         |  A callback to obtain the wallet token asynchronously.                                   | `(_ afterPayToken: @escaping (String) -> Void) -> Void`                                                               | Mandatory          |
-| selectAddress         |  A callback to handle selection of shipping address.                                     | `(_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void`                          | Optional           |
-| selectShippingOption  |  A callback to handle the selection for the shipping options.                                      | `(_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void`    | Optional           |
-| buttonWidth           |  Sets preferred widget button size based on the provided width.                               | `CGFloat`                                                                                                             | Optional           |
-| completion            |  Result callback with the Charge creation API response if successful, or an error if unsuccessful.   | `(Result<ChargeResponse, AfterPayError>) -> Void)`                                                                    | Mandatory          |
+| Name                  | Definition                                                                                           | Type                                                                                                                  | Mandatory/Optional |
+| :-------------------- | :--------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
+| configuration         |  Configuration for the Afterpay SDK.                                                                 | `AfterpaySdkConfig`                                                                                                   | Mandatory          |
+| afterPayToken         |  A callback to obtain the wallet token asynchronously.                                               | `(_ afterPayToken: @escaping (String) -> Void) -> Void`                                                               | Mandatory          |
+| selectAddress         |  A callback to handle selection of shipping address.                                                 | `(_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void`                          | Optional           |
+| selectShippingOption  |  A callback to handle the selection for the shipping options.                                        | `(_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void`    | Optional           |
+| buttonWidth           |  Sets preferred widget button size based on the provided width.                                      | `CGFloat`                                                                                                             | Optional           |
+| completion            |  Result callback with the Charge creation API response if successful, or an error if unsuccessful.   | `(Result<ChargeResponse, AfterpayError>) -> Void)`                                                                    | Mandatory          |
 
-#### AfterPaySdkConfig
+#### AfterpaySdkConfig
 
 | Name           | Definition                                                   | Type                      | Mandatory/Optional    |
 | :------------- | :----------------------------------------------------------- | :------------------------ | :-------------------- |
-| buttonTheme    |  The theme settings for the AfterPay payment button.             | `ButtonTheme`             | Optional              |
-| config         |  The main configuration settings for AfterPay.               | `AfterPayConfiguration`   | Mandatory             |
+| buttonTheme    |  The theme settings for the Afterpay payment button.         | `ButtonTheme`             | Optional              |
+| config         |  The main configuration settings for Afterpay.               | `AfterpayConfiguration`   | Mandatory             |
 | environment    |  Environment of the afterpay widget.                         | `Environment`             | Mandatory             |
-| options        |  Additional checkout options for AfterPay.                   | `CheckoutOptions`         | Optional              |
+| options        |  Additional checkout options for Afterpay.                   | `CheckoutOptions`         | Optional              |
 
 #### ButtonTheme
 
@@ -115,7 +115,7 @@ This subsection describes the parameters required by the `AfterPayWidget` view. 
 | amount         |  Charge amount that was charged           | Decimal              |
 | currency       |  Charge currency that was used            | String               |
 
-#### AfterpayError
+#### MobileSDK.AfterpayError
 
 | Name                       | Error message                                    | Type  |
 | :------------------------- | :----------------------------------------------- | :---- |
@@ -123,7 +123,7 @@ This subsection describes the parameters required by the `AfterPayWidget` view. 
 | errorCapturingCharge       |  Capturing the charge has failed                 | Error |
 | errorCancelingTransaction  |  Canceling the transaction has failed            | Error |
 | transactionCanceled        |  Transaction was canceled due to failure or user | Error |
-| unknownError               |  Unknown error has occured                       | Error |
+| unknownError               |  Unknown error has occurred                      | Error |
 
 
 ### 3. Callback Explanation
@@ -135,65 +135,65 @@ The `token` callback obtains the wallet token asynchronously. It receives a call
 #### Select Address Callback
 
 The `selectAddress` callback handles the selection of shipping address changes and selections. It receives a callback function `((_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void)?` as a parameter.
-This is used in conjunction with the AfterPay SDK `CheckoutV2Handler.onShippingAddressDidChange` which is invoked when the `ShippingAddress` changes and the selected address can be updated.
+This is used in conjunction with the Afterpay SDK `CheckoutV2Handler.onShippingAddressDidChange` which is invoked when the `ShippingAddress` changes and the selected address can be updated.
 
 #### Select Shipping Options Callback
 
 The `selectShippingOption` callback is used to handle the selection of shipping options. It receives a callback function `((_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void)?` as a parameter.
-This is used in conjunction with the AfterPay SDK `CheckoutV2Handler.onShippingOptionDidChange` which is invoked when `ShippingOption` changes and the selected option can be updated.
+This is used in conjunction with the Afterpay SDK `CheckoutV2Handler.onShippingOptionDidChange` which is invoked when `ShippingOption` changes and the selected option can be updated.
 
 #### Completion Callback
 
-The `completion` callback is invoked after the payment operation is completed. It receives a `(Result<ChargeResponse, AfterPayError>) -> Void` if the payment is successful. The callback handles the outcome of the payment operation.
+The `completion` callback is invoked after the payment operation is completed. It receives a `(Result<ChargeResponse, AfterpayError>) -> Void` if the payment is successful. The callback handles the outcome of the payment operation.
 
 ## Android 
 
-## How to use the AfterPayWidget
+## How to use the AfterpayWidget
 
-### Overview
+### 1. Overview
 
-Follow this guide to initialize and then use the `AfterPayWidget` widget in your application. This widget enables you to use Afterpay in your Payment flow.
+Follow this guide to initialize and then use the `AfterpayWidget` widget in your application. This widget enables you to use Afterpay in your Payment flow.
 
-For reference: [AfterPay SDK](https://github.com/afterpay/sdk-android)
+For reference: [Afterpay SDK](https://github.com/afterpay/sdk-android)
 
 > **Note**:
 >
 > When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](overview.mdx) section of this guide.  
 
-The code for the `AfterPayWidget` is as follows. None of the values are populated in this example as this is a definition.
+The code for the `AfterpayWidget` is as follows. None of the values are populated in this example as this is a definition.
 
 ```Kotlin
-fun AfterPayWidget(
+fun AfterpayWidget(
     modifier: Modifier,
-    config: AfterPaySDKConfig,
+    config: AfterpaySDKConfig,
     token: (onTokenReceived: (String) -> Unit) -> Unit,
-    selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterPayShippingOption>) -> Unit) -> Unit,
+    selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit,
     selectShippingOption: (
-        shippingOption: AfterPayShippingOption,
-        provideShippingOptionUpdateResult: (AfterPayShippingOptionUpdate?) -> Unit
+        shippingOption: AfterpayShippingOption,
+        provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit
     ) -> Unit,
     completion: (Result<ChargeResponse>) -> Unit
 ) {...}
 ```
 
-The following is the `AfterPayWidget` code populated with example values. This demonstrates how to use the widget in your application: 
+The following is the `AfterpayWidget` code populated with example values. This demonstrates how to use the widget in your application: 
 
 ```Kotlin
-// Initialize the AfterPaySDKConfig
-val configuration = AfterPaySDKConfig(
-    config = AfterPaySDKConfig.AfterPayConfiguration(
+// Initialize the AfterpaySDKConfig
+val configuration = AfterpaySDKConfig(
+    config = AfterpaySDKConfig.AfterpayConfiguration(
         maximumAmount = "100",
         currency = AU_CURRENCY_CODE,
         language = "en",
         country = AU_COUNTRY_CODE
     ),
-    options = AfterPaySDKConfig.CheckoutOptions(
+    options = AfterpaySDKConfig.CheckoutOptions(
         shippingOptionRequired = true,
         enableSingleShippingOptionUpdate = true
     )
 )
-// Initialize the AfterPayWidget
-AfterPayWidget(
+// Initialize the AfterpayWidget
+AfterpayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
@@ -202,7 +202,7 @@ AfterPayWidget(
     selectAddress = { _, provideShippingOptions ->
         val currency = Currency.getInstance(configuration.config.currency)
         val shippingOptions = listOf(
-            AfterPayShippingOption(
+            AfterpayShippingOption(
                 "standard",
                 "Standard",
                 "",
@@ -211,7 +211,7 @@ AfterPayWidget(
                 "50.00".toBigDecimal(),
                 "0.00".toBigDecimal(),
             ),
-            AfterPayShippingOption(
+            AfterpayShippingOption(
                 "priority",
                 "Priority",
                 "Next business day",
@@ -227,9 +227,9 @@ AfterPayWidget(
         val currency = Currency.getInstance(configuration.config.currency)
         // if standard shipping was selected, update the amounts
         // otherwise leave as is by passing null
-        val result: AfterPayShippingOptionUpdate? =
+        val result: AfterpayShippingOptionUpdate? =
             if (shippingOption.id == "standard") {
-                AfterPayShippingOptionUpdate(
+                AfterpayShippingOptionUpdate(
                     "standard",
                     currency,
                     "0.00".toBigDecimal(),
@@ -243,35 +243,35 @@ AfterPayWidget(
     }
 ) { result ->
     result.onSuccess {
-        Log.d("[AfterPayWidget]", "Success: $it")
+        Log.d("[AfterpayWidget]", "Success: $it")
     }.onFailure {
         val error = it.toError()
-        Log.d("[AfterPayWidget]", "Failure: ${error.displayableMessage}")
+        Log.d("[AfterpayWidget]", "Failure: ${error.displayableMessage}")
     }
 }
 ```
 
-### Parameter Definitions
+### 2. Parameter Definitions
 
-This subsection describes the parameters required by the `AfterPayWidget` composable. It provides information on the purpose of each parameter and the parameters' significance in configuring the behavior of the `AfterPayWidget`.
+This subsection describes the parameters required by the `AfterpayWidget` composable. It provides information on the purpose of each parameter and the parameters' significance in configuring the behavior of the `AfterpayWidget`.
 
-#### AfterPayWidget
+#### AfterpayWidget
 
 | Name                  | Definition                                                                               | Type                                                                                                                                         | Mandatory/Optional |
 | :-------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications.                                           | `androidx.compose.ui.Modifier`                                                                                                               | Optional           |
-| config                |  The configuration for the Afterpay SDK.                                                 | `AfterPaySDKConfig`                                                                                                                          | Mandatory          |
+| config                |  The configuration for the Afterpay SDK.                                                 | `AfterpaySDKConfig`                                                                                                                          | Mandatory          |
 | token                 |  A callback to obtain the wallet token asynchronously.                                   | `(onTokenReceived: (String) -> Unit) -> Unit`                                                                                                | Mandatory          |
-| selectAddress         |  A callback to handle selection of shipping address.                                     | `(address: BillingAddress, provideShippingOptions: (List<AfterPayShippingOption>) -> Unit) -> Unit`                                          | Optional           |
-| selectShippingOption  |  A callback to handle selection of shipping option.                                      | `selectShippingOption: (shippingOption: AfterPayShippingOption, provideShippingOptionUpdateResult: (AfterPayShippingOptionUpdate?) -> Unit)` | Optional           |
+| selectAddress         |  A callback to handle selection of shipping address.                                     | `(address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit`                                          | Optional           |
+| selectShippingOption  |  A callback to handle selection of shipping option.                                      | `selectShippingOption: (shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit)` | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                                                                                           | Mandatory          |
 
-#### AfterPaySDKConfig
+#### AfterpaySDKConfig
 
 | Name           | Definition                                                   | Type                      | Mandatory/Optional    |
 | :------------- | :----------------------------------------------------------- | :------------------------ | :-------------------- |
 | buttonTheme    |  The theme settings for Afterpay payment button.             | `ButtonTheme`             | Optional              |
-| config         |  The main configuration settings for Afterpay.               | `AfterPayConfiguration`   | Mandatory             |
+| config         |  The main configuration settings for Afterpay.               | `AfterpayConfiguration`   | Mandatory             |
 | options        |  Additional checkout options for Afterpay.                   | `CheckoutOptions`         | Optional              |
 
 #### ButtonTheme
@@ -281,7 +281,7 @@ This subsection describes the parameters required by the `AfterPayWidget` compos
 | buttonText     |  The text displayed on the payment button.                   | Enum: `AfterpayPaymentButton.ButtonText`    | Optional              |
 | colorScheme    |  The color scheme of the payment button.                     | Enum: `AfterpayColorScheme`                 | Optional              |
 
-#### AfterPayConfiguration
+#### AfterpayConfiguration
 
 | Name           | Definition                                                       | Type       | Mandatory/Optional    |
 | :------------- | :--------------------------------------------------------------- | :--------- | :-------------------- |
@@ -313,9 +313,9 @@ This subsection describes the parameters required by the `AfterPayWidget` compos
 | country       |  The country of the billing address                                                  | String     | Optional to provide / Mandatory for the user |
 | phoneNumber   |  The phone number associated with the billing address                                | String     | Optional to provide and for the user         |
 
-#### AfterPayShippingOption
+#### AfterpayShippingOption
 
-Represents a shipping option available for AfterPay transactions.
+Represents a shipping option available for Afterpay transactions.
 
 | Name           | Definition                                                   | Type          | Mandatory/Optional    |
 | :------------- | :----------------------------------------------------------- | :------------ | :-------------------- |
@@ -327,9 +327,9 @@ Represents a shipping option available for AfterPay transactions.
 | orderAmount    |  The order amount associated with the shipping option.       | `BigDecimal`  | Mandatory             |
 | taxAmount      |  The tax amount associated with the shipping option.         | `BigDecimal`  | Optional              |
 
-#### AfterPayShippingOptionUpdate
+#### AfterpayShippingOptionUpdate
 
-Represents an update to a shipping option for AfterPay transactions.
+Represents an update to a shipping option for Afterpay transactions.
 
 | Name           | Definition                                                           | Type          | Mandatory/Optional    |
 | :------------- | :------------------------------------------------------------------- | :------------ | :-------------------- |
@@ -342,7 +342,7 @@ Represents an update to a shipping option for AfterPay transactions.
 
 #### ChargeResponse
 
-This subsection outlines the structure of the result or response object returned by the `AfterPayWidget` composable. It details the format and components of the object, enabling you to handle the response effectively within your application.
+This subsection outlines the structure of the result or response object returned by the `AfterpayWidget` composable. It details the format and components of the object, enabling you to handle the response effectively within your application.
 
 The following sample code demonstrates the response structure:
 
@@ -386,7 +386,7 @@ data class ChargeResponse(
 | amount         |  Charge amount that was charged           | `BigDecimal`         |
 | currency       |  Charge currency that was used            | String               |
 
-### Callback Explanation
+### 3. Callback Explanation
 
 #### Token Callback
 
@@ -394,39 +394,39 @@ The `token` callback obtains the wallet token asynchronously. It receives a call
 
 #### Select Address Callback
 
-The `selectAddress` callback handles the selection of shipping address changes and selections. It receives a callback function `(address: BillingAddress, provideShippingOptions: (List<AfterPayShippingOption>) -> Unit) -> Unit` as a parameter.
-This is used in conjunction with the AfterPay SDK `AfterpayCheckoutV2Handler.onShippingAddressDidChange` which is invoked when `ShippingAddress` changes and the selected address can be updated.
+The `selectAddress` callback handles the selection of shipping address changes and selections. It receives a callback function `(address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit` as a parameter.
+This is used in conjunction with the Afterpay SDK `AfterpayCheckoutV2Handler.onShippingAddressDidChange` which is invoked when `ShippingAddress` changes and the selected address can be updated.
 
 #### Select Shipping Options Callback
 
-The `selectShippingOption` callback handles the selection of shipping options. It receives a callback function `(shippingOption: AfterPayShippingOption, provideShippingOptionUpdateResult: (AfterPayShippingOptionUpdate?) -> Unit) -> Unit` as a parameter.
-This is used in conjunction with the AfterPay SDK `AfterpayCheckoutV2Handler.onShippingOptionDidChange` which is invoked when `ShippingOption` changes and the selected option can be updated.
+The `selectShippingOption` callback handles the selection of shipping options. It receives a callback function `(shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit) -> Unit` as a parameter.
+This is used in conjunction with the Afterpay SDK `AfterpayCheckoutV2Handler.onShippingOptionDidChange` which is invoked when `ShippingOption` changes and the selected option can be updated.
 
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback handles the outcome of the payment operation.
 
-#### Error/Exceptions Mapping
+### 4. Error/Exceptions Mapping
 
 The following describes Afterpay exceptions that can be thrown. 
 
 ```Kotlin
-FetchingUrlException(error: ApiErrorResponse) : AfterPayException(error.displayableMessage)
-CapturingChargeException(error: ApiErrorResponse) : AfterPayException(error.displayableMessage)
-TokenException(displayableMessage: String) : AfterPayException(displayableMessage)
-ConfigurationException(displayableMessage: String) : AfterPayException(displayableMessage)
-CancellationException(displayableMessage: String) : AfterPayException(displayableMessage)
-InvalidResultException(displayableMessage: String) : AfterPayException(displayableMessage)
-UnknownException(displayableMessage: String) : AfterPayException(displayableMessage)
+FetchingUrlException(error: ApiErrorResponse) : AfterpayException(error.displayableMessage)
+CapturingChargeException(error: ApiErrorResponse) : AfterpayException(error.displayableMessage)
+TokenException(displayableMessage: String) : AfterpayException(displayableMessage)
+ConfigurationException(displayableMessage: String) : AfterpayException(displayableMessage)
+CancellationException(displayableMessage: String) : AfterpayException(displayableMessage)
+InvalidResultException(displayableMessage: String) : AfterpayException(displayableMessage)
+UnknownException(displayableMessage: String) : AfterpayException(displayableMessage)
 ```
 
 | Exception                 | Description                                                                                   | Error Model       |
 | :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- |
-| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for Afterpay.                       |  AfterPayError    |
-| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for Afterpay.                   |  AfterPayError    |
-| TokenException            |  Exception thrown when there is an error with the Afterpay token.                             |  AfterPayError    |
-| ConfigurationException    |  Exception thrown when there is a configuration error related to Afterpay.                    |  AfterPayError    |
-| CancellationException     |  Exception thrown when there is a cancellation error related to Afterpay.                     |  AfterPayError    |
-| InvalidResultException    |  Exception thrown when there is an invalid intent result error related to Afterpay.           |  AfterPayError    |
-| UnknownException          |  Exception thrown when there is an unknown error related to Afterpay.                         |  AfterPayError    |
+| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for Afterpay.                       |  AfterpayError    |
+| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for Afterpay.                   |  AfterpayError    |
+| TokenException            |  Exception thrown when there is an error with the Afterpay token.                             |  AfterpayError    |
+| ConfigurationException    |  Exception thrown when there is a configuration error related to Afterpay.                    |  AfterpayError    |
+| CancellationException     |  Exception thrown when there is a cancellation error related to Afterpay.                     |  AfterpayError    |
+| InvalidResultException    |  Exception thrown when there is an invalid intent result error related to Afterpay.           |  AfterpayError    |
+| UnknownException          |  Exception thrown when there is an unknown error related to Afterpay.                         |  AfterpayError    |
 

@@ -50,21 +50,21 @@ The following is a general error model that is received from the backend for all
 
 #### ErrorSummary
 
-| Property                | Type           | Description                                     |
-| :---------------------- | :------------- | :---------------------------------------------- |
-| message                 | String?        | A summary message of the error.                 |
-| code                    | String?        | A summary code of the error.                    |
-| statusCode              | String?        | The HTTP status code as a string.               |
-| statusCodeDescription   | String?        | A description of the HTTP status code.          |
+| Property                | Type           | Description                                                |
+| :---------------------- | :------------- | :--------------------------------------------------------- |
+| message                 | String?        | A summary message of the error.                            |
+| code                    | String?        | A summary code of the error.                               |
+| statusCode              | String?        | The HTTP status code as a string.                          |
+| statusCodeDescription   | String?        | A description of the HTTP status code.                     |
 | details                 | ErrorDetails?  | An object containing detailed information about the error. |
 
 #### ErrorDetails
 
-| Property                       | Type      | Description                                              |
-| :----------------------------- | :-------- | :------------------------------------------------------- |
-| gatewaySpecificCode            | String?   | A code specific to the gateway indicating the error.     |
+| Property                       | Type      | Description                                                 |
+| :----------------------------- | :-------- | :---------------------------------------------------------- |
+| gatewaySpecificCode            | String?   | A code specific to the gateway indicating the error.        |
 | gatewaySpecificDescription     | String?   | A description specific to the gateway indicating the error. |
-| messages                       | [String]? | A list of additional error messages.                     |
+| messages                       | [String]? | A list of additional error messages.                        |
 
 
 ## Android

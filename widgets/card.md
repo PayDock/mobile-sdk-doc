@@ -21,19 +21,20 @@ The Card Details Widget is displayed as a SwiftUI sliding bottom sheet.
 View details are as follows:
 
 ```Swift
-CardDetailsSheetView(isPresented: Binding<Bool>,
-                     gatewayId: String,
-                     onCompletion: Binding<String>,
-                     onFailure: Binding<String>)
+CardDetailsWidget(gatewayId: String?,
+                actionText: String,
+                showCardTitle: Bool,
+                allowSaveCard: SaveCardConfig?,
+                completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
 
 The following is an example of a SwiftUI View:
 
 ```Swift
 struct CardDetailsWidgetView: View {
-    @State var cardToken: String = ""
     @State var isSheetPresented = false
-    @State var error: String = ""
+    @State var showAlert = false
+    @State var alertMessage = ""
 
     var body: some View {
         NavigationStack {
@@ -42,11 +43,16 @@ struct CardDetailsWidgetView: View {
                     Button("Launch card sheet") {
                         isSheetPresented = true
                     }
-                    CardDetailsSheetView(
-                        isPresented: $isSheetPresented,
-                        gatewayId: "<insert gateway id>",
-                        onCompletion: $cardToken,
-                        onFailure: $error)
+                    CardDetailsWidget(
+                        gatewayId: "<insert gateway id>", // optional
+                        allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
+                        completion: { result in
+                            switch result {
+                            case .success(let token): // Handle token
+                            case .failure(let error): // Handle error
+                            }
+                            showAlert = true
+                    })
                 }
             }
         }
@@ -56,14 +62,37 @@ struct CardDetailsWidgetView: View {
 
 ### 2. Parameter definitions
 
-#### MobileSDK.CardDetailsSheetView
+#### MobileSDK.CardDetailsWidget
 
-| Name          | Definition                         | Type | Mandatory/Optional                           |
-| ------------- | ---------------------------------- | ------|-------------------------------------------  |
- isPresented  |  Binding that is used for control if the sheet is presented on the screen |   | Mandatory          |
-| gatewayId    |  Gateway ID that the merchant needs to input into the sheet to allow for tokenisation          | Swift.String     | Mandatory          |
-| onCompletion |  Returns the card token to the app once the user is finished with inputing info into the sheet |   | Mandatory          |
-| onFailure    |  Returns the error message to the app in case the tokenisation process fails                   |   | Mandatory          |
+| Name          | Definition                                                                                       | Type                                               | Mandatory/Optional |
+| ------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
+| gatewayId     |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
+| actionText    |  Text in the main action button that initiates tokenisation                                      | String                                             | Mandatory          |
+| showCardTitle |  Shows or hides internal widget main title label                                                 | Bool                                               | Mandatory          |
+| allowSaveCard |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
+| completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`    | Mandatory          |
+
+#### MobileSDK.SaveCardConfig
+
+| Name                   | Definition                                                              | Type                                               | Mandatory/Optional |
+| ---------------------- | ----------------------------------------------------------------------- | -------------------------------------------------- |------------------  |
+| consentText            |  Sets the text to the first line of the consent component               | String                                             | Optional           |
+| privacyPolicyConfig    |  Sets the privacy policy for the second line of consent component       | MobileSDK.PrivacyPolicyConfig                      | Optional           |
+
+#### MobileSDK.PrivacyPolicyConfig
+
+| Name                   | Definition                                                              | Type       | Mandatory/Optional |
+| ---------------------- | ----------------------------------------------------------------------- | ---------- |------------------  |
+| privacyPolicyText      |  Sets the text of the tappable second line of the component             | String     | Mandatory          |
+| privacyPolicyURL       |  Sets the URL link that opens in external browser on tap                | String     | Mandatory          |
+
+#### MobileSDK.CardDetailsError
+
+| Error                     | Description                                                                | Error Model         | Assigned Error Response |
+| :------------------------ | :------------------------------------------------------------------------- | :------------------ | :---------------------- |
+| errorTokenisingCard       |  Error thrown when provided widget failed card tokenisation                |  GiftCardError      |  ErrorRes               |
+| unknownError              |  Error thrown when there is an unknown error related to card tokenisation  |  GiftCardError      |  nil                    |
+
 
 ## Android
 

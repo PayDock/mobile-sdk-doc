@@ -239,6 +239,10 @@ data class ChargeResponse(
 
 The `token` callback is used to obtain the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which should be invoked with the wallet token once it's obtained.
 
+#### Completion Callback
+
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.
+
 ### 8. Error/Exceptions Mapping
 
 The following describes the Google Pay exceptions that can be thrown. 
@@ -261,8 +265,3 @@ UnknownException(displayableMessage: String) : GooglePayException(displayableMes
 | CancellationException     |  Exception thrown when there is a cancellation error related to Google Pay.                   |  GooglePayError      |
 | UnknownException          |  Exception thrown when there is an unknown error related to Google Pay.                       |  GooglePayError      |
 
-
-
-#### Completion Callback
-
-The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.

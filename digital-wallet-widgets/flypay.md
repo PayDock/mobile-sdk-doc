@@ -50,6 +50,14 @@ This subsection describes the parameters required by the `FlyPayWidget` SwiftUI 
 | flyPayToken           |  A callback to obtain the wallet token asynchronously                             | `(@escaping (String) -> Void) -> Void`            | Mandatory          |
 | completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse, FlyPayError>) -> Void`   | Mandatory          |
 
+### MobileSDK.FlyPayError
+
+| Exception                 | Description                                                                | Error Model         | Assigned Error Response |
+| :------------------------ | :------------------------------------------------------------------------- | :------------------ | :---------------------- |
+| errorFetchingFlyPayOrder  |  Exception thrown when fetching FlyPay order ID fails.                     |  ApplePayError      |  ErrorRes               |
+| webViewFailed             |  Exception thrown when there is an issue communicating with the WebView.   |  ApplePayError      |  nil                    |
+| unknownError              |  Exception thrown when there is an unknown error related to FlyPay  .      |  ApplePayError      |  nil                    |
+
 ### 3. Callback Explanation
 
 #### Token Callback
@@ -116,7 +124,7 @@ This subsection describes the various parameters required by the `FlyPayWidget` 
 | :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
 | modifier              |  Compose modifier for container modifications                                     | `androidx.compose.ui.Modifier`                    | Optional           |
 | token                 |  A callback to obtain the wallet token asynchronously                             | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
-| completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.       | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
+| completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
 
 ### 3. Callback Explanation
 
