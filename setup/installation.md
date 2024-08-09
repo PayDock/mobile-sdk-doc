@@ -39,7 +39,7 @@ Choose the project file where you want to access the SDK components. In this fil
 import MobileSDK
 ```
 
-5. The SDK has now been added to your project. To use the SDK in your project, you must include `import MobileSDK` at the top of the file where you will use the SDK. You can then move to the next step and [initialize](/setup/initialise) your MobileSDK.
+The SDK has now been added to your project. To use the SDK in your project, you must include `import MobileSDK` at the top of the file where you will use the SDK. You can then move to the next step and [initialize](/setup/initialise) your MobileSDK.
 
 ## Setup the Paydock Android SDK
 
