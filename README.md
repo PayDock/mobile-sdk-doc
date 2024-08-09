@@ -8,7 +8,7 @@ Once you have setup and initialized the MobileSDK in your application, you can u
 
 1. Begin by [adding the SDK](/setup/installation.md) as a dependency to your app for either iOS or Android.
 
-2. Once the SDK is added, you can [initialize the SDK](/setup/initialise.md) by passing the configuration objects such as your `public_key` and `environment` variable. 
+2. Once the SDK is added, you can [initialize the SDK](/setup/initialise.md) by passing the configuration objects such as `environment` variable. 
 
 3. After the SDK is initialized, you can optionally customise the appearance of your UI elements using the [theming parameters](/setup/theming.md).
 

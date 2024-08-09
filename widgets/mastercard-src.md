@@ -2,7 +2,7 @@
 
 > 
 >
->Integrate the Click to Pay solution into your Mobile checkout.
+>Integrate the Mastercard Click to Pay solution into your Mobile checkout.
 
 ## Overview
 
@@ -14,13 +14,14 @@ The Click to Pay transforms the inputted details into a One-time-token (OTT). Yo
 
 ### How to use the Mastercard SRC Click To Pay Widget
 
-This section describes how to initialise and use the `ClickToPayWidget` view in your application for iOS. The widget integrates with the Paydock `client-sdk` and performs tokenisation to retrieve a OTT (One-Time-Token).
+This section describes how to initialise and use the `MastercardSRCClickToPayWidget` view in your application for iOS. The widget integrates with the Paydock `client-sdk` and performs tokenisation to retrieve a OTT (One-Time-Token).
 
-The definition of the `ClickToPayWidget` is as follows:
+The definition of the `MastercardSRCClickToPayWidget` is as follows:
 
 ```Swift
 MastercardSRCClickToPayWidget(
     serviceId: String,
+    accessToken: String,
     meta: MastercardSRCMeta?
     completion: (MastercardResult) -> Void)
 ```
@@ -33,6 +34,7 @@ The following table defines the parameters required by the `MastercardSRCClickTo
 | Name                | Definition                                                                                                | Type                           | Mandatory/Optional |
 | :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
 | serviceId           |  This is the `id` of the SRC Service created on Paydock                                                   | String                         | Mandatory          |
+| accessToken         |  The access token used for authentication with the backend service.                                       | String                         | Mandatory          |
 | meta                |  Object that contains additional data used for the SRC Checkout.                                          | `MastercardSRCMeta`            | Optional           |
 | completion          |  Result callback with the MastercardResult. Contains token if successful or error in case of failure      | `(MastercardResult) -> Void)`  | Mandatory          |
 

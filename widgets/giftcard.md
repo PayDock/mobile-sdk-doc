@@ -20,6 +20,7 @@ The following sample code demonstrates how to use the `GiftCardView` composable 
 ```Swift
 GiftCardWidget(
     storePin: Bool = true,
+    accessToken: String,
     completion: @escaping (Result<String, Error>) -> Void)
 ```
 
@@ -31,7 +32,7 @@ The following is an example of a GiftCardView initialisation:
 struct GiftCardExampleView: View {
     var body: some View {
         VStack {
-            GiftCardWidget(storePin: storePin) { result in
+            GiftCardWidget(storePin: storePin, accessToken: "<insert access token>") { result in
                 switch result {
                 case .success(let token): // Handle token
                 case .failure(let error): // Handle error
@@ -45,10 +46,11 @@ struct GiftCardExampleView: View {
 ### 2. Parameter Definitions
 
 #### MobileSDK.GiftCardView
-| Name         | Definition                                                         | Type                              | Mandatory/Optional |
-| :----------- | :----------------------------------------------------------------- | :-------------------------------- | :----------------  |
-| storePin     |  A flag to be able to use a PIN value for the initial transaction. | String (default = true)           | Optional           |
-| completion   |  A completion block that returns result with token or error.       | `(Result<String, Error>) -> Void` | Mandatory          |
+| Name         | Definition                                                           | Type                              | Mandatory/Optional |
+| :----------- | :------------------------------------------------------------------- | :-------------------------------- | :----------------  |
+| storePin     |  A flag to be able to use a PIN value for the initial transaction.   | String (default = true)           | Optional           |
+| accessToken  |  The access token used for authentication with the backend service.  | String                            | Mandatory          |
+| completion   |  A completion block that returns result with token or error.         | `(Result<String, Error>) -> Void` | Mandatory          |
 
 ## Android
 

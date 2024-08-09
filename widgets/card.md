@@ -22,6 +22,7 @@ View details are as follows:
 
 ```Swift
 CardDetailsWidget(gatewayId: String?,
+                accessToken: String,
                 actionText: String,
                 showCardTitle: Bool,
                 allowSaveCard: SaveCardConfig?,
@@ -45,6 +46,7 @@ struct CardDetailsWidgetView: View {
                     }
                     CardDetailsWidget(
                         gatewayId: "<insert gateway id>", // optional
+                        accessToken: "<insert access token>" // mandatory
                         allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
                         completion: { result in
                             switch result {
@@ -67,10 +69,11 @@ struct CardDetailsWidgetView: View {
 | Name          | Definition                                                                                       | Type                                               | Mandatory/Optional |
 | ------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
 | gatewayId     |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
+| accessToken   |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
 | actionText    |  Text in the main action button that initiates tokenisation                                      | String                                             | Mandatory          |
 | showCardTitle |  Shows or hides internal widget main title label                                                 | Bool                                               | Mandatory          |
 | allowSaveCard |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
-| completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`    | Mandatory          |
+| completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
 #### MobileSDK.SaveCardConfig
 
