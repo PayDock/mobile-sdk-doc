@@ -7,7 +7,7 @@ You have downloaded the SDK dependency to your app/project during the installati
 
 > **Note**:
 >
-> You can only initialize the MobileSDK once per app launch.
+> You can initialize the MobileSDK multiple times to reconfigure the SDK if necessary.
 
 To initialize the Mobile SDK, pass the configuration object into the SDK. The configuration contains information such as the environment, theme.
 The following is an example of the SDK initialization:
