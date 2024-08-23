@@ -7,32 +7,28 @@ You have downloaded the SDK dependency to your app/project during the installati
 
 > **Note**:
 >
-> You can only initialize the MobileSDK once per app launch.
+> You can initialize the MobileSDK multiple times to reconfigure the SDK if necessary.
 
-To initialize the Mobile SDK, pass the configuration object into the SDK. The configuration contains information such as the environment, theme and the merchant's public key.
+To initialize the Mobile SDK, pass the configuration object into the SDK. The configuration contains information such as the environment, theme.
 The following is an example of the SDK initialization:
 
 ```Swift
 let environment = SDKEnvironment.sandbox
-let publicKey = "public_key"
 let theme = Theme() // This is optional parameter
 
-let config = MobileSDKConfig(environment: environment, publicKey: publicKey, theme: theme)
+let config = MobileSDKConfig(environment: environment, theme: theme)
 MobileSDK.shared.configureMobileSDK(config: config)
 ``` 
 
-1. For ``let publicKey = "public_key"``, replace ``public_key`` with the value that you generated during [authentication](https://docs.paydock.com/#authentication).
+1. Set the SDK Environment.
 
-2. Set the SDK Environment.
-
-3. Apply a custom theme to the SDK. This step is optional.
+2. Apply a custom theme to the SDK. This step is optional.
 
 ### Definitions
 #### MobileSDKConfig
 | Name        | Definition                                                                                | Type                     | Mandatory/Optional |
 | :---------- | :---------------------------------------------------------------------------------------- | :----------------------- | :----------------  |
 | environment |  The target environment that will be used within the SDK                                  | MobileSDK.SDKEnvironment | Mandatory          |
-| publicKey   |  The Paydock public key used for authentication with the backend services within the SDK. | Swift.String             | Mandatory          |
 | theme       |  The theme to be applied across the Mobile SDK (colours, dimensions and font)             | MobileSDK.Theme          | Optional           |
 
 
