@@ -24,6 +24,20 @@ The iOS SDK uses Error as its base error type as it is used in conjunction with 
 
 Each error case includes a `customMessage` property that provides a user-friendly description of the error. You can use this property to display error messages to the user or for logging purposes.
 
+#### RequestError Errors (Http Failures)
+
+| Name                      | Description                                                                                     | Error Result            |
+| :------------------------ | :---------------------------------------------------------------------------------------------- | :---------------------- |
+| connectionError           |  `URLError` thrown related to connection failures (ie. internet, timeout etc)                   |  `URLError`             |
+| decode                    |  Http JSON success response failed to decode to the expected response type                      |  nil                    |
+| invalidURL                |  Error thrown when an invalid URL used for API request                                          |  nil                    |
+| invalidRequest            |  `URLError` thrown related to request/url failures (ie. unsupported/bad url etc)                |  `URLError`             |
+| noResponse                |  Error thrown when no `HTTPURLResponse` is returned                                             |  nil                    |
+| serverError               |  `URLError` thrown related to server failures (ie. bad server response, http failures etc)      |  `URLError`             |
+| unexpectedErrorModel      |  Http JSON failure response failed to decode to expected response type                          |  nil                    |
+| requestError              |  API failure mapped to expected error response                                                  |  `ErrorRes`             |
+| unknown                   |  `URLError` thrown that was not handled                                                         |  `URLError`             |
+
 The following is a general error model that is received from the backend for all API related errors:
 
 #### ErrorRes
@@ -65,7 +79,6 @@ The following is a general error model that is received from the backend for all
 | gatewaySpecificCode            | String?   | A code specific to the gateway indicating the error.        |
 | gatewaySpecificDescription     | String?   | A description specific to the gateway indicating the error. |
 | messages                       | [String]? | A list of additional error messages.                        |
-
 
 ## Android
 

@@ -117,13 +117,13 @@ This subsection describes the parameters required by the `AfterpayWidget` view. 
 
 #### MobileSDK.AfterpayError
 
-| Name                       | Error message                                    | Type  |
-| :------------------------- | :----------------------------------------------- | :---- |
-| errorFetchingAfterpayUrl   |  Error while fetching Afterpay widget URL        | Error |
-| errorCapturingCharge       |  Capturing the charge has failed                 | Error |
-| errorCancelingTransaction  |  Canceling the transaction has failed            | Error |
-| transactionCanceled        |  Transaction was canceled due to failure or user | Error |
-| unknownError               |  Unknown error has occurred                      | Error |
+| Name                       | Description                                                             | Error Result    |
+| :------------------------- | :---------------------------------------------------------------------- | :-------------- |
+| errorFetchingAfterpayUrl   |  Error thrown when fetching Afterpay widget URL                         | ErrorRes        |
+| errorCapturingCharge       |  Error thrown when capturing the charge has failed                      | ErrorRes        |
+| errorCancelingTransaction  |  Error thrown when canceling the transaction has failed                 | ErrorRes        |
+| transactionCanceled        |  Error thrown when the transaction was canceled due to failure or user  | nil             |
+| unknownError               |  Error thrown when an unknown error has occurred                        | nil             |
 
 
 ### 3. Callback Explanation

@@ -114,9 +114,9 @@ More in depth definitions of the parameters, as well as potential errors and res
 
 ### MobileSDK.ApplePayError
 
-| Exception                 | Description                                                                | Error Model         | Assigned Error Response |
-| :------------------------ | :------------------------------------------------------------------------- | :------------------ | :---------------------- |
-| invalidApplePayRequest    |  Exception thrown when provided ApplePayRequest object is not valid.       |  ApplePayError      |  nil                    |
-| errorInitializingPayment  |  Exception thrown when there is an error initializing payment request.     |  ApplePayError      |  nil                    |
-| errorCompletingPayment    |  Exception thrown when there is an error while capturing the charge.       |  ApplePayError      |  ErrorRes               |
-| unknownError              |  Exception thrown when there is an unknown error related to ApplePay.      |  ApplePayError      |  nil                    |
+| Name                       | Description                                                           | Error Result            |
+| :------------------------ | :--------------------------------------------------------------------- | :---------------------- |
+| invalidApplePayRequest    |  Error thrown when provided ApplePayRequest object is not valid.       |  nil                    |
+| errorInitializingPayment  |  Error thrown when there is an error initializing payment request.     |  nil                    |
+| errorCompletingPayment    |  Error thrown when there is an error while capturing the charge.       |  ErrorRes               |
+| unknownError              |  Error thrown when there is an unknown error related to ApplePay.      |  nil                    |
