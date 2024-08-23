@@ -62,6 +62,28 @@ struct CardDetailsWidgetView: View {
 }
 ```
 
+The below table describes the various inline validation errors linked to the `CardDetailsWidget`.
+
+| Field           | Error Message                                                                                       | Validation                                        |
+| --------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Cardholder name | "*Card number is in the wrong field!*"                                                              | Luhn Algorithm Failure                            |
+| Cardholder name | "*Invalid name*"                                                                                    | Empty Field                                       |
+| Card number     | "*Invalid card number*"                                                                             | Empty Field                                       |
+| Card number     | "*Invalid card number*"                                                                             | Field contains non-number                         |
+| Card number     | "*Invalid card number*"                                                                             | Luhn Algorithm Failure                            |
+| Expiry          | “*Invalid expiry date*”                                                                             | Empty Field                                       |
+| Expiry          | “*Invalid expiry date*”                                                                             | Field contains non-number                         |
+| Expiry          | “*Invalid expiry date*”                                                                             | Field matches expected size                       |
+| Expiry          | "*Card expired*"                                                                                    | Date expired                                      |
+| Security code   | "*Invalid security code*"                                                                           | Empty Field                                       |
+| Security code   | "*Invalid security code*"                                                                           | Field contains non-number                         |
+| Security code   | "*Invalid security code*"                                                                           | Field matches expected size (based on code type)  |
+
+#### Cardholder name
+
+"*Card number is in the wrong field!*" -> 
+"*Invalid name*" -> Field is empty
+
 ### 2. Parameter definitions
 
 #### MobileSDK.CardDetailsWidget
@@ -91,10 +113,10 @@ struct CardDetailsWidgetView: View {
 
 #### MobileSDK.CardDetailsError
 
-| Error                     | Description                                                                | Error Model         | Assigned Error Response |
-| :------------------------ | :------------------------------------------------------------------------- | :------------------ | :---------------------- |
-| errorTokenisingCard       |  Error thrown when provided widget failed card tokenisation                |  GiftCardError      |  ErrorRes               |
-| unknownError              |  Error thrown when there is an unknown error related to card tokenisation  |  GiftCardError      |  nil                    |
+| Name                       | Description                                                               | Error Result            |
+| :------------------------ | :------------------------------------------------------------------------- | :---------------------- |
+| errorTokenisingCard       |  Error thrown when provided widget failed card tokenisation                |  ErrorRes               |
+| unknownError              |  Error thrown when there is an unknown error related to card tokenisation  |  nil                    |
 
 
 ## Android
@@ -146,6 +168,24 @@ CardDetailsWidget(
     }
 )
 ```
+
+The below table describes the various inline validation errors linked to the `CardDetailsWidget`.
+
+| Field           | Error Message                                                                                       | Validation                                        |
+| --------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Cardholder name | "*Card number is in the wrong field!*"                                                              | Luhn Algorithm Failure                            |
+| Cardholder name | "*Invalid name*"                                                                                    | Default                                           |
+| Card number     | "*Invalid card number*"                                                                             | Empty Field                                       |
+| Card number     | "*Invalid card number*"                                                                             | Field contains non-number                         |
+| Card number     | "*Invalid card number*"                                                                             | Luhn Algorithm Failure                            |
+| Card number     | "*Invalid card number*"                                                                             | Exceeds max length (19)                           |
+| Expiry          | “*Invalid expiry date*”                                                                             | Empty Field                                       |
+| Expiry          | “*Invalid expiry date*”                                                                             | Field contains non-number                         |
+| Expiry          | “*Invalid expiry date*”                                                                             | Field matches expected size                       |
+| Expiry          | "*Card expired*"                                                                                    | Date expired                                      |
+| Security code   | "*Invalid security code*"                                                                           | Empty Field                                       |
+| Security code   | "*Invalid security code*"                                                                           | Field contains non-number                         |
+| Security code   | "*Invalid security code*"                                                                           | Field matches expected size (based on code type)  |
 
 ### 2. Parameter definitions
 

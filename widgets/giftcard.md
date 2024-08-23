@@ -52,6 +52,13 @@ struct GiftCardExampleView: View {
 | accessToken  |  The access token used for authentication with the backend service.  | String                            | Mandatory          |
 | completion   |  A completion block that returns result with token or error.         | `(Result<String, Error>) -> Void` | Mandatory          |
 
+#### MobileSDK.GiftCardError
+
+| Name                       | Description                                                                    | Error Result            |
+| :------------------------ | :------------------------------------------------------------------------------ | :---------------------- |
+| errorTokenisingCard       |  Error thrown when provided widget failed gift card tokenisation                |  ErrorRes               |
+| unknownError              |  Error thrown when there is an unknown error related to gift card tokenisation  |  nil                    |
+
 ## Android
 
 ## How to use the GiftCardWidget in Android

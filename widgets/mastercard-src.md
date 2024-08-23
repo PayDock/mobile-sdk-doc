@@ -14,50 +14,50 @@ The Click to Pay transforms the inputted details into a One-time-token (OTT). Yo
 
 ### How to use the Mastercard SRC Click To Pay Widget
 
-This section describes how to initialise and use the `MastercardSRCClickToPayWidget` view in your application for iOS. The widget integrates with the Paydock `client-sdk` and performs tokenisation to retrieve a OTT (One-Time-Token).
+This section describes how to initialise and use the `ClickToPayWidget` view in your application for iOS. The widget integrates with the Paydock `client-sdk` and performs tokenisation to retrieve a OTT (One-Time-Token).
 
-The definition of the `MastercardSRCClickToPayWidget` is as follows:
+The definition of the `ClickToPayWidget` is as follows:
 
 ```Swift
-MastercardSRCClickToPayWidget(
+ClickToPayWidget(
     serviceId: String,
     accessToken: String,
-    meta: MastercardSRCMeta?
-    completion: (MastercardResult) -> Void)
+    meta: ClickToPayMeta?
+    completion: (Result<ClickToPayResult, ClickToPayError> -> Void)
 ```
 
 ### Parameter definitions
 
-The following table defines the parameters required by the `MastercardSRCClickToPayWidget` view. The table describes the purpose of each parameter and its functionality when configuring the `MastercardSRCClickToPayWidget`.
+The following table defines the parameters required by the `ClickToPayWidget` view. The table describes the purpose of each parameter and its functionality when configuring the `ClickToPayWidget`.
 
-#### MastercardSRCClickToPayWidget
-| Name                | Definition                                                                                                | Type                           | Mandatory/Optional |
-| :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
-| serviceId           |  This is the `id` of the SRC Service created on Paydock                                                   | String                         | Mandatory          |
-| accessToken         |  The access token used for authentication with the backend service.                                       | String                         | Mandatory          |
-| meta                |  Object that contains additional data used for the SRC Checkout.                                          | `MastercardSRCMeta`            | Optional           |
-| completion          |  Result callback with the MastercardResult. Contains token if successful or error in case of failure      | `(MastercardResult) -> Void)`  | Mandatory          |
+#### ClickToPayWidget
+| Name                | Definition                                                                                                | Type                                                   | Mandatory/Optional |
+| :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------------------------------- | :----------------  |
+| serviceId           |  This is the `id` of the SRC Service created on Paydock                                                   | String                                                 | Mandatory          |
+| accessToken         |  The access token used for authentication with the backend service.                                       | String                                                 | Mandatory          |
+| meta                |  Object that contains additional data used for the SRC Checkout.                                          | `ClickToPayMeta`                                       | Optional           |
+| completion          |  Result callback with the `ClickToPayResult`. Contains token if successful or error in case of failure    | `(Result<ClickToPayResult, ClickToPayError> -> Void)`  | Mandatory          |
 
-The following tables describe the properties of the `MastercardSRCMeta` object used by the `client-sdk`. They provide information on the data related to Mastercard's Digital Payment Application (DPA).
+The following tables describe the properties of the `ClickToPayDPAData` object used by the `client-sdk`. They provide information on the data related to Mastercard's Digital Payment Application (DPA).
 
-#### MastercardResult
+#### ClickToPayResult
 | Name            | Definition                                          | Type           | Mandatory/Optional   |
 | :-------------- | :-------------------------------------------------- | :------------- | :------------------  |
 | event           |  Enum indicating outcome of the widget flow.        | `Event`        | Mandatory            |
-| mastercardToken |  OTT received from the Mastercard widget            | String         | Optional             |
+| mastercardToken |  OTT received from the ClickToPay widget            | String         | Optional             |
 
-#### MastercardSRCMeta
+#### ClickToPayMeta
 | Name          | Definition                                                                                            | Type                    | Mandatory/Optional   |
 | :------------ | :---------------------------------------------------------------------------------------------------- | :---------------------- | :------------------  |
-| dpaData               |  Object where the DPA creation data is stored.                                                | `MastercardDPAData`     | Optional             |
+| dpaData               |  Object where the DPA creation data is stored.                                                | `ClickToPayDPAData`     | Optional             |
 | disableSummaryScreen  |  flag that controls if a final summary screen is presented in the checkout flow.              | Boolean                 | Optional             |
 | cardBrands            |  List of allowed card brands - options: 'mastercard', 'maestro', 'visa', 'amex', 'discover'   | `Array<Enum>`           | Optional             |
 | coBrandNames          |  List of co-brand names associated with the SRC experience.                                   | `Array<String>`         | Optional             |
 | checkoutExperience    |  Checkout experience type, either 'WITHIN_CHECKOUT' or 'PAYMENT_SETTINGS'.                    | Enum                    | Optional             |
 | services              |  Services offered, such as 'INLINE_CHECKOUT' or 'INLINE_INSTALLMENTS'.                        | Enum                    | Optional             |
-| dpaTransactionOptions |  Object that stores options for creating a transaction with DPA.                              | `MastercardDPAOptions`  | Optional             |
+| dpaTransactionOptions |  Object that stores options for creating a transaction with DPA.                              | `ClickToPayDPAOptions`  | Optional             |
 
-#### MastercardDPAData
+#### ClickToPayDPAData
 | Name                      | Definition                                                    | Type                  | Mandatory/Optional   |
 | :------------------------ | :------------------------------------------------------------ | :-------------------- | :------------------  |
 | dpaAddress                |  Address associated with the DPA.                             | String                | Optional             |
@@ -70,7 +70,7 @@ The following tables describe the properties of the `MastercardSRCMeta` object u
 | dpaSupportUri             |  URI for DPA support.                                         | String                | Optional             |
 | applicationType           |  Application type, either 'WEB_BROWSER' or 'MOBILE_APP'.      | Enum                  | Optional             |
 
-#### MastercardDPAOptions
+#### ClickToPayDPAOptions
 | Name                 | Definition                                                                    | Type                   | Mandatory/Optional   |
 | :------------------- | :---------------------------------------------------------------------------- | :--------------------- | :------------------  |
 | dpaBillingPreference |  Billing preferences for DPA, options are 'FULL', 'POSTAL_COUNTRY', 'NONE'.   | Enum                   | Optional             |
@@ -90,9 +90,16 @@ The following tables describe the properties of the `MastercardSRCMeta` object u
 | :---------------- | :------------------------------ | :----------- | :------------------  |
 | dynamicDataType   |  Dynamic data types.            | String       | Mandatory            |
 
+#### MobileSDK.ClickToPayError
+
+| Name                       | Description                                                                     | Error Result            |
+| :------------------------ | :------------------------------------------------------------------------------- | :---------------------- |
+| webViewFailed             |  Error thrown when there is an error while communicating with a WebView.         |  NSError                |
+| UnknownException          |  Error thrown when there is an unknown error related to ClickToPay.              |  nil                    |
+
 ### Callback Explanation
 
-The `completion` callback is invoked after the SRC tokenisation flow is completed. The SRC flow receives a `MastercardResult` and, after the successful tokenisation of the SRC details, generates an OTT.
+The `completion` callback is invoked after the SRC tokenisation flow is completed. The SRC flow receives a `ClickToPayResult` and, after the successful tokenisation of the SRC details, generates an OTT.
 
 ## Android
 
@@ -200,16 +207,16 @@ After the merchant completes the SRC tokenisation flow, they invoke the `complet
 
 ### Error/Exceptions Mapping
 
-The following describes Mastercard SRC exceptions that can be thrown. 
+The following describes ClickToPay exceptions that can be thrown. 
 
 ```Kotlin
-CheckoutErrorException(displayableMessage: String) : MastercardSRCException(error.displayableMessage)
-WebViewException(code: Int?, displayableMessage: String) : MastercardSRCException(displayableMessage)
-CancellationException(displayableMessage: String) : MastercardSRCException(displayableMessage)
+CheckoutErrorException(displayableMessage: String) : ClickToPayException(error.displayableMessage)
+WebViewException(code: Int?, displayableMessage: String) : ClickToPayException(displayableMessage)
+CancellationException(displayableMessage: String) : ClickToPayException(displayableMessage)
 ```
 
-| Exception                 | Description                                                                                   | Error Model           |
-| :------------------------ | :-------------------------------------------------------------------------------------------- | :-------------------- |
-| CheckoutErrorException    |  Exception thrown when there is an error during the checkout process for Mastercard SRC.      |  MastercardSRCError   |
-| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  MastercardSRCError   |
-| CancellationException     |  Exception thrown when there is a cancellation error related to Mastercard SRC.               |  MastercardSRCError   |
+| Exception                 | Description                                                                                   | Error Model        |
+| :------------------------ | :-------------------------------------------------------------------------------------------- | :----------------- |
+| CheckoutErrorException    |  Exception thrown when there is an error during the checkout process for Click to Pay.        |  ClickToPayError   |
+| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  ClickToPayError   |
+| CancellationException     |  Exception thrown when there is a cancellation error related to Click to Pay.                 |  ClickToPayError   |

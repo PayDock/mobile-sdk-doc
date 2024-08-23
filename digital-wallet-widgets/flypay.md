@@ -52,11 +52,12 @@ This subsection describes the parameters required by the `FlyPayWidget` SwiftUI 
 
 ### MobileSDK.FlyPayError
 
-| Exception                 | Description                                                                | Error Model         | Assigned Error Response |
-| :------------------------ | :------------------------------------------------------------------------- | :------------------ | :---------------------- |
-| errorFetchingFlyPayOrder  |  Exception thrown when fetching FlyPay order ID fails.                     |  ApplePayError      |  ErrorRes               |
-| webViewFailed             |  Exception thrown when there is an issue communicating with the WebView.   |  ApplePayError      |  nil                    |
-| unknownError              |  Exception thrown when there is an unknown error related to FlyPay  .      |  ApplePayError      |  nil                    |
+| Name                      | Description                                                            | Error Result            |
+| :------------------------ | :--------------------------------------------------------------------- | :---------------------- |
+| errorFetchingFlyPayOrder  |  Error thrown when fetching FlyPay order ID fails.                     |  ErrorRes               |
+| flyPayUrlError            |  Error thrown when generating the FlyPay URL.                          |  nil                    |
+| webViewFailed             |  Error thrown when there is an issue communicating with the WebView.   |  NSError                |
+| unknownError              |  Error thrown when there is an unknown error related to FlyPay.        |  nil                    |
 
 ### 3. Callback Explanation
 

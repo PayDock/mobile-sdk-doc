@@ -12,26 +12,34 @@ The 3DS Widget integrates with the Paydock JS client-sdk within a WebView compon
 
 ### 1. Overview
 
-The `Three3DSView` validates and authenticates the 3DS charge using the created 3DS token from your iOS app. This section provides a step-by-step guide on how to initialize and use the `Three3DSView` composable in your application.
+The `ThreeDSWidget` validates and authenticates the 3DS charge using the created 3DS token from your iOS app. This section provides a step-by-step guide on how to initialize and use the `ThreeDSWidget` composable in your application.
 
-The following sample code demonstrates the `Three3DSView` composable definition, as well as how to use it in your application:
+The following sample code demonstrates the `ThreeDSWidget` composable definition, as well as how to use it in your application:
 
 ```Swift
-ThreeDSView(
+ThreeDSWidget(
     token: String,
     baseURL: URL?,
-    completionHandler: (ThreeDSResult) -> Void)
+    completionHandler: (Result<ThreeDSResult, ThreeDSError>) -> Void
 ```
 
 The widget returns an object that contains the status of the 3DS flow and the 3DS token.
 
 ### 2. Parameter definitions
 
+#### ThreeDSWidget 
+
+| Name                | Definition                                                                       | Type                                               | Mandatory/Optional |
+| :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------- | :----------------  |
+| token               |  The 3DS token used for 3DS widget initialisation.                               | String                                             | Mandatory          |
+| baseURL             |  A URL that is used to resolve relative URLs within the webview.                 | URL                                                | Optional           |
+| completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<ThreeDSResult, ThreeDSError>) -> Void`    | Mandatory          |
+
 #### MobileSDK.ThreeDSResult
-| Name         | Definition                                                         | Type                        | Mandatory/Optional |
-| :----------- | :----------------------------------------------------------------- | :-------------------------- | :----------------  |
-| event        |  Type of the event that happened in the 3DS flow                   | EventType                   | Mandatory          |
-| charge3dsId  |  A 3DS ID                                                          | String                      | Mandatory          |
+| Name         | Definition                                                                      | Type                        | Mandatory/Optional |
+| :----------- | :------------------------------------------------------------------------------ | :-------------------------- | :----------------  |
+| event        |  Type of the event that happened in the 3DS flow                                | EventType                   | Mandatory          |
+| charge3dsId  |  The Charge ID associated with the 3DS transaction to return to the merchant    | String                      | Mandatory          |
 
 `EventType` enum represents all the possible outcomes of a 3DS flow allowing you to handle it.
 
@@ -44,6 +52,13 @@ The widget returns an object that contains the status of the 3DS flow and the 3D
 | chargeAuthDecoupled |  Represents a decoupled 3DS charge authorization                   | EnumCase                      | Mandatory          |
 | chargeAuthInfo      |  Represents an informational event related to a 3DS charge         | EnumCase                      | Mandatory          |
 | error               |  Represents an unknown or unrecognized event type                  | EnumCase                      | Mandatory          |
+
+#### MobileSDK.ThreeDSError
+
+| Name                       | Description                                                                     | Error Result            |
+| :------------------------ | :------------------------------------------------------------------------------- | :---------------------- |
+| webViewFailed             |  Error thrown when there is an error while communicating with a WebView.         |  NSError                |
+| UnknownException          |  Error thrown when there is an unknown error related to 3DS.                     |  nil                    |
 
 
 ## Android
@@ -85,10 +100,10 @@ This subsection describes the various parameters required by the `ThreeDSWidget`
 
 #### ThreeDSWidget 
 
-| Name                | Definition                                                         | Type                        | Mandatory/Optional |
-| :------------------ | :----------------------------------------------------------------- | :---------------------------- | :----------------  |
-| token  |  The 3DS token used for 3DS widget initialization.                  | String                      | Mandatory          |
-| completion    |  Result callback with the 3DS authentication if successful, or error if not.                    | `(Result<ThreeDSResult>) -> Unit`                      | Mandatory          |
+| Name                | Definition                                                                       | Type                                 | Mandatory/Optional |
+| :------------------ | :------------------------------------------------------------------------------- | :----------------------------------- | :----------------  |
+| token               |  The 3DS token used for 3DS widget initialization.                               | String                               | Mandatory          |
+| completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<ThreeDSResult>) -> Unit`    | Mandatory          |
 
 #### ThreeDSResult
 
@@ -105,22 +120,22 @@ data class ThreeDSResult(
 
 #### Definition
 
-| Name                | Definition                                                         | Type                        | 
-| :------------------ | :----------------------------------------------------------------- | :---------------------------- | 
-| event  |  The type of event that occurred during 3DS processing                  | `EventType`                      | 
-| charge3dsId    |  The Charge ID associated with the 3DS transaction to return to the merchant                    | String                     | 
+| Name                | Definition                                                                     | Type                        | 
+| :------------------ | :----------------------------------------------------------------------------- | :-------------------------- | 
+| event               |  The type of event that occurred during 3DS processing                         | `EventType`                 | 
+| charge3dsId         |  The Charge ID associated with the 3DS transaction to return to the merchant   | String                      | 
 
 #### EventType
 
-| Name                | Definition                                                         | 
-| :------------------ | :----------------------------------------------------------------- |
-| CHARGE_AUTH_SUCCESS  |  Represents a successful 3DS charge authorization                  |
-| CHARGE_AUTH_REJECT  |  Represents a rejected 3DS charge authorization                  |
-| CHARGE_AUTH_CHALLENGE  |  Represents a 3DS charge authorization with a challenge                 |
-| CHARGE_AUTH_DECOUPLED  |  Represents a decoupled 3DS charge authorization                 |
-| CHARGE_AUTH_INFO  |  Represents an informational event related to a 3DS charge                 |
-| CHARGE_ERROR  |  Represents an error event related to a 3DS charge                 |
-| UNKNOWN  |  Represents an unknown or unrecognised event type (default)                 |
+| Name                   | Definition                                                         | 
+| :--------------------- | :----------------------------------------------------------------- |
+| CHARGE_AUTH_SUCCESS    |  Represents a successful 3DS charge authorization                  |
+| CHARGE_AUTH_REJECT     |  Represents a rejected 3DS charge authorization                    |
+| CHARGE_AUTH_CHALLENGE  |  Represents a 3DS charge authorization with a challenge            |
+| CHARGE_AUTH_DECOUPLED  |  Represents a decoupled 3DS charge authorization                   |
+| CHARGE_AUTH_INFO       |  Represents an informational event related to a 3DS charge         |
+| CHARGE_ERROR           |  Represents an error event related to a 3DS charge                 |
+| UNKNOWN                |  Represents an unknown or unrecognised event type (default)        |
 
 ### 3. Callback Explanation
 
