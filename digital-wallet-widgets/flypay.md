@@ -1,6 +1,6 @@
 # Flypay Widget
 
-The FlyPay Widget integrates with Flypay using a WebView component. This handles the communication between Flypay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
+The Flypay Widget integrates with Flypay using a WebView component. This handles the communication between Flypay and the SDK. Once completed, the WebView component returns the `FlyPayOrderId`.
 
 ![FlyPay View](/img/FlyPay.png)
 
@@ -16,6 +16,7 @@ The following sample code demonstrates the definition of the `FlyPayWidget`:
 
 ```Swift
 FlyPayWidget(
+    clientId: String,
     flyPayToken: (@escaping (String) -> Void) -> Void,
     completion: (Result<ChargeResponse, FlyPayError>) -> Void)
 ```
@@ -26,7 +27,7 @@ The following sample code demonstrates how you can use the widget in your applic
 struct FlyPayExampleView: View {
     @StateObject private var viewModel = FlyPayExampleVM()
     var body: some View {
-        FlyPayWidget { onFlyPayButtonTap in
+        FlyPayWidget(clientId: <merchantClientId>) { onFlyPayButtonTap in
             // Example: Initiate Wallet Transaction to retrieve the wallet token
             viewModel.initializeWalletCharge(completion: onFlyPayButtonTap)
         } completion: { result in
@@ -47,6 +48,7 @@ This subsection describes the parameters required by the `FlyPayWidget` SwiftUI 
 
 | Name                  | Definition                                                                        | Type                                              | Mandatory/Optional |
 | :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
+| clientId              |  A merchant supplied client ID                                                    | String                                            | Mandatory          |
 | flyPayToken           |  A callback to obtain the wallet token asynchronously                             | `(@escaping (String) -> Void) -> Void`            | Mandatory          |
 | completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse, FlyPayError>) -> Void`   | Mandatory          |
 
@@ -84,6 +86,7 @@ The following sample code demonstrates the definition of the `FlyPayWidget`:
 ```Kotlin
 fun FlyPayWidget(
     modifier: Modifier,
+    clientId: String,
     token: (onTokenReceived: (String) -> Unit) -> Unit,
     completion: (Result<String>) -> Unit
 ) {...}
@@ -97,6 +100,7 @@ FlyPayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
+    clientId = merchantClientId,
     token = { callback ->
         // Obtain Wallet Token asynchronously using the callback
         // Example: Initiate Wallet Transaction to retrieve the wallet token
@@ -124,6 +128,7 @@ This subsection describes the various parameters required by the `FlyPayWidget` 
 | Name                  | Definition                                                                        | Type                                              | Mandatory/Optional |
 | :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
 | modifier              |  Compose modifier for container modifications                                     | `androidx.compose.ui.Modifier`                    | Optional           |
+| clientId              |  A merchant supplied client ID                                                    | String                                            | Mandatory          |
 | token                 |  A callback to obtain the wallet token asynchronously                             | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
 | completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
 
