@@ -82,7 +82,7 @@ fun ThreeDSWidget(
 The following sample code example demonstrates the usage within your application:
 
 ```Kotlin
-// Initialize the GiftCardWidget
+// Initialize the ThreeDSWidget
 ThreeDSWidget(token = threeDSToken) { result ->
     result.onSuccess { threeDSResult ->
          // Handle success - Update UI or perform actions
