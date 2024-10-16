@@ -22,12 +22,12 @@ View details are as follows:
 
 ```Swift
 CardDetailsWidget(gatewayId: String?,
-                accessToken: String,
-                actionText: String,
-                showCardTitle: Bool,
-                collectCardholderName: Bool,
-                allowSaveCard: SaveCardConfig?,
-                completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
+                  accessToken: String,
+                  actionText: String,
+                  showCardTitle: Bool,
+                  collectCardholderName: Bool,
+                  allowSaveCard: SaveCardConfig?,
+                  completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
 
 The following is an example of a SwiftUI View:
@@ -98,8 +98,8 @@ The below table describes the various inline validation errors linked to the `Ca
 | gatewayId     |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
 | accessToken   |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
 | actionText    |  Text in the main action button that initiates tokenisation (default is "Submit")                                     | String                                             | Optional          |
-| showCardTitle |  Shows or hides main title label                                                                 | Bool                                               | Optional          |
-| collectCardholderName |  Shows or hides cardholder name input                                                    | Bool                                               | Optional          |
+| showCardTitle       |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
+| collectCardholderName       |  A flag indicating whether to show the cardholder name input (default is true).                                               | Optional          |
 | allowSaveCard |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
 | completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`   | Mandatory          |
 
