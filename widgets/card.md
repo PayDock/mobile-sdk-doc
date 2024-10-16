@@ -99,7 +99,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | accessToken   |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
 | actionText    |  Text in the main action button that initiates tokenisation (default is "Submit")                                     | String                                             | Optional          |
 | showCardTitle       |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
-| collectCardholderName       |  A flag indicating whether to show the cardholder name input (default is true).                                               | Optional          |
+| collectCardholderName       |  A flag indicating whether to show the cardholder name input (default is true).                                               | Boolean          | Optional               |
 | allowSaveCard |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
 | completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`   | Mandatory          |
 
