@@ -25,6 +25,7 @@ CardDetailsWidget(gatewayId: String?,
                 accessToken: String,
                 actionText: String,
                 showCardTitle: Bool,
+                collectCardholderName: Bool,
                 allowSaveCard: SaveCardConfig?,
                 completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
@@ -46,8 +47,12 @@ struct CardDetailsWidgetView: View {
                     }
                     CardDetailsWidget(
                         gatewayId: "<insert gateway id>", // optional
-                        accessToken: "<insert access token>" // mandatory
-                        allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
+                        accessToken: "<insert access token>", // mandatory
+                        actionText: "<override default action button text>",
+                        showCardTitle: true, // whether to show card title view
+                        collectCardholderName: true, // whether to show cardholder name field
+                        allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", 
+                            privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
                         completion: { result in
                             switch result {
                             case .success(let token): // Handle token
@@ -92,10 +97,11 @@ The below table describes the various inline validation errors linked to the `Ca
 | ------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
 | gatewayId     |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
 | accessToken   |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
-| actionText    |  Text in the main action button that initiates tokenisation                                      | String                                             | Mandatory          |
-| showCardTitle |  Shows or hides internal widget main title label                                                 | Bool                                               | Mandatory          |
+| actionText    |  Text in the main action button that initiates tokenisation (default is "Submit")                                     | String                                             | Optional          |
+| showCardTitle |  Shows or hides main title label                                                                 | Bool                                               | Optional          |
+| collectCardholderName |  Shows or hides cardholder name input                                                    | Bool                                               | Optional          |
 | allowSaveCard |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
-| completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
+| completion    |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`   | Mandatory          |
 
 #### MobileSDK.SaveCardConfig
 
@@ -137,6 +143,7 @@ fun CardDetailsWidget(
     gatewayId: String?,
     actionText: String,
     showCardTitle: Boolean,
+    collectCardholderName: Boolean,
     allowSaveCard: SaveCardConfig?,
     completion: (Result<CardResult>) -> Unit
 ) {...}
@@ -152,6 +159,9 @@ CardDetailsWidget(
         .padding(16.dp), // optional
     accessToken = ACCESS_TOKEN, // required
     gatewayId = GATEWAY_ID, // optional
+    actionText: "<override default action button text>",
+    showCardTitle: true, // whether to show card title view
+    collectCardholderName: true, // whether to show cardholder name field
     allowSaveCard = SaveCardConfig(
         privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
             privacyPolicyURL = "https://www.privacypolicy.com"
@@ -199,6 +209,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | gatewayId           |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
 | actionText          |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
 | showCardTitle       |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
+| collectCardholderName       |  A flag indicating whether to show the cardholder name input (default is true).                                      | Boolean                        | Optional           |
 | allowSaveCard       |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |
 | completion          |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
 
