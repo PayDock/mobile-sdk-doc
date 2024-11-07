@@ -10,6 +10,119 @@ The MobileSDK provides a PayPal Vault Widget that integrates with the PayPal SDK
 
 ## iOS
 
+### 1. Overview
+
+This section provides a step-by-step guide on how to initialize and use the `PayPalSavePaymentSourceWidget` view in your application. The widget facilitates the card linking process using PayPal services.
+
+> **Note**:
+>
+> When the customer taps the link button for the PayPal Vault flow, the SDK handles the gateway communication between Paydock and PayPal before initialising the PayPal client web flow.
+
+The following sample code demonstrates the definition of the `PayPalSavePaymentSourceWidget`:
+
+```Swift
+    PayPalSavePaymentSourceWidget(config: PayPalVaultConfig,
+                                  completion: @escaping (Result<PayPalVaultResult, PayPalVaultError>) -> Void)
+    {...}
+```
+
+The following sample code example demonstrates the usage within your application:
+
+```Swift
+let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id")
+PayPalSavePaymentSourceWidget(config: config) { result in
+    switch result {
+    case let .success(payPalVaultResult):
+        // Handle success
+    case let .failure(error):
+        // Handle failure
+    }
+}
+```
+
+### 2. Parameter Definitions
+
+This subsection describes the various parameters required by the `PayPalSavePaymentSourceWidget` view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `PayPalSavePaymentSourceWidget`.
+
+#### PayPalSavePaymentSourceWidget
+
+| Name                  | Definition                                                                                     | Type                                                   | Mandatory/Optional |
+| :-------------------- | :--------------------------------------------------------------------------------------------- | :----------------------------------------------------- | :----------------- |
+| config                |  The configuration for PayPal Vault widget.                                                    | `PayPalVaultConfig`                                    | Mandatory          |
+| completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.  | `Result<PayPalVaultResult, PayPalVaultError> -> Void`  | Mandatory          |
+
+#### PayPalVaultConfig
+
+This subsection describes the various parameters required by the `PayPalVaultConfig`.
+
+The following sample code demonstrates the response structure:
+
+```Swift
+public struct PayPalVaultConfig {
+    public let accessToken: String
+    public let gatewayId: String
+    public let actionText: String?
+}
+```
+
+| Name           | Definition                                                                       | Type                       | Mandatory/Optional |
+| :------------- | :------------------------------------------------------------------------------- | :------------------------- | :----------------- |
+| accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
+| gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
+| actionText     |  The text to be displayed on the button. Defaults to "Link PayPal account".      | String                     | Optional           |
+
+
+#### PayPalVaultResult
+
+This subsection outlines the structure of the result or response object returned by the `PayPalSavePaymentSourceWidget` view. It details the format and components of the object, enabling you to handle the response effectively within your application.
+
+The following sample code demonstrates the response structure:
+
+```Swift
+public struct PayPalVaultResult {
+    public let token: String
+}
+```
+
+| Name           | Definition                                                                       | Type                       | 
+| :------------- | :------------------------------------------------------------------------------- | :------------------------- | 
+| token          |  The token generated from the PayPal Vault process.                              | String                     | 
+
+### 3. Callback Explanation
+
+#### Completion Callback
+
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<PayPalVaultResult, PayPalVaultError> -> Void` if the linking process is successful. The callback is used to handle the outcome of the PayPal Vault operation.
+
+#### 4. Error/Exceptions Mapping
+
+The following describes PayPal Vault exceptions that can be thrown. 
+
+```Swift
+public enum PayPalVaultError: Error {
+    case createSessionAuthToken(error: ErrorRes)
+    case createSetupToken(error: ErrorRes)
+    case getPayPalClientId(error: ErrorRes)
+    case sdkException(description: String)
+    case userCancelled
+    case unknownError(RequestError?)
+}
+```
+
+> **Note**:
+>
+> sdkException: result of vaulting a PayPal payment method completes with an error.
+> userCancelled: result of when a user cancels PayPal payment method vaulting.
+
+| Exception                | Description                                                                        | Error Model            |
+| :----------------------- | :--------------------------------------------------------------------------------- | :--------------------- |
+| createSessionAuthToken   |  Exception thrown when there is an error creating a session authorization token.   |  PayPalVaultError      |
+| createSetupToken         |  Exception thrown when there is an error creating a setup token.                   |  PayPalVaultError      |
+| getPayPalClientId        |  Exception thrown when there is an error retrieving the PayPal client ID.          |  PayPalVaultError      |
+| sdkException             |  Exception thrown during PayPal SDK operations.                                    |  PayPalVaultError      |
+| userCancelled            |  Exception thrown when user manually cancels the flow.                             |  PayPalVaultError      |
+| unknownError             |  Exception thrown during the PayPal SDK  process.                                  |  PayPalVaultError      |
+
 ## Android
 
 ## How to use the PayPalSavePaymentSourceWidget
