@@ -36,6 +36,10 @@ class PayPalDataCollectorUtil private constructor(
 }
 ```
 
+> **Note**:
+>
+> The util involves an async call, so it requires the initialisation to be called using `CoroutineScope`.
+
 The following sample code example demonstrates the usage within your application:
 
 ```Kotlin
@@ -82,6 +86,33 @@ data class PayPalDataCollectorConfig(
 | :------------- | :------------------------------------------------------------------------------- | :------------------------- | :----------------- |
 | accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
 | gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
+
+The following sample code demonstrates the `collectDeviceInfo()` usage and params:
+
+```Kotlin
+fun collectDeviceInfo(
+        context: Context,
+        hasUserLocationConsent: Boolean = false,
+        clientMetadataId: String? = null,
+        additionalData: Map<String, String>? = null,
+    ): String? {...}
+```
+
+```Kotlin
+val clientMetadataId = payPalDataCollectorUtil?.collectDeviceInfo(context)
+```
+
+> **Note**:
+>
+> All parameters are optional fields besides the `context` which mirrors the PayPal SDK `PayPalDataCollectorRequest`.
+
+| Name                      | Definition                                                                                                                                                     | Type                                       | Mandatory/Optional |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :----------------- |
+| context                   |  The OAuth access token required for authenticating API requests.                                                                                              | `Context`                                  | Mandatory          |
+| hasUserLocationConsent    |  Informs the SDK if your application has obtained consent from the user to collect location data in compliance with Google Play Developer Program policies.    | Boolean (default = false)                  | Optional           |
+| clientMetadataId          |  Client based metadata Id used when completing a transaction.                                                                                                  | String? (default = null)                   | Optional           |
+| additionalData            |  Additional metadata to link with data collection.                                                                                                             | `Map<String, String>?` (default = null)    | Optional           |
+
 
 #### 3. Error/Exceptions Mapping
 
