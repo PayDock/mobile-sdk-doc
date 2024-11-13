@@ -13,19 +13,6 @@ The MobileSDK provides a PayPal Data Collector Util that integrates with the Pay
 
 This section provides a step-by-step guide on how to initialise and use the `PayPalDataCollectorUtil` util in your application.
 
-The following sample code demonstrates the definition of the `PayPalDataCollectorUtil`:
-
-```Swift
-public class PayPalDataCollectorUtil {
-    let config: PayPalDataCollectorConfig
-    let clientId: String
-        
-    init(config: PayPalDataCollectorConfig, clientId: String) {
-        self.config = config
-        self.clientId = clientId
-    }
-```
-
 The following sample code example demonstrates the usage within your application:
 
 ```Swift
