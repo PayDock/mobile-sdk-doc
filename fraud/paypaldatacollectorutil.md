@@ -9,6 +9,71 @@ The MobileSDK provides a PayPal Data Collector Util that integrates with the Pay
 
 ## iOS
 
+### 1. Overview
+
+This section provides a step-by-step guide on how to initialise and use the `PayPalDataCollectorUtil` util in your application.
+
+The following sample code example demonstrates the usage within your application:
+
+```Swift
+do {
+    let config = PayPalDataCollectorConfig(accessToken: "yout_access_token", gatewayId: "your_gateway_id")
+    let util = try await PayPalDataCollectorUtil.initialise(config: config)
+    util.collectDeviceData(additionalData: [:]) // Add additional data dictionary if needed
+} catch let PayPalDataCollectorError.initialisationClientId(error: errorResponse) {
+    // Handle initialisation error
+} catch let PayPalDataCollectorError.unknownError(requestError) {
+    // Handle unknown error
+}
+```
+
+### 2. Parameter Definitions
+
+This subsection describes the various parameters required by the `PayPalDataCollectorUtil` util. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `PayPalDataCollectorUtil`.
+
+
+#### PayPalDataCollectorConfig
+
+This subsection describes the various parameters required by the `PayPalDataCollectorConfig`.
+
+The following sample code demonstrates the response structure:
+
+```Swift
+public struct PayPalDataCollectorConfig {
+    public let accessToken: String
+    public let gatewayId: String
+```
+
+| Name           | Definition                                                                       | Type                       | Mandatory/Optional |
+| :------------- | :------------------------------------------------------------------------------- | :------------------------- | :----------------- |
+| accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
+| gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
+
+The following sample code demonstrates the `collectDeviceData()` usage and params:
+
+```Swift
+public func collectDeviceData(additionalData: [String: String] = [:]) -> String
+```
+
+
+| Name                      | Definition                                            | Type                                       | Mandatory/Optional |
+| :------------------------ | :---------------------------------------------------- | :----------------------------------------- | :----------------- |
+| additionalData            |  Additional metadata to link with data collection.    | `[String, String]` (default = [:])         | Optional           |
+
+#### 3. Error/Exceptions Mapping
+
+The following describes `PayPalDataCollectorUtil` errors that can be thrown. 
+
+> **Note**:
+>
+> Any error that would be thrown, would only be related to the initalisation of the PayPal SDK DataCollector. 
+> This is to prevent the util class from being initialised if the PayPal SDK util cannot be initialised.
+
+| Error                             | Description                                                                               | Error Model                 |
+| :-------------------------------- | :---------------------------------------------------------------------------------------- | :-------------------------- |
+| initialisationClientId            |  Error thrown when trying to retrieve the clientId to initialise the DataCollector        |  PayPalDataCollectorError   |
+| unknownError                      |  Error thrown when an unknown error occurs in PayPalDataCollector initialisation.         |  PayPalDataCollectorError   |
+
 ## Android
 
 ## How to use the PayPalDataCollector
