@@ -11,7 +11,7 @@ The MobileSDK provides a PayPal Data Collector Util that integrates with the Pay
 
 ### 1. Overview
 
-This section provides a step-by-step guide on how to initialize and use the `PayPalDataCollectorUtil` util in your application.
+This section provides a step-by-step guide on how to initialise and use the `PayPalDataCollectorUtil` util in your application.
 
 The following sample code demonstrates the definition of the `PayPalDataCollectorUtil`:
 
@@ -25,10 +25,6 @@ public class PayPalDataCollectorUtil {
         self.clientId = clientId
     }
 ```
-
-> **Note**:
->
-> The util cannot be initialised directly. Instead you need to use the provided async function that will return the util instance.
 
 The following sample code example demonstrates the usage within your application:
 
