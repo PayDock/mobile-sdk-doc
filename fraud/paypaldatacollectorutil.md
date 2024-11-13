@@ -105,6 +105,7 @@ val clientMetadataId = payPalDataCollectorUtil?.collectDeviceInfo(context)
 > **Note**:
 >
 > All parameters are optional fields besides the `context` which mirrors the PayPal SDK `PayPalDataCollectorRequest`.
+> The `hasUserLocationConsent` flag, enables PayPal to collect necessary information required for Fraud Detection and Risk Management.
 
 | Name                      | Definition                                                                                                                                                     | Type                                       | Mandatory/Optional |
 | :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :----------------- |
