@@ -25,7 +25,8 @@ The following image showcases the full capabilities of the MobileSDK's theming p
 
 | Dimensions | Notes |
 | ----- | ----- |
-| cornerRadius | The rounding applied to UI Elements (e.g. Buttons, Text Fields) |
+| textFieldCornerRadius | The rounding applied to TextField Elements |
+| buttonCornerRadius | The rounding applied to Button Elements |
 | borderWidth | The thickness of borders of input fields and tabs |
 | spacing | The spacing between individual views on UI Elements |
 
@@ -245,7 +246,8 @@ MobileSDKTheme(
 		),
 	),
 	dimensions = MobileSDKTheme.Dimensions.themeDimensions(
-		cornerRadius = 4,
+		textFieldCornerRadius = 4,
+		buttonCornerRadius = 4,
 		shadow = 0,
 		borderWidth = 1,
 		spacing = 10
@@ -287,7 +289,8 @@ MobileSDKTheme(
 MobileSDKTheme(
 	// using default SDK colour scheme
 	dimensions = MobileSDKTheme.Dimensions.themeDimensions(
-		cornerRadius = 4,
+		textFieldCornerRadius = 4,
+		buttonCornerRadius = 4,
 		shadow = 0,
 		borderWidth = 1,
 		spacing = 10
