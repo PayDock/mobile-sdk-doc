@@ -102,13 +102,21 @@ Alongside the widget based errors/exceptions, there are generic errors that can 
 
 Generic exceptions that can be thrown are as follows:
 
-| Exception               | Description                                                                                                                                                      | Error Model                     |
-| :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ |
-| SocketTimeoutException  |  Signals that a timeout has occurred on a socket read or accept.                                                                                                 |  ConnectionError.Timeout        |
-| IOException             |  Signals that an I/O exception of some sort has occurred. This class is the general class of exceptions produced by failed or interrupted I/O operations.        |  ConnectionError.IOError        |
-| UnknownHostException    |  Thrown to indicate that the IP address of a host could not be determined.                                                                                       |  ConnectionError.UnknownHost    |
-| SerializationException  |  A generic exception indicating the problem in serialization or deserialization process.                                                                         |  ErrorModel.SerializationError  |
-| [Catch All]             |  A generic catch all mapping for any unknown exception not catered for specifically                                                                              |  ErrorModel.UnknownError        |
+```Kotlin
+TimeoutException(error: ApiErrorResponse) : GenericException(error.displayableMessage)
+ConnectionException(error: ApiErrorResponse) : GenericException(error.displayableMessage)
+DataParsingException(error: ApiErrorResponse) : GenericException(error.displayableMessage)
+GeneralException(error: ApiErrorResponse) : GenericException(error.displayableMessage)
+UnknownException(code: Int?, displayableMessage: String) : GenericException(displayableMessage)
+```
+
+| Exception               | Description                                                                                                                                                      | Error Model                                |
+| :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- |
+| TimeoutException        |  Represents a timeout error, commonly related to [SocketTimeoutException].                                                                                       |  ErrorModel.ConnectionError.Timeout        |
+| GeneralException        |  Represents a general error, related to common exceptions like [IOException], [IllegalStateException], etc.                                                      |  ErrorModel.ConnectionError.IOError        |
+| ConnectionException     |  Represents a connection error, commonly related to [UnknownHostException].                                                                                      |  ErrorModel.ConnectionError.UnknownHost    |
+| DataParsingException    |  Represents a data parsing error, commonly related to [SerializationException].                                                                                  |  ErrorModel.SerializationError             |
+| UnknownException        |  Represents an unknown error, acting as a catch-all for exceptions that do not fall into the predefined categories.                                              |  ErrorModel.UnknownError                   |
 
 The Mobile SDK provides some utility helpers to map the result exception to an `ErrorModel`, enabling easy mapping to display the exception message based on the type.
 
@@ -144,7 +152,13 @@ completion = { result ->
     result.onSuccess {
         ...
     }.onFailure { exception: Throwable ->
-        if (exception is [WidgetException]) {
+        if (exception is [GenericException]) {
+                val errorMessage = when (exception) {
+                    is [GenericException].TimeoutException -> exception.message
+                    is [GenericException].ConnectionException -> exception.message
+                }
+                Log.d("[WidgetFailure]", "Failure: $errorMessage")
+        } else if (exception is [WidgetException]) {
             val errorMessage = when (exception) {
                 is [WidgetException].ApiException -> exception.error.displayableMessage
                 is [WidgetException].UnknownException -> exception.message
@@ -164,6 +178,10 @@ In this method, a try block is used to directly obtain the result using the `get
 throw specific exceptions. If a WidgetException is thrown, it checks the specific type and handles it accordingly. 
 
 Additionally, a generic catch block handles any other exceptions, converting them to custom error messages for logging purposes.
+
+> **Note**:
+>
+> Using this approach, could result in [GenericExceptions] being ignored.
 
 ```Kotlin
 // Option 2: Use try catch block with getOrThrow extension function
@@ -188,6 +206,10 @@ completion = { result ->
 This method processes the result using the `onSuccess` and a custom `onFailure` extension function, similar to Option 1, 
 but with a focus on handling a specific exception type, WidgetException. If such an exception occurs, it checks the specific subtype and provides appropriate handling. Additionally, it uses `recoverCatching` to 
 handle and log generic exceptions that may not be related to WidgetException.
+
+> **Note**:
+>
+> Using this approach, could result in [GenericExceptions] being ignored.
 
 
 ```Kotlin
