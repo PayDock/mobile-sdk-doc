@@ -32,7 +32,7 @@ MobileSDK.shared.configureMobileSDK(config: config)
 | Name           | Definition                                                                                | Type                       | Mandatory/Optional |
 | :------------- | :---------------------------------------------------------------------------------------- | :------------------------- | :----------------  |
 | environment    |  The target environment that will be used within the SDK                                  | `MobileSDK.SDKEnvironment` | Mandatory          |
-| enableTestMode |  The target environment that will be used within the SDK                                  | Bool                       | Optional          |
+| enableTestMode |  Flag to enable test mode. This is only allowed in non-production environments            | Bool                       | Optional          |
 | theme          |  The theme to be applied across the Mobile SDK (colours, dimensions and font)             | `MobileSDK.Theme`          | Optional           |
 
 
