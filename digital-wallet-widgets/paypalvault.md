@@ -229,9 +229,9 @@ The following describes PayPal Vault exceptions that can be thrown.
 ```Kotlin
 CreateSessionAuthTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
 CreateSetupTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
-CreateSetupTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
-CreateSetupTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
-CreatePaymentTokenException(code: Int?, displayableMessage: String) : PayPalVaultException(displayableMessage)
+GetPayPalClientIdException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
+CreatePaymentTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
+PayPalSDKException(code: Int, description: String) : PayPalVaultException(description)
 CancellationException(displayableMessage: String) : PayPalVaultException(displayableMessage)
 UnknownException(displayableMessage: String) : PayPalVaultException(displayableMessage)
 ```
