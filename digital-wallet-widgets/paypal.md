@@ -52,7 +52,7 @@ struct PayPalExampleView: View {
 
 | Name             | Definition                                                                                        | Type                                            | Mandatory/Optional |
 | :--------------- | :------------------------------------------------------------------------------------------------ | :---------------------------------------------- | :----------------- |
-| viewState        |  Widget Options that are two way fields to alter view state                                       | ViewState                                       | Optional           |
+| viewState        |  View options that are two way fields to alter view state                                         | ViewState                                       | Optional           |
 | loadingDelegate  |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | WidgetLoadingDelegate                           | Optional           |
 | payPalToken      |  A callback to obtain the wallet token asynchronously                                             | `(String) -> Void) -> Void`                     | Mandatory          |
 | completion       |  Result callback with the Charge creation API response if successful, or error if not.            | `(Result<ChargeResponse, PayPalError>) -> Void` | Mandatory          |

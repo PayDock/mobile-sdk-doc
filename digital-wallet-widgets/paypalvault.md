@@ -53,7 +53,7 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 
 | Name                  | Definition                                                                                        | Type                                                   | Mandatory/Optional |
 | :-------------------- | :------------------------------------------------------------------------------------------------ | :----------------------------------------------------- | :----------------- |
-| viewState             |  View State that are two way fields to alter view state                                           | ViewState                                              | Optional           |
+| viewState             |  View options that are two way fields to alter view state                                         | ViewState                                              | Optional           |
 | config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                                    | Mandatory          |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                                | Optional           |
 | completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `Result<PayPalVaultResult, PayPalVaultError> -> Void`  | Mandatory          |

@@ -99,7 +99,7 @@ The below table describes the various inline validation errors linked to the `Ca
 
 | Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
-| viewState                |  View State that are two way fields to alter view state                                          | ViewState                                          | Optional           |
+| viewState                |  View options that are two way fields to alter view state                                        | ViewState                                          | Optional           |
 | gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
 | accessToken              |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
 | actionText               |  Text in the main action button that initiates tokenisation (default is "Submit")                | String                                             | Optional           |
