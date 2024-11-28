@@ -20,6 +20,8 @@ Use the following to initialize the **PayPalView**:
 
 ```Swift
 PayPalWidget(
+    viewState: ViewState?,
+    loadingDelegate: WidgetLoadingDelegate?,
     payPalTokenHandler: @escaping (_ payPalToken: @escaping (String) -> Void) -> Void,
     completion: @escaping (Result<ChargeResponse, PayPalError>) -> Void)
 ```
@@ -46,9 +48,25 @@ struct PayPalExampleView: View {
 
 ### 2. Parameter Definitions
 
+#### PayPalWidget
+
+| Name             | Definition                                                                                        | Type                                            | Mandatory/Optional |
+| :--------------- | :------------------------------------------------------------------------------------------------ | :---------------------------------------------- | :----------------- |
+| viewState        |  Widget Options that are two way fields to alter view state                                       | ViewState                                       | Optional           |
+| loadingDelegate  |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | WidgetLoadingDelegate                           | Optional           |
+| payPalToken      |  A callback to obtain the wallet token asynchronously                                             | `(String) -> Void) -> Void`                     | Mandatory          |
+| completion       |  Result callback with the Charge creation API response if successful, or error if not.            | `(Result<ChargeResponse, PayPalError>) -> Void` | Mandatory          |
+
+#### MobileSDK.ViewState
+
+| Name                   | Definition                                                              | Type                                               | Mandatory/Optional |
+| ---------------------- | ----------------------------------------------------------------------- | -------------------------------------------------- |------------------  |
+| state                  |  Sets the state the widget should be placed in                          | Enum (disabled, none)                              | Mandatory          |
+
 The following definitions provide a more detailed overview of the parameters used in the Paypal initialisation, and the potential error messages that may occur.
 
 #### MobileSDK.ChargeResponse
+
 | Name     | Definition                                       | Type          | Mandatory/Optional |
 | :------- | :----------------------------------------------- | :------------ | :----------------  |
 | status   |  Status of a PayPal payment after completion.    | Swift.String  | Mandatory          |
@@ -81,8 +99,10 @@ The following sample code demonstrates the definition of the `PayPalWidget`:
 ```Kotlin
 fun PayPalWidget(
     modifier: Modifier,
+    enabled: Boolean,
     token: (onTokenReceived: (String) -> Unit) -> Unit,
     requestShipping: Boolean,
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<ChargeResponse>) -> Unit
 ) {...}
 ```
@@ -95,13 +115,15 @@ PayPalWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
+    enabled: Boolean, // optional
     token = { callback ->
         // Obtain Wallet Token asynchronously using the callback
         // Example: Initiate Wallet Transaction to retrieve the wallet token
         val walletToken = // ... retrieve the token
         callback(walletToken)
     },
-    requestShipping = false //optional (default: true)
+    requestShipping = false //optional (default: true),
+    loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { chargeResponse ->
@@ -120,12 +142,14 @@ This subsection describes the various parameters required by the `PayPalWidget` 
 
 #### PayPalWidget
 
-| Name                  | Definition                                                                               | Type                                              | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
-| modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                    | Optional           |
-| token                 |  A callback to obtain the wallet token asynchronously                                    | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
-| requestShipping       |  Flag passed to determine if PayPal will ask the user for their shipping address.        | Boolean (default = `true`)                        | Optional           |
-| completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
+| Name                  | Definition                                                                                      | Type                                          | Mandatory/Optional |
+| :-------------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
+| modifier              |  Compose modifier for container modifications                                                   | `androidx.compose.ui.Modifier`                | Optional           |
+| enabled               |  Controls the enabled state of this Widget.                                                     | Boolean                                       | Optional           |
+| token                 |  A callback to obtain the wallet token asynchronously                                           | `(onTokenReceived: (String) -> Unit) -> Unit` | Mandatory          |
+| requestShipping       |  Flag passed to determine if PayPal will ask the user for their shipping address.               | Boolean (default = `true`)                    | Optional           |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.| `WidgetLoadingDelegate`                       | Optional           |
+| completion            |  Result callback with the Charge creation API response if successful, or error if not.          | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
 
 #### ChargeResponse
 
