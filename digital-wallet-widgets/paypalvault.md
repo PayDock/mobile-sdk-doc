@@ -100,7 +100,6 @@ The following describes PayPal Vault exceptions that can be thrown.
 
 ```Swift
 public enum PayPalVaultError: Error {
-    case createSessionAuthToken(error: ErrorRes)
     case createSetupToken(error: ErrorRes)
     case getPayPalClientId(error: ErrorRes)
     case sdkException(description: String)
@@ -116,7 +115,6 @@ public enum PayPalVaultError: Error {
 
 | Exception                | Description                                                                        | Error Model            |
 | :----------------------- | :--------------------------------------------------------------------------------- | :--------------------- |
-| createSessionAuthToken   |  Exception thrown when there is an error creating a session authorization token.   |  PayPalVaultError      |
 | createSetupToken         |  Exception thrown when there is an error creating a setup token.                   |  PayPalVaultError      |
 | getPayPalClientId        |  Exception thrown when there is an error retrieving the PayPal client ID.          |  PayPalVaultError      |
 | sdkException             |  Exception thrown during PayPal SDK operations.                                    |  PayPalVaultError      |
