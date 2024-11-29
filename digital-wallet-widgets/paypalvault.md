@@ -227,7 +227,6 @@ The `completion` callback is invoked after the payment operation is completed. I
 The following describes PayPal Vault exceptions that can be thrown. 
 
 ```Kotlin
-CreateSessionAuthTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
 CreateSetupTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
 GetPayPalClientIdException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
 CreatePaymentTokenException(error: ApiErrorResponse) : PayPalVaultException(error.displayableMessage)
@@ -243,7 +242,6 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 
 | Exception                         | Description                                                                                   | Error Model            |
 | :-------------------------------- | :-------------------------------------------------------------------------------------------- | :--------------------- |
-| CreateSessionAuthTokenException   |  Exception thrown when there is an error creating a session authorization token.              |  PayPalVaultError      |
 | CreateSetupTokenException         |  Exception thrown when there is an error creating a setup token.                              |  PayPalVaultError      |
 | GetPayPalClientIdException        |  Exception thrown when there is an error retrieving the PayPal client ID.                     |  PayPalVaultError      |
 | CreatePaymentTokenException       |  Exception thrown when there is an error creating a payment token.                            |  PayPalVaultError      |
