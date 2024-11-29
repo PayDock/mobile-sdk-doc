@@ -21,6 +21,7 @@ The following sample code demonstrates how to use the `GiftCardView` composable 
 GiftCardWidget(
     storePin: Bool = true,
     accessToken: String,
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: @escaping (Result<String, Error>) -> Void)
 ```
 
@@ -32,7 +33,9 @@ The following is an example of a GiftCardView initialisation:
 struct GiftCardExampleView: View {
     var body: some View {
         VStack {
-            GiftCardWidget(storePin: storePin, accessToken: "<insert access token>") { result in
+            GiftCardWidget(storePin: storePin, 
+                           accessToken: "<insert access token>", 
+                           loadingDelegate: <Delegate Instance>) { result in
                 switch result {
                 case .success(let token): // Handle token
                 case .failure(let error): // Handle error
@@ -46,11 +49,12 @@ struct GiftCardExampleView: View {
 ### 2. Parameter Definitions
 
 #### MobileSDK.GiftCardView
-| Name         | Definition                                                           | Type                              | Mandatory/Optional |
-| :----------- | :------------------------------------------------------------------- | :-------------------------------- | :----------------  |
-| storePin     |  A flag to be able to use a PIN value for the initial transaction.   | String (default = true)           | Optional           |
-| accessToken  |  The access token used for authentication with the backend service.  | String                            | Mandatory          |
-| completion   |  A completion block that returns result with token or error.         | `(Result<String, Error>) -> Void` | Mandatory          |
+| Name            | Definition                                                                                       | Type                              | Mandatory/Optional |
+| :-----------    | :----------------------------------------------------------------------------------------------  | :-------------------------------- | :----------------  |
+| storePin        |  A flag to be able to use a PIN value for the initial transaction.                               | String (default = true)           | Optional           |
+| accessToken     |  The access token used for authentication with the backend service.                              | String                            | Mandatory          |
+| loadingDelegate |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate             | Optional           |
+| completion      |  A completion block that returns result with token or error.                                     | `(Result<String, Error>) -> Void` | Mandatory          |
 
 #### MobileSDK.GiftCardError
 

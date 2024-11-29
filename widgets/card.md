@@ -21,12 +21,14 @@ The Card Details Widget is displayed as a SwiftUI sliding bottom sheet.
 View details are as follows:
 
 ```Swift
-CardDetailsWidget(gatewayId: String?,
+CardDetailsWidget(viewState: ViewState? = nil
+                  gatewayId: String?,
                   accessToken: String,
                   actionText: String,
                   showCardTitle: Bool,
                   collectCardholderName: Bool,
                   allowSaveCard: SaveCardConfig?,
+                  loadingDelegate: WidgetLoadingDelegate? = nil,
                   completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
 
@@ -46,6 +48,7 @@ struct CardDetailsWidgetView: View {
                         isSheetPresented = true
                     }
                     CardDetailsWidget(
+                        viewState: ViewState? = ViewState(state = .disabled), // optional
                         gatewayId: "<insert gateway id>", // optional
                         accessToken: "<insert access token>", // mandatory
                         actionText: "<override default action button text>",
@@ -53,6 +56,7 @@ struct CardDetailsWidgetView: View {
                         collectCardholderName: true, // whether to show cardholder name field
                         allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", 
                             privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
+                        loadingDelegate: "<assigned delegate class>",
                         completion: { result in
                             switch result {
                             case .success(let token): // Handle token
@@ -95,13 +99,21 @@ The below table describes the various inline validation errors linked to the `Ca
 
 | Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
+| viewState                |  View options that are two way fields to alter view state                                        | ViewState                                          | Optional           |
 | gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
 | accessToken              |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
 | actionText               |  Text in the main action button that initiates tokenisation (default is "Submit")                | String                                             | Optional           |
 | showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional           |
 | collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional           |
 | allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
+| loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate                              | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
+
+#### MobileSDK.ViewState
+
+| Name                   | Definition                                                              | Type                                               | Mandatory/Optional |
+| ---------------------- | ----------------------------------------------------------------------- | -------------------------------------------------- |------------------  |
+| state                  |  Sets the state the widget should be placed in                          | Enum (disabled, none)                              | Mandatory          |
 
 #### MobileSDK.SaveCardConfig
 
@@ -139,12 +151,14 @@ The following sample code demonstrates the definition of the `CardDetailsWidget`
 @Composable
 fun CardDetailsWidget(
     modifier: Modifier,
+    enabled: Boolean,
     accessToken: String,
     gatewayId: String?,
     actionText: String,
     showCardTitle: Boolean,
     collectCardholderName: Boolean,
     allowSaveCard: SaveCardConfig?,
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<CardResult>) -> Unit
 ) {...}
 ```
@@ -157,6 +171,7 @@ CardDetailsWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
+    enabled: Boolean, // optional
     accessToken = ACCESS_TOKEN, // required
     gatewayId = GATEWAY_ID, // optional
     actionText: "<override default action button text>",
@@ -167,6 +182,7 @@ CardDetailsWidget(
             privacyPolicyURL = "https://www.privacypolicy.com"
         )
     ),
+    loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
     completion = { result ->
         result.onSuccess { cardResult ->
             // Handle success - Update UI or perform actions
@@ -205,12 +221,14 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | Name                    | Definition                                                                                                | Type                           | Mandatory/Optional |
 | :------------------     | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
 | modifier                |  Compose modifier for container modifications.                                                            | `Modifier`                     | Optional           |
+| enabled                 |  Controls the enabled state of this Widget.                                                               | Boolean                        | Optional           |
 | accessToken             |  The access token used for authentication with the backend service.                                       | String                         | Mandatory          |
 | gatewayId               |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
 | actionText              |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
 | showCardTitle           |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
 | collectCardholderName   |  A flag indicating whether to show the cardholder name input (default is true).                           | Boolean                        | Optional           |
 | allowSaveCard           |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |
+| loadingDelegate         |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`        | Optional           |
 | completion              |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
 
 #### SaveCardConfig

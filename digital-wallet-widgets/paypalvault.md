@@ -21,7 +21,9 @@ This section provides a step-by-step guide on how to initialize and use the `Pay
 The following sample code demonstrates the definition of the `PayPalSavePaymentSourceWidget`:
 
 ```Swift
-    PayPalSavePaymentSourceWidget(config: PayPalVaultConfig,
+    PayPalSavePaymentSourceWidget(viewState: ViewState?,
+                                  config: PayPalVaultConfig,
+                                  loadingDelegate: WidgetLoadingDelegate?,
                                   completion: @escaping (Result<PayPalVaultResult, PayPalVaultError>) -> Void)
     {...}
 ```
@@ -30,7 +32,10 @@ The following sample code example demonstrates the usage within your application
 
 ```Swift
 let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id")
-PayPalSavePaymentSourceWidget(config: config) { result in
+PayPalSavePaymentSourceWidget(viewState: ViewState(state: .disabled),
+                              config: config,
+                              loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading) 
+                              { result in
     switch result {
     case let .success(payPalVaultResult):
         // Handle success
@@ -46,10 +51,12 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 
 #### PayPalSavePaymentSourceWidget
 
-| Name                  | Definition                                                                                     | Type                                                   | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------------- | :----------------------------------------------------- | :----------------- |
-| config                |  The configuration for PayPal Vault widget.                                                    | `PayPalVaultConfig`                                    | Mandatory          |
-| completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.  | `Result<PayPalVaultResult, PayPalVaultError> -> Void`  | Mandatory          |
+| Name                  | Definition                                                                                        | Type                                                   | Mandatory/Optional |
+| :-------------------- | :------------------------------------------------------------------------------------------------ | :----------------------------------------------------- | :----------------- |
+| viewState             |  View options that are two way fields to alter view state                                         | ViewState                                              | Optional           |
+| config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                                    | Mandatory          |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                                | Optional           |
+| completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `Result<PayPalVaultResult, PayPalVaultError> -> Void`  | Mandatory          |
 
 #### PayPalVaultConfig
 
@@ -140,7 +147,9 @@ The following sample code demonstrates the definition of the `PayPalSavePaymentS
 ```Kotlin
 fun PayPalSavePaymentSourceWidget(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     config: PayPalVaultConfig,
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<PayPalVaultResult>) -> Unit,
 ) {...}
 ```
@@ -151,10 +160,12 @@ The following sample code example demonstrates the usage within your application
 // Initialize the PayPalSavePaymentSourceWidget
 PayPalSavePaymentSourceWidget(
         modifier = Modifier.padding(16.dp),
+        enabled: Boolean, // optional
         config = PayPalVaultConfig(
             accessToken = [access_token],
             gatewayId = [pay_pal_gateway_id]
-        )
+        ),
+        loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
 ) { result ->
     // Handle the result of the operation
     result.onSuccess { token ->
@@ -173,11 +184,13 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 
 #### PayPalSavePaymentSourceWidget
 
-| Name                  | Definition                                                                                     | Type                                              | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
-| modifier              |  Compose modifier for container modifications                                                  | `androidx.compose.ui.Modifier`                    | Optional           |
-| config                |  The configuration for PayPal Vault widget.                                                    | `PayPalVaultConfig`                               | Mandatory          |
-| completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.  | `(Result<PayPalVaultResult>) -> Unit`             | Mandatory          |
+| Name                  | Definition                                                                                        | Type                                              | Mandatory/Optional |
+| :-------------------- | :------------------------------------------------------------------------------------------------ | :------------------------------------------------ | :----------------- |
+| modifier              |  Compose modifier for container modifications                                                     | `androidx.compose.ui.Modifier`                    | Optional           |
+| enabled               |  Controls the enabled state of this Widget.                                                       | Boolean                                           | Optional           |
+| config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                               | Mandatory          |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                           | Optional           |
+| completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `(Result<PayPalVaultResult>) -> Unit`             | Mandatory          |
 
 #### PayPalVaultConfig
 
