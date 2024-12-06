@@ -166,14 +166,14 @@ The code for the `AfterpayWidget` is as follows. None of the values are populate
 fun AfterpayWidget(
     modifier: Modifier,
     config: AfterpaySDKConfig,
-    enabled: Boolean, // default to true
+    enabled: Boolean,
     token: (onTokenReceived: (String) -> Unit) -> Unit,
     selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit,
     selectShippingOption: (
         shippingOption: AfterpayShippingOption,
         provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit
     ) -> Unit,
-    loadingDelegate: WidgetLoadingDelegate?, // default to null
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<ChargeResponse>) -> Unit
 ) {...}
 ```
