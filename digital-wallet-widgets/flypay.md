@@ -86,8 +86,10 @@ The following sample code demonstrates the definition of the `FlyPayWidget`:
 ```Kotlin
 fun FlyPayWidget(
     modifier: Modifier,
+    enabled: Boolean = true,   
     clientId: String,
     token: (onTokenReceived: (String) -> Unit) -> Unit,
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<String>) -> Unit
 ) {...}
 ```
@@ -128,8 +130,10 @@ This subsection describes the various parameters required by the `FlyPayWidget` 
 | Name                  | Definition                                                                        | Type                                              | Mandatory/Optional |
 | :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
 | modifier              |  Compose modifier for container modifications                                     | `androidx.compose.ui.Modifier`                    | Optional           |
+| enabled              |  A boolean to enable or disable the payment button                                 | Boolean                                           | Optional           |
 | clientId              |  A merchant supplied client ID                                                    | String                                            | Mandatory          |
 | token                 |  A callback to obtain the wallet token asynchronously                             | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.                     | `WidgetLoadingDelegate`                           | Optional          |
 | completion            |  Result callback with the *FlyPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
 
 ### 3. Callback Explanation
@@ -137,6 +141,21 @@ This subsection describes the various parameters required by the `FlyPayWidget` 
 #### Token Callback
 
 The `token` callback obtains the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which you must invoke with the wallet token once it is obtained. 
+
+### WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Kotlin
+interface WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    fun widgetLoadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    fun widgetLoadingDidFinish()
+}
+```
 
 #### Completion Callback
 

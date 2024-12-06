@@ -166,12 +166,14 @@ The code for the `AfterpayWidget` is as follows. None of the values are populate
 fun AfterpayWidget(
     modifier: Modifier,
     config: AfterpaySDKConfig,
+    enabled: Boolean,
     token: (onTokenReceived: (String) -> Unit) -> Unit,
     selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit,
     selectShippingOption: (
         shippingOption: AfterpayShippingOption,
         provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit
     ) -> Unit,
+    loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<ChargeResponse>) -> Unit
 ) {...}
 ```
@@ -261,9 +263,11 @@ This subsection describes the parameters required by the `AfterpayWidget` compos
 | :-------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications.                                           | `androidx.compose.ui.Modifier`                                                                                                               | Optional           |
 | config                |  The configuration for the Afterpay SDK.                                                 | `AfterpaySDKConfig`                                                                                                                          | Mandatory          |
+| enabled               |  A boolean to enable or disable the payment button.                                      | Boolean                                                                                                                 | Optional           |
 | token                 |  A callback to obtain the wallet token asynchronously.                                   | `(onTokenReceived: (String) -> Unit) -> Unit`                                                                                                | Mandatory          |
 | selectAddress         |  A callback to handle selection of shipping address.                                     | `(address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit`                                          | Optional           |
 | selectShippingOption  |  A callback to handle selection of shipping option.                                      | `selectShippingOption: (shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit)` | Optional           |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.                           | `WidgetLoadingDelegate`                                                                             | Optional          |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                                                                                           | Mandatory          |
 
 #### AfterpaySDKConfig
@@ -402,9 +406,28 @@ This is used in conjunction with the Afterpay SDK `AfterpayCheckoutV2Handler.onS
 The `selectShippingOption` callback handles the selection of shipping options. It receives a callback function `(shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit) -> Unit` as a parameter.
 This is used in conjunction with the Afterpay SDK `AfterpayCheckoutV2Handler.onShippingOptionDidChange` which is invoked when `ShippingOption` changes and the selected option can be updated.
 
+### WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Kotlin
+interface WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    fun widgetLoadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    fun widgetLoadingDidFinish()
+}
+```
+
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback handles the outcome of the payment operation.
+
+> **Note**:
+>
+> If an error does occur within the Afterpay process, it would first return an `Result.failure` with the error exception. But it will also return a `Result.success` after completing the charge returning a `ChargeResponse` with the failed/declined result.
 
 ### 4. Error/Exceptions Mapping
 

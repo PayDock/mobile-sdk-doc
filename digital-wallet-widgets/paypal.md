@@ -203,6 +203,21 @@ data class ChargeResponse(
 
 The `token` callback is used to obtain the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which should be invoked with the wallet token once it's obtained.
 
+### WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Kotlin
+interface WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    fun widgetLoadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    fun widgetLoadingDidFinish()
+}
+```
+
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.
