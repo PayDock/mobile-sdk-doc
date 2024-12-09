@@ -109,6 +109,7 @@ The following describes PayPal Vault exceptions that can be thrown.
 public enum PayPalVaultError: Error {
     case createSetupToken(error: ErrorRes)
     case getPayPalClientId(error: ErrorRes)
+    case createPaymentToken(error: ErrorRes)
     case sdkException(description: String)
     case userCancelled
     case unknownError(RequestError?)
@@ -124,6 +125,7 @@ public enum PayPalVaultError: Error {
 | :----------------------- | :--------------------------------------------------------------------------------- | :--------------------- |
 | createSetupToken         |  Exception thrown when there is an error creating a setup token.                   |  PayPalVaultError      |
 | getPayPalClientId        |  Exception thrown when there is an error retrieving the PayPal client ID.          |  PayPalVaultError      |
+| createPaymentToken       |  Exception thrown when there is an error creating a payment token.                 |  PayPalVaultError      |
 | sdkException             |  Exception thrown during PayPal SDK operations.                                    |  PayPalVaultError      |
 | userCancelled            |  Exception thrown when user manually cancels the flow.                             |  PayPalVaultError      |
 | unknownError             |  Exception thrown during the PayPal SDK  process.                                  |  PayPalVaultError      |
