@@ -31,7 +31,7 @@ The following sample code demonstrates the definition of the `PayPalSavePaymentS
 The following sample code example demonstrates the usage within your application:
 
 ```Swift
-let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id")
+let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id", actionText: nil)
 PayPalSavePaymentSourceWidget(viewState: ViewState(state: .disabled),
                               config: config,
                               loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading) 
@@ -88,12 +88,15 @@ The following sample code demonstrates the response structure:
 ```Swift
 public struct PayPalVaultResult {
     public let token: String
+    public let email: String
+
 }
 ```
 
-| Name           | Definition                                                                       | Type                       | 
-| :------------- | :------------------------------------------------------------------------------- | :------------------------- | 
-| token          |  The token generated from the PayPal Vault process.                              | String                     | 
+| Name           | Definition                                                   | Type                       | 
+| :------------- | :----------------------------------------------------------- | :------------------------- | 
+| token          |  The token generated from the PayPal Vault process.          | String                     | 
+| email          |  The email associated with the user.                         | String                     | 
 
 ### 3. Callback Explanation
 
