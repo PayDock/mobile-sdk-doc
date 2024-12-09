@@ -77,6 +77,7 @@ The following sample code demonstrates the definition of the `GiftCardWidget`:
 @Composable
 fun GiftCardWidget(
     modifier: Modifier,
+    enabled: Boolean,
     accessToken: String,
     storePin: Boolean,
     completion: (Result<String>) -> Unit
@@ -116,9 +117,25 @@ This subsection describes the various parameters required by the `GiftCardWidget
 | modifier            |  Compose modifier for container modifications                                                             | `Modifier`                  | Optional           |
 | accessToken         |  The access token used for authentication with the backend service.                                       | String                      | Mandatory          |
 | storePin            |  A flag to be able to use a PIN value for the initial transaction.                                        | String (default = true)     | Optional           |
+| loadingDelegate     |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`     | Optional           |
 | completion          |  Result callback with the gift card details tokenisation API response if successful, or error if not.     | `(Result<String>) -> Unit`  | Mandatory          |
 
 ### 3. Callback Explanation
+
+### WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Kotlin
+interface WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    fun widgetLoadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    fun widgetLoadingDidFinish()
+}
+```
 
 #### Completion Callback
 
