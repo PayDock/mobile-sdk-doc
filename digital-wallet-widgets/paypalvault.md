@@ -31,7 +31,7 @@ The following sample code demonstrates the definition of the `PayPalSavePaymentS
 The following sample code example demonstrates the usage within your application:
 
 ```Swift
-let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id")
+let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id", actionText: nil)
 PayPalSavePaymentSourceWidget(viewState: ViewState(state: .disabled),
                               config: config,
                               loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading) 
@@ -88,12 +88,15 @@ The following sample code demonstrates the response structure:
 ```Swift
 public struct PayPalVaultResult {
     public let token: String
+    public let email: String
+
 }
 ```
 
-| Name           | Definition                                                                       | Type                       | 
-| :------------- | :------------------------------------------------------------------------------- | :------------------------- | 
-| token          |  The token generated from the PayPal Vault process.                              | String                     | 
+| Name           | Definition                                                   | Type                       | 
+| :------------- | :----------------------------------------------------------- | :------------------------- | 
+| token          |  The token generated from the PayPal Vault process.          | String                     | 
+| email          |  The email associated with the user.                         | String                     | 
 
 ### 3. Callback Explanation
 
@@ -109,6 +112,7 @@ The following describes PayPal Vault exceptions that can be thrown.
 public enum PayPalVaultError: Error {
     case createSetupToken(error: ErrorRes)
     case getPayPalClientId(error: ErrorRes)
+    case createPaymentToken(error: ErrorRes)
     case sdkException(description: String)
     case userCancelled
     case unknownError(RequestError?)
@@ -124,6 +128,7 @@ public enum PayPalVaultError: Error {
 | :----------------------- | :--------------------------------------------------------------------------------- | :--------------------- |
 | createSetupToken         |  Exception thrown when there is an error creating a setup token.                   |  PayPalVaultError      |
 | getPayPalClientId        |  Exception thrown when there is an error retrieving the PayPal client ID.          |  PayPalVaultError      |
+| createPaymentToken       |  Exception thrown when there is an error creating a payment token.                 |  PayPalVaultError      |
 | sdkException             |  Exception thrown during PayPal SDK operations.                                    |  PayPalVaultError      |
 | userCancelled            |  Exception thrown when user manually cancels the flow.                             |  PayPalVaultError      |
 | unknownError             |  Exception thrown during the PayPal SDK  process.                                  |  PayPalVaultError      |
