@@ -166,7 +166,9 @@ PayPalSavePaymentSourceWidget(
         enabled: Boolean, // optional
         config = PayPalVaultConfig(
             accessToken = [access_token],
-            gatewayId = [pay_pal_gateway_id]
+            gatewayId = [pay_pal_gateway_id],
+            actionText = "custom button text", // optional
+            icon = ButtonIcon.Vector(Icons.Filled.Add) || ButtonIcon.DrawableRes(R.drawable.ic_add)// optional
         ),
         loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
 ) { result ->
@@ -205,7 +207,8 @@ The following sample code demonstrates the response structure:
 data class PayPalVaultConfig(
     val accessToken: String,
     val gatewayId: String,
-    val actionText: String? = null
+    val actionText: String? = null,
+    val icon: ButtonIcon? = ButtonIcon.DrawableRes(R.drawable.ic_link)
 )
 ```
 
@@ -214,6 +217,7 @@ data class PayPalVaultConfig(
 | accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
 | gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
 | actionText     |  The text to be displayed on the button. Defaults to "Link PayPal account".      | String                     | Optional           |
+| icon           |  The icon to display on the button. Allows for `ImageVector` or `DrawableRes`.   | `ButtonIcon`               | Optional           |
 
 
 #### PayPalVaultResult
