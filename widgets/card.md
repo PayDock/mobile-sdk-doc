@@ -100,12 +100,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
 | viewState                |  View options that are two way fields to alter view state                                        | ViewState                                          | Optional           |
-| gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
-| accessToken              |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
-| actionText               |  Text in the main action button that initiates tokenisation (default is "Submit")                | String                                             | Optional           |
-| showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional           |
-| collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional           |
-| allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | SaveCardConfig                                     | Optional           |
+| config                   |  Configuration options for the card details widget                                               | `CardDetailsWidgetConfig`                                             | Required           |
 | loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate                              | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
@@ -114,6 +109,18 @@ The below table describes the various inline validation errors linked to the `Ca
 | Name                   | Definition                                                              | Type                                               | Mandatory/Optional |
 | ---------------------- | ----------------------------------------------------------------------- | -------------------------------------------------- |------------------  |
 | state                  |  Sets the state the widget should be placed in                          | Enum (disabled, none)                              | Mandatory          |
+
+
+#### MobileSDK.CardDetailsWidgetConfig
+
+| Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
+| gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
+| accessToken              |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
+| actionText               |  Text in the main action button that initiates tokenisation (default is "Submit")                | String                                             | Optional           |
+| showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional           |
+| collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional           |
+| allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | `SaveCardConfig`                                     | Optional           |
 
 #### MobileSDK.SaveCardConfig
 
@@ -222,7 +229,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | :------------------     | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
 | modifier                |  Compose modifier for container modifications.                                                            | `Modifier`                     | Optional           |
 | enabled                 |  Controls the enabled state of this Widget.                                                               | Boolean                        | Optional           |
-| accessToken             |  The access token used for authentication with the backend service.                                       | String                         | Mandatory          |
+| config                  |  Configuration options for the card details widget                                                        | `CardDetailsWidgetConfig`                                             | Required           |
 | gatewayId               |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
 | actionText              |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
 | showCardTitle           |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
@@ -230,6 +237,16 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | allowSaveCard           |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |
 | loadingDelegate         |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`        | Optional           |
 | completion              |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
+
+#### CardDetailsWidgetConfig
+
+| Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
+| gatewayId               |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
+| actionText              |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
+| showCardTitle           |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
+| collectCardholderName   |  A flag indicating whether to show the cardholder name input (default is true).                           | Boolean                        | Optional           |
+| allowSaveCard           |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |  
 
 #### SaveCardConfig
 | Name                | Definition                                                                                                   | Type                     | Mandatory/Optional |
