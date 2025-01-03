@@ -77,7 +77,25 @@ public struct PayPalVaultConfig {
 | accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
 | gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
 | actionText     |  The text to be displayed on the button. Defaults to "Link PayPal account".      | String                     | Optional           |
+| icon           |  Type of the icon you want to display in the PayPal Vault button.                | Icon                       | Optional           |
 
+#### PayPalVaultConfig.Icon
+
+Enum defining various icon types for the PayPalVault button
+
+```Swift
+public enum Icon {
+    case none
+    case defaultIcon
+    case customIcon(image: Image)
+}
+```
+
+| Name              | Definition                                               | Type           | Mandatory/Optional |
+| :---------------- | :------------------------------------------------------- | :------------- | :----------------- |
+| none              |  Vault button will not display any icon.                 | Enum           | Optional           |
+| defaultIcon       |  Vault button will display the default Link icon         | Enum           | Optional           |
+| customIcon(Image) |  Vault button will display the Image() that you provide  | Enum           | Optional           |
 
 #### PayPalVaultResult
 
