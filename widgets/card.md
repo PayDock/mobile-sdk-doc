@@ -48,7 +48,7 @@ struct CardDetailsWidgetView: View {
                         isSheetPresented = true
                     }
                     CardDetailsWidget(
-                        viewState: ViewState? = ViewState(state = .disabled), // optional
+                    config: CardDetailsWidgetConfig(
                         gatewayId: "<insert gateway id>", // optional
                         accessToken: "<insert access token>", // mandatory
                         actionText: "<override default action button text>",
@@ -56,8 +56,12 @@ struct CardDetailsWidgetView: View {
                         collectCardholderName: true, // whether to show cardholder name field
                         allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", 
                             privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
-                        loadingDelegate: "<assigned delegate class>",
-                        completion: { result in
+                        schemeSupport: SupportedSchemesConfig(
+                            supportedSchemes: "<insert supported card schemes (set)",
+                            enableValidation: true
+                        )
+                    ),
+                    completion: { result in
                             switch result {
                             case .success(let token): // Handle token
                             case .failure(let error): // Handle error
@@ -80,6 +84,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | Card number     | "*Invalid card number*"                                                                             | Empty Field                                       |
 | Card number     | "*Invalid card number*"                                                                             | Field contains non-number                         |
 | Card number     | "*Invalid card number*"                                                                             | Luhn Algorithm Failure                            |
+| Card number     | "*Card type not accepted*"                                                                          | Card scheme not supported                         |
 | Expiry          | “*Invalid expiry date*”                                                                             | Empty Field                                       |
 | Expiry          | “*Invalid expiry date*”                                                                             | Field contains non-number                         |
 | Expiry          | “*Invalid expiry date*”                                                                             | Field matches expected size                       |
@@ -120,7 +125,8 @@ The below table describes the various inline validation errors linked to the `Ca
 | actionText               |  Text in the main action button that initiates tokenisation (default is "Submit")                | String                                             | Optional           |
 | showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional           |
 | collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional           |
-| allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | `SaveCardConfig`                                     | Optional           |
+| allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | `SaveCardConfig`                                   | Optional           |
+| schemeSupport            |  Configures the card scheme support and validation behavior                                      | `SupportedSchemesConfig`                           | Optional           |
 
 #### MobileSDK.SaveCardConfig
 
@@ -135,6 +141,13 @@ The below table describes the various inline validation errors linked to the `Ca
 | ---------------------- | ----------------------------------------------------------------------- | ---------- |------------------  |
 | privacyPolicyText      |  Sets the text of the tappable second line of the component             | String     | Mandatory          |
 | privacyPolicyURL       |  Sets the URL link that opens in external browser on tap                | String     | Mandatory          |
+
+#### MobileSDK.SupportedSchemesConfig
+
+| Name                   | Definition                                                                   | Type                                               | Mandatory/Optional |
+| ---------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------- |------------------  |
+| supportedSchemes       |  A unique set of supported card schemes                                      | `Set<CardScheme>`                                  | Optional           |
+| enableValidation       |  A flag to determine if validation should run for the `supportedSchemes`     | Boolean                                            | Optional           |
 
 #### MobileSDK.CardDetailsError
 
@@ -155,16 +168,10 @@ This section provides a step-by-step guide on how to initialize and use the `Car
 The following sample code demonstrates the definition of the `CardDetailsWidget`:
 
 ```Kotlin
-@Composable
 fun CardDetailsWidget(
     modifier: Modifier,
     enabled: Boolean,
-    accessToken: String,
-    gatewayId: String?,
-    actionText: String,
-    showCardTitle: Boolean,
-    collectCardholderName: Boolean,
-    allowSaveCard: SaveCardConfig?,
+    config: CardDetailsWidgetConfig,
     loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<CardResult>) -> Unit
 ) {...}
@@ -179,14 +186,20 @@ CardDetailsWidget(
         .fillMaxWidth()
         .padding(16.dp), // optional
     enabled: Boolean, // optional
-    accessToken = ACCESS_TOKEN, // required
-    gatewayId = GATEWAY_ID, // optional
-    actionText: "<override default action button text>",
-    showCardTitle: true, // whether to show card title view
-    collectCardholderName: true, // whether to show cardholder name field
-    allowSaveCard = SaveCardConfig(
-        privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
-            privacyPolicyURL = "https://www.privacypolicy.com"
+    config = CardDetailsWidgetConfig(
+        accessToken = ACCESS_TOKEN, // required
+        gatewayId = GATEWAY_ID, // optional
+        actionText: "<override default action button text>",
+        showCardTitle: true, // whether to show card title view
+        collectCardholderName: true, // whether to show cardholder name field
+        allowSaveCard = SaveCardConfig(
+            privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
+                privacyPolicyURL = "https://www.privacypolicy.com"
+            )
+        ),
+        schemeSupport = SupportedSchemeConfig(
+            supportedSchemes = CardScheme.entries.toSet(),
+            enableValidation = true // optional
         )
     ),
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
@@ -211,7 +224,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | Card number     | "*Invalid card number*"                                                                             | Empty Field                                       |
 | Card number     | "*Invalid card number*"                                                                             | Field contains non-number                         |
 | Card number     | "*Invalid card number*"                                                                             | Luhn Algorithm Failure                            |
-| Card number     | "*Invalid card number*"                                                                             | Exceeds max length (19)                           |
+| Card number     | "*Card type not accepted*"                                                                          | Card scheme not supported                         |
 | Expiry          | “*Invalid expiry date*”                                                                             | Empty Field                                       |
 | Expiry          | “*Invalid expiry date*”                                                                             | Field contains non-number                         |
 | Expiry          | “*Invalid expiry date*”                                                                             | Field matches expected size                       |
@@ -229,12 +242,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | :------------------     | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
 | modifier                |  Compose modifier for container modifications.                                                            | `Modifier`                     | Optional           |
 | enabled                 |  Controls the enabled state of this Widget.                                                               | Boolean                        | Optional           |
-| config                  |  Configuration options for the card details widget                                                        | `CardDetailsWidgetConfig`                                             | Required           |
-| gatewayId               |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
-| actionText              |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
-| showCardTitle           |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
-| collectCardholderName   |  A flag indicating whether to show the cardholder name input (default is true).                           | Boolean                        | Optional           |
-| allowSaveCard           |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |
+| config                  |  Configuration options for the card details widget                                                        |`CardDetailsWidgetConfig`       | Required           |
 | loadingDelegate         |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`        | Optional           |
 | completion              |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
 
@@ -259,6 +267,13 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | :------------------ | :---------------------------------------------------------------------------------------------------- | :--------------- | :----------------  |
 | privacyPolicyText   |  The text displayed to the user for the privacy policy link. (default is "Read our privacy policy")   | String           | Optional           |
 | privacyPolicyURL    |  The URL of the privacy policy document.                                                              | String           | Mandatory          |
+
+#### SupportedSchemesConfig
+
+| Name                   | Definition                                                                                    | Type                                               | Mandatory/Optional |
+| ---------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------- |------------------  |
+| supportedSchemes       |  A unique set of supported card schemes                                                       | `Set<CardScheme>`                                  | Optional           |
+| enableValidation       |  A flag to determine if validation should run for the `supportedSchemes` (default is false).  | Boolean                                            | Optional           |
 
 #### CardResult
 | Name                | Definition                                                                                           | Type             | Mandatory/Optional |
