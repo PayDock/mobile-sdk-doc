@@ -22,12 +22,7 @@ View details are as follows:
 
 ```Swift
 CardDetailsWidget(viewState: ViewState? = nil
-                  gatewayId: String?,
-                  accessToken: String,
-                  actionText: String,
-                  showCardTitle: Bool,
-                  collectCardholderName: Bool,
-                  allowSaveCard: SaveCardConfig?,
+                  config: CardDetailsWidgetConfig,
                   loadingDelegate: WidgetLoadingDelegate? = nil,
                   completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
@@ -36,41 +31,46 @@ The following is an example of a SwiftUI View:
 
 ```Swift
 struct CardDetailsWidgetView: View {
-    @State var isSheetPresented = false
-    @State var showAlert = false
-    @State var alertMessage = ""
-
     var body: some View {
         NavigationStack {
             ScrollView {
-                HStack {
-                    Button("Launch card sheet") {
-                        isSheetPresented = true
-                    }
-                    CardDetailsWidget(
-                    config: CardDetailsWidgetConfig(
-                        gatewayId: "<insert gateway id>", // optional
-                        accessToken: "<insert access token>", // mandatory
-                        actionText: "<override default action button text>",
-                        showCardTitle: true, // whether to show card title view
-                        collectCardholderName: true, // whether to show cardholder name field
-                        allowSaveCard: SaveCardConfig(consentText: "Remember this card for next time.", 
-                            privacyPolicyConfig: SaveCardConfig.PrivacyPolicyConfig(privacyPolicyText: "Read our privacy policy", privacyPolicyURL: "https://www.google.com")),
-                        schemeSupport: SupportedSchemesConfig(
-                            supportedSchemes: "<insert supported card schemes (set)",
-                            enableValidation: true
-                        )
-                    ),
+                CardDetailsWidget(
+                    viewState: nil,
+                    config: getConfig(),
+                    loadingDelegate: nil,
                     completion: { result in
-                            switch result {
-                            case .success(let token): // Handle token
-                            case .failure(let error): // Handle error
-                            }
-                            showAlert = true
-                    })
-                }
+                    switch result {
+                    case .success(let result): // handle success
+                    case .failure(let error): // handle failure
+                    }
+                })
             }
         }
+    }
+    
+    private func getConfig() -> CardDetailsWidgetConfig {
+        let privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
+            privacyPolicyText: "<insert link text>",
+            privacyPolicyURL: "<insert link URL string>")
+        
+        let saveCardConfig = SaveCardConfig(
+            consentText: "<insert consent text>",
+            privacyPolicyConfig: privacyPolicyConfig)
+        
+        let supportedSchemesConfig = SupportedSchemesConfig(
+            supportedSchemes: [.amex, .visa], // optional
+            enableValidation: true)
+        
+        let config = CardDetailsWidgetConfig(
+            gatewayId: "<insert gateway id>", // optional
+            accessToken: "<access token>", // mandatory
+            actionText: "<override default action text>", // optional
+            showCardTitle: true, // whether to show card title view
+            collectCardholderName: true, // whether to show cardholder name field
+            allowSaveCard: saveCardConfig,
+            schemeSupport: supportedSchemesConfig)
+        
+        return config
     }
 }
 ```
@@ -105,7 +105,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
 | viewState                |  View options that are two way fields to alter view state                                        | ViewState                                          | Optional           |
-| config                   |  Configuration options for the card details widget                                               | `CardDetailsWidgetConfig`                                             | Required           |
+| config                   |  Configuration options for the card details widget                                               | `CardDetailsWidgetConfig`                          | Required           |
 | loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate                              | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
