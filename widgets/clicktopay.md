@@ -212,11 +212,9 @@ The following describes ClickToPay exceptions that can be thrown.
 ```Kotlin
 CheckoutErrorException(displayableMessage: String) : ClickToPayException(error.displayableMessage)
 WebViewException(code: Int?, displayableMessage: String) : ClickToPayException(displayableMessage)
-CancellationException(displayableMessage: String) : ClickToPayException(displayableMessage)
 ```
 
 | Exception                 | Description                                                                                   | Error Model        |
 | :------------------------ | :-------------------------------------------------------------------------------------------- | :----------------- |
 | CheckoutErrorException    |  Exception thrown when there is an error during the checkout process for Click to Pay.        |  ClickToPayError   |
 | WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  ClickToPayError   |
-| CancellationException     |  Exception thrown when there is a cancellation error related to Click to Pay.                 |  ClickToPayError   |
