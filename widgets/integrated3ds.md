@@ -12,7 +12,86 @@ The 3DS Widget integrates with the Paydock JS client-sdk within a WebView compon
 
 ### 1. Overview
 
+This section provides a step-by-step guide on how to initialize and use the `Integrated3DSWidget` view in your application. The widget performs payment verification using 3DS service.
+
+It validates the token to ensure it's valid and of the correct format before rending the UI.
+
+The following sample code demonstrates the definition of the `Integrated3DSWidget`:
+
+```Swift
+Integrated3DSWidget(
+    token: String,
+    baseURL: URL?,
+    completion: @escaping (Result<Integrated3DSResult, Integrated3DSError>) -> Void
+) {...}
+```
+
+The following sample code example demonstrates the usage within your application:
+
+```Swift
+Integrated3DSWidget(
+    token: <Your 3DS token>,
+    baseURL: <Your base URL>,
+    completion: { result in
+        switch result {
+        case .success(let result):
+            // handle success
+        case .failure(let error):
+            // handle failure
+        }
+})
+```
+
+The widget returns an object that contains the status of the 3DS flow and the 3DS token.
+
+
 ### 2. Parameter definitions
+
+#### Integrated3DSWidget 
+
+| Name                | Definition                                                                       | Type                                                           | Mandatory/Optional |
+| :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------------------- | :----------------  |
+| token               |  The integrated 3DS token used for integrated 3DS widget initialisation.         | String                                                         | Mandatory          |
+| baseURL             |  A URL that is used to resolve relative URLs within the webview.                 | URL                                                            | Optional           |
+| completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<Integrated3DSResult, Integrated3DSError>) -> Void`    | Mandatory          |
+
+#### MobileSDK.Integrated3DSResult
+
+| Name         | Definition                                                                      | Type                        | Mandatory/Optional |
+| :----------- | :------------------------------------------------------------------------------ | :-------------------------- | :----------------  |
+| event        |  Type of the event that happened in the 3DS flow                                | EventType                   | Mandatory          |
+| charge3dsId  |  The Charge ID associated with the 3DS transaction to return to the merchant    | String                      | Mandatory          |
+
+`EventType` enum represents all the possible outcomes of a 3DS flow allowing you to handle it.
+
+#### MobileSDK.EventType
+
+| Name                         | Definition                                                         | Type                             | Mandatory/Optional |
+| :--------------------------- | :--------------------------------------------------------------------- | :--------------------------- | :----------------  |
+| chargeAuthSuccess            |  Represents a successful 3DS charge authorization                     | EnumCase                      | Mandatory          |
+| chargeAuthReject             |  Represents a rejected 3DS charge authorization                       | EnumCase                      | Mandatory          |
+| chargeAuthCancelled          |  Represents a charge cancellation event in the 3DS flow               | EnumCase                      | Mandatory          |
+| additionalDataCollectSuccess |  Indicates that additional data collection was successfully completed | EnumCase                      | Mandatory          |
+| additionalDataCollectReject  |  Indicates that additional data collection was rejected               | EnumCase                      | Mandatory          |
+| chargeAuth                   |  Represents a general charge authorization event in the 3DS flow      | EnumCase                      | Mandatory          |
+
+### 3. Callback Explanation
+
+#### Completion Callback
+
+The `completion` callback is invoked after the Integrated 3DS is completed. It receives a `Result<Integrated3DSResult, Integrated3DSError>` if the payment is authenticated. The callback handles the outcome of the payment operation.
+
+### 4. Error/Exceptions Mapping
+
+The following describes Integrated 3DS exceptions that can be thrown. 
+
+#### MobileSDK.Integrated3DSError
+
+| Name                      | Description                                                                        | Error Result            |
+| :------------------------ | :--------------------------------------------------------------------------------- | :---------------------- |
+| webViewFailed             |  Error thrown when there is an error while communicating with a WebView.           |  NSError                |
+| invalidToken              |  Exception thrown when the token is invalid and/or is of the incorrect format/type |  NSError                |
+| unknown                   |  Error thrown when there is an unknown error related to 3DS.                       |  nil                    |
 
 ## Android
 
