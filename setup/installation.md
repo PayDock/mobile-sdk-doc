@@ -29,7 +29,7 @@ You can configure repository access using Swift Package Manager.
 https://github.com/PayDock/ios-mobile-sdk
 ```
 
-2. Select the latest version number from our release page and enter it into the __Dependency rule__ field.
+2. Select the latest version number from our release page and enter it into the __Dependency Rule__ field.
 
 ![Add package](/img/Package_url.png)
 
@@ -40,8 +40,8 @@ https://github.com/PayDock/ios-mobile-sdk
 
 #### Adding MobileSDK to your own Package.swift
 
-In case your project is a package and you want to include MobileSDK dependency to it you should add MobileSDK directly to your own Package.swif.
-Example of how to add it to "YourProject" Package.swift
+In case your project is a package and you want to include MobileSDK dependency to it you should add MobileSDK directly to your own __Package.swift__.
+Example of how to add it to __YourProject__ Package.swift
 
 ```Swift
 let package = Package(
