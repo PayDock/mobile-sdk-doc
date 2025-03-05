@@ -11,7 +11,7 @@ Get up and running using the PayDock API in just a few minutes.
 
 2. Once you have an account, follow our [integration guide](https://docs.paydock.com/#getting-started) on how to configure and setup your server integration.
 
-3. After authenticating your API keys, integrate the SDK into either your [iOS](#ios) or [Android](#android) application by following the instructions in this guide.
+3. After authenticating your API keys, integrate the SDK into either your [iOS](#setup-the-paydock-ios-sdk) or [Android](#setup-the-paydock-android-sdk) application by following the instructions in this guide.
 
 ## Setup the Paydock iOS SDK
 
@@ -43,73 +43,70 @@ The SDK has now been added to your project. To use the SDK in your project, you 
 
 ## Setup the Paydock Android SDK
 
-This guide walks you through the steps to add the Paydock Android MobileSDK into your Android application. 
+This guide walks you through the steps to add the Paydock Android MobileSDK into your Android application. Follow the instructions below to ensure a smooth setup process.
 
 ### Step 1: Configure Repository Access
 
-Before you can access the MobileSDK, you need to:
+The Paydock Android SDK is publicly available via [Jitpack](https://www.jitpack.io/#PayDock/android-mobile-sdk), eliminating the need for authentication. To include it in your project, you must add the Jitpack repository to your project-level configuration.
 
-1. Create a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) on your Github account. This is your authentication, enabling you to access the MobileSDK through Github's repository package registry. The package registry is where the dependencies for the MobileSDK are located. 
+#### Updating the Project-Level `build.gradle` (Groovy)
 
-2. Replace the `<username>` in the instructions with your Github username. 
-
-3. Replace the `<access_token>` in the instructions with the **Personal Access Token** you have created in step 1. 
-
-The following examples in both Groovy and Kotlin demonstrate how this looks like. 
-
-#### Project Level `build.gradle`
-
-#### Groovy
+Add the following Jitpack repository to your `build.gradle` file at the project level:
 
 ```groovy
-repositories {
-  // ... other repositories
-  maven {
-      url "https://maven.pkg.github.com/Paydock/android-mobile-sdk"
-      name "GitHubPackages"
-      credentials {
-            username "<username>"
-            password "<access_token>"
-      }
-  }
-}
-```
-
-#### Kotlin DSL
-```kotlin
-repositories {
-    // ... other repositories
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/Paydock/android-mobile-sdk")
-        credentials(HttpHeaderCredentials) {
-            username = "<username>"
-            password = "<access_token>"
-        }
+allprojects {
+    repositories {
+        // ... other repositories
+        maven { url 'https://jitpack.io' }
     }
 }
 ```
 
-### Step 2: Add SDK Dependency
+#### Updating the Project-Level `build.gradle` (Kotlin DSL)
 
-In your app/module level _build.gradle_, add the MobileSDK dependency. Replace `<latest_version>` with the latest version of the SDK.
+If you are using Kotlin DSL, modify your `settings.gradle.kts` file as shown below:
 
-Note:
-You can find the latest version of the SDK in our documentation or on [Github](https://github.com/PayDock/android-mobile-sdk).
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        // Include Jitpack to fetch the SDK
+        maven("https://jitpack.io")
+    }
+}
+```
 
-#### Project Level `build.gradle`
+This ensures that Gradle can resolve dependencies from Jitpack.
+
+### Step 2: Add the Paydock SDK Dependency
+
+Once Jitpack is configured, you need to add the Paydock MobileSDK as a dependency in your module-level `build.gradle` file.
+
+#### Finding the Latest Version
+
+You can always find the latest version of the SDK on [Jitpack](https://www.jitpack.io/#PayDock/android-mobile-sdk). Replace `<latest_version>` in the examples below with the most recent version available.
+
+You can find the latest version of the SDK on .
+
+#### Adding the Dependency in build.gradle (Groovy)
 
 #### Groovy
 ```groovy
 dependencies {
-  implementation 'com.paydock:mobile-sdk:<latest_version>'
-}
-```
-#### Kotlin DSL
-```kotlin
-dependencies {
-  implementation("com.paydock:mobile-sdk:<latest_version>")
+    // Add the Paydock SDK dependency
+    implementation 'com.github.PayDock:android-mobile-sdk:<latest_version>'
 }
 ```
 
-That's it! You have successfully configured your project to use the Paydock Android SDK. You can now start using the SDK to integrate Paydock's payment processing capabilities into your Android application.
+#### Adding the Dependency in build.gradle.kts (Kotlin DSL)
+```kotlin
+dependencies {
+    // Add the Paydock SDK dependency
+    implementation("com.github.PayDock:android-mobile-sdk:<latest_version>")
+}
+```
+
+### Step 3: Sync and Verify
+
+After adding the dependency, sync your Gradle project to fetch the required files. Ensure that the dependency is correctly resolved before proceeding with development.
+
+That's it! Your project is now set up to use the Paydock Android SDK via Jitpack. You can start integrating Paydock's payment processing features into your Android application.
