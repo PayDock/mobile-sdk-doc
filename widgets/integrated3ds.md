@@ -90,8 +90,8 @@ The following describes Integrated 3DS exceptions that can be thrown.
 | Name                      | Description                                                                        | Error Result            |
 | :------------------------ | :--------------------------------------------------------------------------------- | :---------------------- |
 | webViewFailed             |  Error thrown when there is an error while communicating with a WebView.           |  NSError                |
-| invalidToken              |  Exception thrown when the token is invalid and/or is of the incorrect format/type |  NSError                |
-| unknown                   |  Error thrown when there is an unknown error related to 3DS.                       |  nil                    |
+| invalidToken              |  Exception thrown when the token is invalid and/or is of the incorrect format/type |  nil                    |
+| mappingFailed             |  Exception thrown when there is an issue mapping a web event a SDK expected event. |  nil                    |
 
 ## Android
 
