@@ -15,21 +15,59 @@ Get up and running using the PayDock API in just a few minutes.
 
 ## Setup the Paydock iOS SDK
 
-This guide walks you through how to integrate the Paydock Android SDK into your Android application. 
+This guide walks you through how to integrate the Paydock Android SDK into your Android application.
 
 ### Step 1: Configure Repository Access
 
-You can configure repository access using either Swift Package Manager or CocoaPods.
+You can configure repository access using Swift Package Manager.
 
-#### Swift Package Manager
+#### Adding package through Xcode
 
-1. In Xcode, select _File > Add Packages_. Enter the following:
+1. In Xcode, select __File > Add Packages__. Enter the following:
+
 ```
 https://github.com/PayDock/ios-mobile-sdk
 ```
-2. Select the latest version number from our release page. 
 
-3. Add the version number when you are prompted and click _Add Package_. 
+2. Select the latest version number from our release page and enter it into the __Dependency rule__ field.
+
+![Add package](/img/Package_url.png)
+
+3. Confirm by clicking on __Add Package__.
+
+![Add package confirm](/img/Package_add.png)
+
+
+#### Adding MobileSDK to your own Package.swift
+
+In case your project is a package and you want to include MobileSDK dependency to it you should add MobileSDK directly to your own Package.swif.
+Example of how to add it to "YourProject" Package.swift
+
+```Swift
+let package = Package(
+    name: "YourProject",
+    platforms: [
+        .iOS(.v16)
+    ],
+    products: [
+        .library(
+            name: "YourProject",
+            targets: ["YourProject"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/PayDock/ios-mobile-sdk", exact: "2.1.1") // Insert latest version number
+    ],
+    targets: [
+        .target(
+            name: "YourProject",
+            dependencies: [
+                .product(name: "MobileSDK", package: "mobile-sdk-ios")
+            ],
+            path: "Sources"
+        ),
+    ]
+)
+```
 
 ### Step 2: Add SDK Dependency
 
