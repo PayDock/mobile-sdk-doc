@@ -73,7 +73,7 @@ The widget returns an object that contains the status of the 3DS flow and the 3D
 | chargeAuthChallenge          |  epresents a 3DS charge authorization with a challenge                | EnumCase                      | Mandatory          |
 | chargeAuthDecoupled          |  Represents a decoupled 3DS charge authorization                      | EnumCase                      | Mandatory          |
 | chargeAuthInfo               |  Represents an informational event related to a 3DS charge            | EnumCase                      | Mandatory          |
-| error                        |  Represents an error event related to a 3DS charge                    | EnumCase                      | Mandatory          |
+| chargeError                  |  Represents an error event related to a 3DS charge                    | EnumCase                      | Mandatory          |
 
 ### 3. Callback Explanation
 
@@ -91,7 +91,7 @@ The following describes Standalone 3DS exceptions that can be thrown.
 | :------------------------ | :--------------------------------------------------------------------------------- | :---------------------- |
 | webViewFailed             |  Error thrown when there is an error while communicating with a WebView.           |  NSError                |
 | invalidToken              |  Exception thrown when the token is invalid and/or is of the incorrect format/type |  NSError                |
-| unknown                   |  Error thrown when there is an unknown error related to 3DS.                       |  nil                    |
+| mappingFailed             |  Exception thrown when there is an issue mapping a web event a SDK expected event. |  nil                    |
 
 ## Android
 
