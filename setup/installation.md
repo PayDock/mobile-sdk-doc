@@ -15,7 +15,7 @@ Get up and running using the PayDock API in just a few minutes.
 
 ## Setup the Paydock iOS SDK
 
-This guide walks you through how to integrate the Paydock Android SDK into your Android application.
+This guide walks you through how to integrate the Paydock iOS SDK into your iOS application.
 
 ### Step 1: Configure Repository Access
 
@@ -77,7 +77,7 @@ Choose the project file where you want to access the SDK components. In this fil
 import MobileSDK
 ```
 
-The SDK has now been added to your project. To use the SDK in your project, you must include `import MobileSDK` at the top of the file where you will use the SDK. You can then move to the next step and [initialize](/setup/initialise) your MobileSDK.
+The SDK has now been added to your project. To use the SDK in your project, you must include `import MobileSDK` at the top of the file where you will use the SDK. You can then move to the next step and [initialize](/setup/initialise.md) your MobileSDK.
 
 ## Setup the Paydock Android SDK
 
