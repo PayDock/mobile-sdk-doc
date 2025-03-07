@@ -248,7 +248,6 @@ MobileSDKTheme(
 	dimensions = MobileSDKTheme.Dimensions.themeDimensions(
 		textFieldCornerRadius = 4,
 		buttonCornerRadius = 4,
-		shadow = 0,
 		borderWidth = 1,
 		spacing = 10
 	),
@@ -291,7 +290,6 @@ MobileSDKTheme(
 	dimensions = MobileSDKTheme.Dimensions.themeDimensions(
 		textFieldCornerRadius = 4,
 		buttonCornerRadius = 4,
-		shadow = 0,
 		borderWidth = 1,
 		spacing = 10
 	)
@@ -361,12 +359,12 @@ MobileSDKTheme(
 
 #### com.paydock.ThemeDimensions
 
-| Name            | Definition                                                                                              | Type                           |
-| :-------------- | :------------------------------------------------------------------------------------------------------ | :----------------------------- |
-| cornerRadius    |  The corner radius applied to shapes used by buttons, cards and certain backgrounds.                    | `androidx.compose.ui.unit.Dp`  |
-| shadow          |  The shadow that can be applied to provide elevation to components                                      | `androidx.compose.ui.unit.Dp`  |
-| borderWidth     |  The border width is the width applied as stroke width to container borders, outline buttons.           | `androidx.compose.ui.unit.Dp`  |
-| spacing         |  The spacing applied to content, specifically columns and rows and acts as a divider between content.   | `androidx.compose.ui.unit.Dp`  |
+| Name            		   | Definition                                                                                              | Type                           |
+| :----------------------- | :------------------------------------------------------------------------------------------------------ | :----------------------------- |
+| textFieldCornerRadius    |  The corner radius applied to shapes used by textfields (`OutlinedTextField`).                    		 | `androidx.compose.ui.unit.Dp`  |
+| buttonCornerRadius       |  The corner radius applied to shapes used by buttons.                    								 | `androidx.compose.ui.unit.Dp`  |
+| borderWidth     		   |  The border width is the width applied as stroke width to container borders, outline buttons.           | `androidx.compose.ui.unit.Dp`  |
+| spacing         		   |  The spacing applied to content, specifically columns and rows and acts as a divider between content.   | `androidx.compose.ui.unit.Dp`  |
 
 #### com.paydock.ThemeFont
 
