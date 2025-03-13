@@ -152,10 +152,10 @@ data class PayPalDataCollectorConfig(
 | accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
 | gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
 
-The following sample code demonstrates the `collectDeviceInfo()` usage and params:
+The following sample code demonstrates the `collectDeviceId()` usage and params:
 
 ```Kotlin
-fun collectDeviceInfo(
+fun collectDeviceId(
         context: Context,
         hasUserLocationConsent: Boolean = false,
         clientMetadataId: String? = null,
@@ -164,7 +164,7 @@ fun collectDeviceInfo(
 ```
 
 ```Kotlin
-val clientMetadataId = payPalDataCollectorUtil?.collectDeviceInfo(context)
+val clientMetadataId = payPalDataCollectorUtil?.collectDeviceId(context)
 ```
 
 > **Note**:
