@@ -291,7 +291,6 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 > **Note**:
 >
 > PayPalSDKException: result of vaulting a PayPal payment method completes with an error.
-> MissingParamsException: inidicates missing either the `client_id` and/or `setup_token` before initialising PayPal SDK. This is an edge case and is only used as a pre-caution.
 
 | Exception                         | Description                                                                                   | Error Model            |
 | :-------------------------------- | :-------------------------------------------------------------------------------------------- | :--------------------- |
@@ -299,6 +298,5 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 | GetPayPalClientIdException        |  Exception thrown when there is an error retrieving the PayPal client ID.                     |  PayPalVaultError      |
 | CreatePaymentTokenException       |  Exception thrown when there is an error creating a payment token.                            |  PayPalVaultError      |
 | PayPalSDKException                |  Exception thrown during PayPal SDK operations.                                               |  PayPalVaultError      |
-| MissingParamsException            |  Exception thrown before initialising PayPal SDK if missing params.                           |  PayPalVaultError      |
 | CancellationException             |  Exception thrown when cancelling PayPal vault flow.                                          |  PayPalVaultError      |
 | UnknownException                  |  Exception thrown when an unknown error occurs in PayPal Vault operations.                    |  PayPalVaultError      |
