@@ -19,7 +19,7 @@ The following sample code example demonstrates the usage within your application
 do {
     let config = PayPalDataCollectorConfig(accessToken: "yout_access_token", gatewayId: "your_gateway_id")
     let util = try await PayPalDataCollectorUtil.initialise(config: config)
-    let correlationId = util.collectDeviceId(additionalData: [:]) // Add additional data dictionary if needed
+    let correlationId = try util.collectDeviceId(additionalData: [:]) // Add additional data dictionary if needed
 } catch let PayPalDataCollectorError.initialisationClientId(error: errorResponse) {
     // Handle initialisation error
 } catch let PayPalDataCollectorError.parsingError
