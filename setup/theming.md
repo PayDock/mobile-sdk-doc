@@ -107,7 +107,7 @@ let colors = Colors(
     border: Color.yourBorderColor,
     placeholder: Color.yourPlaceholderColor)
 
-let theme = Theme(colors: darkThemeColors)
+let theme = Theme(colors: colors)
 
 let config = MobileSDKConfig(environment: .staging, theme: theme)
 MobileSDK.shared.configureMobileSDK(config: config)
@@ -138,7 +138,7 @@ MobileSDK.shared.configureMobileSDK(config: config)
 
 ### Recommended way of providing colors to the SDK
 
-The Mobile SDK supports light mode, dark mode, and high-contrast accessibility colors. It is your responsibility to provide colors that adapt to these modes.
+The Mobile SDK supports light mode, dark mode, and high-contrast accessibility colors.
 To take full advantage of this support, it is recommended to create Color Assets in your app's Asset Catalog and provide them in the **Theme()** object. While you can also provide colors directly to the **Theme()** object without using the Asset Catalog, this approach will not support dark mode or high-contrast accessibility.
 
 Each color you define should include appropriate color variants for different traits.
