@@ -291,7 +291,6 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 > **Note**:
 >
 > PayPalSDKException: result of vaulting a PayPal payment method completes with an error.
-> CancellationException: result of when a user cancels PayPal payment method vaulting. But can also thrown due to initialisation issues between SDK and the PayPal Vault flow.
 
 | Exception                         | Description                                                                                   | Error Model            |
 | :-------------------------------- | :-------------------------------------------------------------------------------------------- | :--------------------- |
@@ -299,5 +298,5 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 | GetPayPalClientIdException        |  Exception thrown when there is an error retrieving the PayPal client ID.                     |  PayPalVaultError      |
 | CreatePaymentTokenException       |  Exception thrown when there is an error creating a payment token.                            |  PayPalVaultError      |
 | PayPalSDKException                |  Exception thrown during PayPal SDK operations.                                               |  PayPalVaultError      |
-| CancellationException             |  Exception thrown during the PayPal SDK  process.                                             |  PayPalVaultError      |
+| CancellationException             |  Exception thrown when cancelling PayPal vault flow.                                          |  PayPalVaultError      |
 | UnknownException                  |  Exception thrown when an unknown error occurs in PayPal Vault operations.                    |  PayPalVaultError      |

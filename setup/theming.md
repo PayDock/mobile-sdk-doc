@@ -40,7 +40,7 @@ The following image showcases the full capabilities of the MobileSDK's theming p
 
 Match the look and feel of the SDK to your app using the iOS SDK's visual customization capabilities. 
 
-Easily tweak the SDK by passing the optional **Theme()** object when initializing the SDK. This enables customization of the color scheme for Light and Dark mode, and customization of the font and the dimensions of the elements.
+Easily tweak the SDK by passing the optional **Theme()** object when initializing the SDK. This enables customization of the color scheme, customization of the font and the dimensions of the elements.
 
 When the **Theme()** object is not provided, the SDK uses it's default values.
 
@@ -48,8 +48,7 @@ The **Theme()** component is as follows:
 
 ```Swift
 public struct Theme {
-    var lightThemeColors: Colors
-    var darkThemeColors: Colors
+    var colors: Colors
     var dimensions: Dimensions
     var fontName: String
 }
@@ -69,25 +68,15 @@ MobileSDK.shared.configureMobileSDK(config: config)
 2. The following example demonstrates how to customize all parameters::
 
 ```Swift
-let lightThemeColors = Colors(
-    primary: Color.purple,
-    onPrimary: Color.white,
-    text: Color.black,
-    success: Color.green,
-    error: Color.red,
-    background: Color.white,
-    border: Color.gray,
-    placeholder: Color.gray)
-
-let darkThemeColors = Colors(
-    primary: Color.purple,
-    onPrimary: Color.white,
-    text: Color.white,
-    success: Color.green,
-    error: Color.red,
-    background: Color.black,
-    border: Color.gray,
-    placeholder: Color.gray)
+let colors = Colors(
+    primary: Color.yourPrimaryColor,
+    onPrimary: Color.yourOnPrimaryColor,
+    text: Color.yourTextColor,
+    success: Color.yourSuccessColor,
+    error: Color.yourErrorColor,
+    background: Color.yourBackgroundColor,
+    border: Color.yourBorderColor,
+    placeholder: Color.yourPlaceholderColor)
 
 let dimensions = Dimensions(
     cornerRadius:  8,
@@ -97,8 +86,7 @@ let dimensions = Dimensions(
 let fontName = "Avenir-LightOblique"
 
 let theme = Theme(
-    lightThemeColors: lightThemeColors, 
-    darkThemeColors: darkThemeColors, 
+    colors: colors, 
     dimensions: dimensions, 
     fontName: fontName)
 
@@ -109,29 +97,17 @@ MobileSDK.shared.configureMobileSDK(config: config)
 3. The following example demonstrates how to customize colors only:
 
 ```Swift
-let lightThemeColors = Colors(
-    primary: Color.purple,
-    onPrimary: Color.white,
-    text: Color.black,
-    success: Color.green,
-    error: Color.red,
-    background: Color.white,
-    border: Color.gray,
-    placeholder: Color.gray)
+let colors = Colors(
+    primary: Color.yourPrimaryColor,
+    onPrimary: Color.yourOnPrimaryColor,
+    text: Color.yourTextColor,
+    success: Color.yourSuccessColor,
+    error: Color.yourErrorColor,
+    background: Color.yourBackgroundColor,
+    border: Color.yourBorderColor,
+    placeholder: Color.yourPlaceholderColor)
 
-let darkThemeColors = Colors(
-    primary: Color.purple,
-    onPrimary: Color.white,
-    text: Color.white,
-    success: Color.green,
-    error: Color.red,
-    background: Color.black,
-    border: Color.gray,
-    placeholder: Color.gray)
-
-let theme = Theme(
-    lightThemeColors: lightThemeColors, 
-    darkThemeColors: darkThemeColors)
+let theme = Theme(colors: colors)
 
 let config = MobileSDKConfig(environment: .staging, theme: theme)
 MobileSDK.shared.configureMobileSDK(config: config)
@@ -160,35 +136,46 @@ let config = MobileSDKConfig(environment: .staging, theme: theme)
 MobileSDK.shared.configureMobileSDK(config: config)
 ```
 
+### Recommended way of providing colors to the SDK
+
+The Mobile SDK supports light mode, dark mode, and high-contrast accessibility colors.
+To take full advantage of this support, it is recommended to create Color Assets in your app's Asset Catalog and provide them in the **Theme()** object. While you can also provide colors directly to the **Theme()** object without using the Asset Catalog, this approach will not support dark mode or high-contrast accessibility.
+
+Each color you define should include appropriate color variants for different traits.
+
+Below is an example of a default color used by the Mobile SDK for error messages across screens:
+
+![Color Assets](/img/ColorAssets.png)
+
 ### Definitions
 
 #### MobileSDK.Theme
 
-| Name              | Definition                                        | Type                 |
-| :---------------- | :-------------------------------------------------| :------------------- |
-| lightThemeColors  |  Color theme containing light mode parameters.   | MobileSDK.Colors     |
-| darkThemeColors   |  Color theme containing dark mode parameters.    | MobileSDK.Colors     |
-| dimensions        |  The dimension values for various UI elements     | MobileSDK.Dimensions |
-| fontName          |  Name of the font to be used within the theme.    | Swift.String         |
+| Name              | Definition                                                                 | Type                 |
+| :---------------- | :------------------------------------------------------------------------- | :------------------- |
+| colors            |  Color theme containing ligh mode, dark mode and high contrast traits.     | MobileSDK.Colors     |
+| dimensions        |  The dimension values for various UI elements                              | MobileSDK.Dimensions |
+| fontName          |  Name of the font to be used within the theme.                             | Swift.String         |
 
 #### MobileSDK. Colors
-| Name              | Definition                                                                                                            | Type          |
-| :---------------- | :---------------------------------------------------------------------------------------------------------------------| :-------------|
+| Name              | Definition                                                                                                           | Type          |
+| :---------------- | :--------------------------------------------------------------------------------------------------------------------| :-------------|
 | primary           |  The primary color that is displayed over active elements such as buttons, active text fields, dropdown menus etc.   | SwiftUI.Color |
 | onPrimary         |  Color used for text and icons displayed on top of primary color.                                                    | SwiftUI.Color |
 | text              |  The color that is used for the text that is input into the field by the user.                                       | SwiftUI.Color |
 | success           |  The success color is used to indicate success in components such as text fields, icons, validations etc.            | SwiftUI.Color |
 | error             |  The error color is used to indicate error state in components such as textfield for cases when validations fail.    | SwiftUI.Color |
 | background        |  This color is used for the background of the widget bottom sheet on which all other components are placed.          | SwiftUI.Color |
-| border            |  Used as a color for textfield outline border and separators.                                                         | SwiftUI.Color |
+| border            |  Used as a color for textfield outline border and separators.                                                        | SwiftUI.Color |
 | placeholder       |  Color used for text and icons displayed on the background as well as textfield labels and placeholders.             | SwiftUI.Color |
 
 #### MobileSDK.Dimensions
-| Name         | Definition                                                                                                                                                          | Type                   |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------|
-| cornerRadius |  The corner radius that is applied to various components such as buttons and text fields.                                                                           | Swift.Double           |
-| borderWidth  |  Width of the borders in the SDK such as text fields in points. This value is for inactive text fields. Active text field double this amount.                       | Swift.Double           |
-| spacing      |  The spacing that is applied to the layout of the SDK. It impacts horizontal and vertical distance from the bottom sheet borders and spacing between the elements.  | CoreFoundation.CGFloat |
+| Name                  | Definition                                                                                                                                                          | Type                   |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------|
+| buttonCornerRadius    |  The corner radius that is applied to buttons.                                                                                                                      | Swift.Double           |
+| textFieldCornerRadius |  The corner radius that is applied to text fields.                                                                                                                  | Swift.Double           |
+| borderWidth           |  Width of the borders in the SDK such as text fields in points. This value is for inactive text fields. Active text field double this amount.                       | Swift.Double           |
+| spacing               |  The spacing that is applied to the layout of the SDK. It impacts horizontal and vertical distance from the bottom sheet borders and spacing between the elements.  | CoreFoundation.CGFloat |
 
 #### MobileSDK.Theme.fontName
 | Name      | Definition                                                                                                                    | Type         |
