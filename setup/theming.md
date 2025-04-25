@@ -182,179 +182,87 @@ Below is an example of a default color used by the Mobile SDK for error messages
 | :---------| :-----------------------------------------------------------------------------------------------------------------------------| :------------|
 | fontName  |  Name of the font that will be used across the entire SDK UI. The font needs to be imported as a resource into the project.   | Swift.String |
 
-## Android
+## Android SDK Theming
 
-### How to Customize the SDK visuals for Android
+### Automatic Integration with Your App's Theme
 
- **Note**
- 
- Customizing the SDK theme, referred to as the `MobileSDKTheme`,  is broken up into 3 parts. Each item is optional and customizable based on what you intend to target and change.
+Our Android SDK components are built using Jetpack Compose and are designed to seamlessly integrate with your application's existing visual style defined using Compose's `MaterialTheme`.
 
+By default, UI elements provided by our SDK, such as `CardDetailsWidget`, will automatically adopt the colors, typography, and shapes defined in the `MaterialTheme` that wraps them within your application's UI hierarchy.
 
- Use the `MobileSDKTheme` helper functions to create the various theming components used by the SDK. These functions can create the default values, which you can override if you need to make updates. You can also use them to change properties without having to specify every value.
- 
- The helper functions follow a similar customisation pattern to Jetpack Compose.
- 
- The theming components, as well as the helper method associated with each section, are as follows:
+**How it Works:**
 
-> 1. **Colours** → `Colours.themeColours()`
->       1. Light Mode → `lightThemeColors()`
->       2. Dark Mode → `darkThemeColors()`
-> 2. **Dimensions** → `Dimensions.themeDimensions()`
-> 3. **Font** → `FontName.themeFont()`
+This automatic styling works because:
 
-### Examples of SDK customization for Android
+1.  **Standard Compose Theming:** Your application typically defines its look and feel using `MaterialTheme`, providing a `colorScheme`, `typography`, and `shapes`. Jetpack Compose makes these theme attributes available to all composables nested within that `MaterialTheme` via Composition Locals.
+2.  **SDK Components Respect the Theme:** Our SDK's composable functions (like `CardDetailsWidget` and its internal elements) are built to respect this standard Compose mechanism. They read the provided `colorScheme`, `typography`, `shapes`, and contextual values like `LocalContentColor` directly from the theme environment established by your app's `MaterialTheme`.
 
-The following examples showcase how the `MobileSDKTheme` can be used and customized. They range from full scope examples to minor, specific theming updates.
+**What This Means for You:**
 
-```Kotlin
-// Full Theme Update
-MobileSDKTheme(
-	colours = MobileSDKTheme.Colours.themeColours(
-		light = MobileSDKTheme.Colours.lightThemeColors(
-			primary = Color.Blue,
-			onPrimary = Color.White,
-			text = Color.Black,
-			placeholder = Color.Gray,
-			success = Color.Green,
-			error = Color.Red,
-			background = Color.White,
-			outline = Color.DarkGray,
-		),
-		dark = MobileSDKTheme.Colours.darkThemeColors(
-			primary = Color.Blue,
-			onPrimary = Color.White,
-			text = Color.White,
-			placeholder = Color.LightGray,
-			success = Color.Green,
-			error = Color.Red,
-			background = Color.Black,
-			outline = Color.Gray,
-		),
-	),
-	dimensions = MobileSDKTheme.Dimensions.themeDimensions(
-		textFieldCornerRadius = 4,
-		buttonCornerRadius = 4,
-		borderWidth = 1,
-		spacing = 10
-	),
-	font = MobileSDKTheme.FontName.themeFont(
-		fonts = listOf(AppFont)
-	)
-)
+* **Consistency:** SDK components will naturally match the look and feel of your application without extra configuration. Buttons, text, backgrounds, and other elements within our SDK's UI will use your defined brand colors and fonts.
+* **Simplicity:** You generally don't need to write custom styling code specifically for our SDK components just to match your app's theme.
+* **Dynamic Theming Support:** If your app supports light/dark themes by switching `MaterialTheme` configurations, our SDK components will adapt accordingly along with the rest of your app's UI.
 
-// Only Updating Colour Scheme
-MobileSDKTheme(
-	colours = MobileSDKTheme.Colours.themeColours(
-		light = MobileSDKTheme.Colours.lightThemeColors(
-			primary = Color.Blue,
-			onPrimary = Color.White,
-			text = Color.Black,
-			placeholder = Color.Gray,
-			success = Color.Green,
-			error = Color.Red,
-			background = Color.White,
-			outline = Color.DarkGray,
-		),
-		dark = MobileSDKTheme.Colours.darkThemeColors(
-			primary = Color.Blue,
-			onPrimary = Color.White,
-			text = Color.White,
-			placeholder = Color.LightGray,
-			success = Color.Green,
-			error = Color.Red,
-			background = Color.Black,
-			outline = Color.Gray,
-		),
-		// using default SDK dimensions
-		// using default SDK font family
-	)
-)
+**Key Themed Aspects:**
 
-// Only Updating Dimensions
-MobileSDKTheme(
-	// using default SDK colour scheme
-	dimensions = MobileSDKTheme.Dimensions.themeDimensions(
-		textFieldCornerRadius = 4,
-		buttonCornerRadius = 4,
-		borderWidth = 1,
-		spacing = 10
-	)
-	// using default SDK font family
-)
+* **Colors:** Backgrounds, text colors, button colors, input field styles, and icon tints within the SDK will derive from your `MaterialTheme.colorScheme` (e.g., using `primary`, `surface`, `onSurface`, etc.) and `LocalContentColor`.
+* **Typography:** Text elements will use appropriate styles (like `bodyLarge`, `labelMedium`, etc.) from your `MaterialTheme.typography`.
+* **Shapes:** Where applicable (e.g., buttons or card-like elements within the SDK), shapes will be based on your `MaterialTheme.shapes`.
 
-// Only Updating Font
-MobileSDKTheme(
-	// using default SDK colour scheme
-	// using default SDK dimensions
-	font = MobileSDKTheme.FontName.themeFont(
-		fonts = listOf(AppFont)
-	)
-)
+**Prerequisites for Automatic Theming:**
+
+For this seamless integration to work, ensure that:
+
+* Your application uses Jetpack Compose's `MaterialTheme` to define its theme.
+* The point in your UI hierarchy where you integrate our SDK's components (e.g., placing `CardDetailsWidget`) is *inside* the scope of your `MaterialTheme` composable.
+
+```kotlin
+// Example: Your App's Screen Structure
+
+@Composable
+fun YourAppScreenUsingOurSDK() {
+    // Your app's MaterialTheme definition
+    YourAppTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                // Your existing app content - uses YourAppTheme
+                Text(
+                    "Welcome to Your App",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Integrating our SDK component:
+                // It automatically inherits styling from YourAppTheme
+                CardDetailsWidget(
+                    // ... required SDK parameters
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                // More of your app content
+                Button(onClick = { /* ... */ }) {
+                    Text("Submit") // Also uses YourAppTheme
+                }
+            }
+        }
+    }
+}
+
+// Note: YourAppTheme wraps MaterialTheme internally
+@Composable
+fun YourAppTheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colorScheme = yourAppColorScheme,
+        typography = yourAppTypography,
+        shapes = yourAppShapes,
+        content = content
+    )
+}
 ```
 
-This can further be expanded by only updating certain properties within a specific section. For example, only changing the primary colour of the `MobileSDKTheme`:
+## Summary
 
-```Kotlin
-MobileSDKTheme(
-	colours = MobileSDKTheme.Colours.themeColours(
-		light = MobileSDKTheme.Colours.lightThemeColors(
-			primary = Color.Blue
-		),
-		dark = MobileSDKTheme.Colours.darkThemeColors(
-			primary = Color.Blue
-		)
-	)
-)
-```
-
-
- **Note**  
-
- This must be added/applied using the MobileSDK → MobileSDK.Builder...applyTheme(updatedTheme)
-
-
-
-### Definitions
-#### com.paydock.MobileSDKTheme
-
-| Name         | Definition                                                                 | Type                          |
-| :----------- | :------------------------------------------------------------------------- | :---------------------------- |
-| colours      |  The colour theme containing light and dark mode                           | `com.paydock.ThemeColors`     |
-| dimensions   |  The dimension values for various UI elements                              | `com.paydock.ThemeDimensions` |
-| font         |  The font theme containing the font family to be used within the theme     | `com.paydock.ThemeFont`       |
-
-#### com.paydock.ThemeColors
-
-| Name         | Definition                                 | Type                      |
-| :----------- | :----------------------------------------- | :------------------------ |
-| light        |  The colour theme containing light mode    | `com.paydock.ThemeColor`  |
-| dark         |  The colour theme containing dark mode     | `com.paydock.ThemeColor`  |
-
-#### com.paydock.ThemeColor
-
-| Name         | Definition                                                                                                                    | Type                                  | Compose Link          |
-| :----------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ | :-------------------- |
-| primary      |  The primary colour is the colour displayed most frequently across your app’s screens and components.                         | `androidx.compose.ui.graphics.Color`  | `Theme.primary`       |
-| onPrimary    |  Color used for text and icons displayed on top of the primary color.                                                         | `androidx.compose.ui.graphics.Color`  | `Theme.onPrimary`     |
-| text         |  The colour (and state variants) that can be used for content on top of surface.                                              | `androidx.compose.ui.graphics.Color`  | `Theme.onSurface`     |
-| placeholder  |  Color used for text and icons displayed on top of the background colour as well as text field labels and placeholder text.   | `androidx.compose.ui.graphics.Color`  | `Theme.onBackground`  |
-| success      |  The success colour is used to indicate success in component, such as valid text in a text field.                             | `androidx.compose.ui.graphics.Color`  | *n/a*                 |
-| error        |  The error colour is used to indicate errors in components, such as invalid text in a text field.                             | `androidx.compose.ui.graphics.Color`  | `Theme.error`         |
-| background   |  The background colour is used for sheet that UI elements are presented on                                                    | `androidx.compose.ui.graphics.Color`  | `Theme.surface`       |
-| outline      |  Subtle colour used for boundaries. Outline colour role adds contrast for accessibility purposes.                             | `androidx.compose.ui.graphics.Color`  | `Theme.outline`       |
-
-#### com.paydock.ThemeDimensions
-
-| Name            		   | Definition                                                                                              | Type                           |
-| :----------------------- | :------------------------------------------------------------------------------------------------------ | :----------------------------- |
-| textFieldCornerRadius    |  The corner radius applied to shapes used by textfields (`OutlinedTextField`).                    		 | `androidx.compose.ui.unit.Dp`  |
-| buttonCornerRadius       |  The corner radius applied to shapes used by buttons.                    								 | `androidx.compose.ui.unit.Dp`  |
-| borderWidth     		   |  The border width is the width applied as stroke width to container borders, outline buttons.           | `androidx.compose.ui.unit.Dp`  |
-| spacing         		   |  The spacing applied to content, specifically columns and rows and acts as a divider between content.   | `androidx.compose.ui.unit.Dp`  |
-
-#### com.paydock.ThemeFont
-
-| Name            | Definition                                                                                                                                      | Type                                        |
-| :-------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------ |
-| familyName      |  The font family name that is applied to all text based components. This is used within compose to easily be converted to the required type.    | `androidx.compose.ui.text.font.FontFamily`  |
+Our SDK leverages standard Jetpack Compose theming principles. By simply ensuring our components are placed within your app's `MaterialTheme`, they will automatically adopt your defined visual styles for colors, typography, and shapes, providing a consistent user experience with minimal effort. If specific overrides are needed beyond the default theme adoption, standard Compose techniques (like passing specific parameters if available on SDK components, or using modifiers) can be applied.
