@@ -6,6 +6,75 @@ The Coles Pay Widget integrates with Coles Pay using a WebView component. This h
 
 ## iOS
 
+## How to use the ColesPayWidget
+
+### 1. Overview
+
+This section provides a step-by-step guide on how to initialize and use the `ColesPayWidget` SwiftUI view in your application. The widget facilitates the payment using Coles Pay services.
+
+The following sample code demonstrates the definition of the `ColesPayWidget`:
+
+```Swift
+ColesPayWidget(
+    clientId: String,
+    colesPayToken: @escaping (_ colesPayToken: @escaping (String) -> Void) -> Void,
+    completion: @escaping (Result<String, ColesPayError>) -> Void))
+```
+
+The following sample code demonstrates how you can use the widget in your application:
+
+```Swift
+struct ColesPayExampleView: View {
+    @StateObject private var viewModel = ColesPayExampleVM()
+    var body: some View {
+        ColesPayWidget(clientId: <merchantClientId>) { onColesPayButtonTap in
+            // Example: Initiate Wallet Transaction to retrieve the wallet token
+            viewModel.initializeWalletCharge(completion: onColesPayButtonTap)
+        } completion: { result in
+            switch result {
+            case .success(let colesPayOrderId): // Handle success
+            case .failure(let error): // Handle error
+            }
+        }
+    }
+}
+```
+
+### 2. Parameter definitions
+
+This subsection describes the parameters required by the `ColesPayWidget` SwiftUI view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `ColesPayWidget`.
+
+#### ColesPayWidget
+
+| Name                  | Definition                                                                        | Type                                                                 | Mandatory/Optional |
+| :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------- |
+| clientId              |  A merchant supplied client ID                                                    | String                                                               | Mandatory          |
+| colesPayToken         |  A callback to obtain the wallet token asynchronously                             | `@escaping (_ colesPayToken: @escaping (String) -> Void) -> Void`    | Mandatory          |
+| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.       | `(Result<String, ColesPayError>) -> Void`                              | Mandatory          |
+
+### MobileSDK.ColesPayError
+
+| Name                        | Description                                                            | Error Result            |
+| :-------------------------- | :--------------------------------------------------------------------- | :---------------------- |
+| errorFetchingColesPayOrder  |  Error thrown when fetching ColesPay order ID fails.                   |  ErrorRes               |
+| colesPayUrlError            |  Error thrown when generating the ColesPay URL.                        |  nil                    |
+| webViewFailed               |  Error thrown when there is an issue communicating with the WebView.   |  NSError                |
+| transactionCanceled         |  Error thrown when user cancel the flow.                               |  nil                    |
+| unknownError                |  Error thrown when there is an unknown error related to ColesPay.      |  nil                    |
+
+### 3. Callback Explanation
+
+#### Token Callback
+
+> **Note**:
+>
+> The `colesPayToken` callback obtains the wallet token asynchronously. It receives a callback function `@escaping (_ colesPayToken: @escaping (String) -> Void) -> Void` as a parameter, which you must invoke with the `wallet_token` once it is obtained. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
+
+#### Completion Callback
+
+The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String, ColesPayError>` that contains the *ColesPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation.
+
+
 ## Android
 
 ## How to use the ColesPayWidget
