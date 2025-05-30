@@ -80,6 +80,7 @@ The following definitions provide a more detailed overview of the parameters use
 | errorFetchingPayPalUrl    |  Error thrown when there is an error fetching the URL for PayPal.                |  ErrorRes               |
 | errorCapturingCharge      |  Error thrown when there is an error capturing the charge for PayPal.            |  ErrorRes               |
 | webViewFailed             |  Error thrown when there is an error while communicating with a WebView.         |  NSError                |
+| transactionCanceled       |  Error thrown when user cancels the flow.                                        |  nil                    |
 | UnknownException          |  Error thrown when there is an unknown error related to PayPal.                  |  nil                    |
 
 ## Android
