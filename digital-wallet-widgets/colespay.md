@@ -2,7 +2,7 @@
 
 The Coles Pay Widget integrates with Coles Pay using a WebView component. This handles the communication between Coles Pay and the SDK. Once completed, the WebView component returns the `ColesPayOrderId`.
 
-![Coles Pay View](/img/ColesPay.png)
+![Coles Pay View](/img/Colespay.png)
 
 ## iOS
 
