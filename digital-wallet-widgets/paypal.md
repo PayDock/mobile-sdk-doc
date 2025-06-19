@@ -101,7 +101,7 @@ The following sample code demonstrates the definition of the `PayPalWidget`:
 fun PayPalWidget(
     modifier: Modifier,
     enabled: Boolean,
-    token: (onTokenReceived: (String) -> Unit) -> Unit,
+    tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     requestShipping: Boolean,
     loadingDelegate: WidgetLoadingDelegate?,
     completion: (Result<ChargeResponse>) -> Unit
@@ -117,11 +117,14 @@ PayPalWidget(
         .fillMaxWidth()
         .padding(16.dp), // optional
     enabled: Boolean, // optional
-    token = { callback ->
-        // Obtain Wallet Token asynchronously using the callback
-        // Example: Initiate Wallet Transaction to retrieve the wallet token
-        val walletToken = // ... retrieve the token
-        callback(walletToken)
+    tokenRequest = { callback ->
+        // show widget loader
+        tokenResult.onSuccess { result ->
+            // Handle token success
+            val walletToken = result.token // ... retrieve the token
+        }.onFailure {
+            // Handle token failure success
+        }
     },
     requestShipping = false //optional (default: true),
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
@@ -147,7 +150,7 @@ This subsection describes the various parameters required by the `PayPalWidget` 
 | :-------------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications                                                   | `androidx.compose.ui.Modifier`                | Optional           |
 | enabled               |  Controls the enabled state of this Widget.                                                     | Boolean                                       | Optional           |
-| token                 |  A callback to obtain the wallet token asynchronously                                           | `(onTokenReceived: (String) -> Unit) -> Unit` | Mandatory          |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | requestShipping       |  Flag passed to determine if PayPal will ask the user for their shipping address.               | Boolean (default = `true`)                    | Optional           |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.| `WidgetLoadingDelegate`                       | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.          | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
@@ -202,7 +205,9 @@ data class ChargeResponse(
 
 #### Token Callback
 
-The `token` callback is used to obtain the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which should be invoked with the wallet token once it's obtained.
+The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
+
+The `WalletTokenResult` acts as a token wrapper containing the actual token result.
 
 ### WidgetLoadingDelegate
 
@@ -232,6 +237,7 @@ FetchingUrlException(error: ApiErrorResponse) : PayPalException(error.displayabl
 CapturingChargeException(error: ApiErrorResponse) : PayPalException(error.displayableMessage)
 WebViewException(code: Int?, displayableMessage: String) : PayPalException(displayableMessage)
 CancellationException(displayableMessage: String) : PayPalException(displayableMessage)
+InitialisationWalletTokenException(displayableMessage: String, val errorBody: String?) : PayPalException(displayableMessage)
 UnknownException(displayableMessage: String) : PayPalException(displayableMessage)
 ```
 
@@ -241,5 +247,6 @@ UnknownException(displayableMessage: String) : PayPalException(displayableMessag
 | CapturingChargeException  |  Exception thrown when there is an error capturing the charge for PayPal.                     |  PayPalError      |
 | WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  PayPalError      |
 | CancellationException     |  Exception thrown when there is a cancellation error related to PayPal.                       |  PayPalError      |
+| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  PayPalError      |
 | UnknownException          |  Exception thrown when there is an unknown error related to PayPal.                           |  PayPalError      |
 
