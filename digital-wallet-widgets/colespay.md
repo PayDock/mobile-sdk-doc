@@ -90,7 +90,7 @@ fun ColesPayWidget(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     clientId: String,
-    token: (onTokenReceived: (String) -> Unit) -> Unit,
+    tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
     completion: (Result<String>) -> Unit
 ) {...}
@@ -105,11 +105,14 @@ ColesPayWidget(
         .fillMaxWidth()
         .padding(16.dp), // optional
     clientId = merchantClientId,
-    token = { callback ->
-        // Obtain Wallet Token asynchronously using the callback
-        // Example: Initiate Wallet Transaction to retrieve the wallet token
-        val walletToken = // ... retrieve the token
-        callback(walletToken)
+    tokenRequest = { callback ->
+        // show widget loader
+        tokenResult.onSuccess { result ->
+            // Handle token success
+            val walletToken = result.token // ... retrieve the token
+        }.onFailure {
+            // Handle token failure success
+        }
     }
 ) { result ->
     // Handle the result of the payment operation
@@ -134,7 +137,7 @@ This subsection describes the various parameters required by the `ColesPayWidget
 | modifier              |  Compose modifier for container modifications                                     | `androidx.compose.ui.Modifier`                    | Optional           |
 | enabled               |  A boolean to enable or disable the payment button                                | Boolean                                           | Optional           |
 | clientId              |  A merchant supplied client ID                                                    | String                                            | Mandatory          |
-| token                 |  A callback to obtain the wallet token asynchronously                             | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.                     | `WidgetLoadingDelegate`                           | Optional          |
 | completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
 
@@ -142,7 +145,9 @@ This subsection describes the various parameters required by the `ColesPayWidget
 
 #### Token Callback
 
-The `token` callback obtains the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which you must invoke with the wallet token once it is obtained. 
+The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
+
+The `WalletTokenResult` acts as a token wrapper containing the actual token result..
 
 ### WidgetLoadingDelegate
 
@@ -172,6 +177,7 @@ FetchingUrlException(error: ApiErrorResponse) : ColesPayException(error.displaya
 WebViewException(code: Int?, displayableMessage: String) : ColesPayException(displayableMessage)
 CancellationException(displayableMessage: String) : ColesPayException(displayableMessage)
 ParseException(displayableMessage: String, val errorBody: String?) : ColesPayException(displayableMessage)
+InitialisationWalletTokenException(displayableMessage: String, val errorBody: String?) : ColesPayException(displayableMessage)
 UnknownException(displayableMessage: String) : ColesPayException(displayableMessage)
 ```
 
@@ -181,6 +187,7 @@ UnknownException(displayableMessage: String) : ColesPayException(displayableMess
 | WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  ColesPayError      |
 | CancellationException     |  Exception thrown when there is a cancellation error related to Coles Pay.                    |  ColesPayError      |
 | ParseException            |  Exception thrown when parsing of data from an API call, typically JSON.                      |  ColesPayError      |
+| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  ColesPayError      |
 | UnknownException          |  Exception thrown when there is an unknown error related to Coles Pay.                        |  ColesPayError      |
 
 

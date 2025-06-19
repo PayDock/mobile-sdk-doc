@@ -2,7 +2,7 @@
 
 The MobileSDK's pre-built UI widgets seamlessly integrate with Paydock functionality from your native iOS or Android app.
 
-Once you have setup and initialized the MobileSDK in your application, you can use the MobileSDK widgets to access payment flows. These include interacting with GooglePay, ApplePay, Paypal, PayPal Vault, Afterpay and FlyPay. You can also complete 3DS challenges, capture addresses, securely collect gift card details, use Click To Pay services and tokenise card details.
+Once you have setup and initialized the MobileSDK in your application, you can use the MobileSDK widgets to access payment flows. These include interacting with GooglePay, ApplePay, Paypal, PayPal Vault, Afterpay and Coles Pay. You can also complete 3DS challenges, capture addresses, securely collect gift card details, use Click To Pay services and tokenise card details.
 
 ## Next steps
 
