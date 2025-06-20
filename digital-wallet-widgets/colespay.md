@@ -147,7 +147,7 @@ This subsection describes the various parameters required by the `ColesPayWidget
 
 The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
 
-The `WalletTokenResult` acts as a token wrapper containing the actual token result..
+The `WalletTokenResult` acts as a token wrapper containing the actual token result.
 
 ### WidgetLoadingDelegate
 

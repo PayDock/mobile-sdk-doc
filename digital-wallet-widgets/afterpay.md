@@ -167,7 +167,7 @@ fun AfterpayWidget(
     modifier: Modifier,
     config: AfterpaySDKConfig,
     enabled: Boolean,
-    token: (onTokenReceived: (String) -> Unit) -> Unit,
+    tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit,
     selectShippingOption: (
         shippingOption: AfterpayShippingOption,
@@ -199,7 +199,15 @@ AfterpayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
-    token = walletViewModel.getWalletToken(WalletType.AFTER_PAY),
+   tokenRequest = { callback ->
+        // show widget loader
+        tokenResult.onSuccess { result ->
+            // Handle token success
+            val walletToken = result.token // ... retrieve the token
+        }.onFailure {
+            // Handle token failure success
+        }
+    },
     config = configuration,
     selectAddress = { _, provideShippingOptions ->
         val currency = Currency.getInstance(configuration.config.currency)
@@ -264,7 +272,7 @@ This subsection describes the parameters required by the `AfterpayWidget` compos
 | modifier              |  Compose modifier for container modifications.                                           | `androidx.compose.ui.Modifier`                                                                                                               | Optional           |
 | config                |  The configuration for the Afterpay SDK.                                                 | `AfterpaySDKConfig`                                                                                                                          | Mandatory          |
 | enabled               |  A boolean to enable or disable the payment button.                                      | Boolean                                                                                                                 | Optional           |
-| token                 |  A callback to obtain the wallet token asynchronously.                                   | `(onTokenReceived: (String) -> Unit) -> Unit`                                                                                                | Mandatory          |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | selectAddress         |  A callback to handle selection of shipping address.                                     | `(address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit`                                          | Optional           |
 | selectShippingOption  |  A callback to handle selection of shipping option.                                      | `selectShippingOption: (shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit)` | Optional           |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.                           | `WidgetLoadingDelegate`                                                                             | Optional          |
@@ -394,7 +402,9 @@ data class ChargeResponse(
 
 #### Token Callback
 
-The `token` callback obtains the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which is invoked with the wallet token once it is obtained.
+The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
+
+The `WalletTokenResult` acts as a token wrapper containing the actual token result.
 
 #### Select Address Callback
 
@@ -440,6 +450,7 @@ TokenException(displayableMessage: String) : AfterpayException(displayableMessag
 ConfigurationException(displayableMessage: String) : AfterpayException(displayableMessage)
 CancellationException(displayableMessage: String) : AfterpayException(displayableMessage)
 InvalidResultException(displayableMessage: String) : AfterpayException(displayableMessage)
+InitialisationWalletTokenException(displayableMessage: String, val errorBody: String?) : AfterpayException(displayableMessage)
 UnknownException(displayableMessage: String) : AfterpayException(displayableMessage)
 ```
 
@@ -451,5 +462,6 @@ UnknownException(displayableMessage: String) : AfterpayException(displayableMess
 | ConfigurationException    |  Exception thrown when there is a configuration error related to Afterpay.                    |  AfterpayError    |
 | CancellationException     |  Exception thrown when there is a cancellation error related to Afterpay.                     |  AfterpayError    |
 | InvalidResultException    |  Exception thrown when there is an invalid intent result error related to Afterpay.           |  AfterpayError    |
+| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  AfterpayError    |
 | UnknownException          |  Exception thrown when there is an unknown error related to Afterpay.                         |  AfterpayError    |
 
