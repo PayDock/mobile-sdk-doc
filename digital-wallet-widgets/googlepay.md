@@ -19,7 +19,7 @@ The following sample code demonstrates the definition of the `GooglePayWidget`:
 ```Kotlin
 fun GooglePayWidget(
     modifier: Modifier,
-    token: (onTokenReceived: (String) -> Unit) -> Unit,
+    tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     isReadyToPayRequest: JSONObject,
     paymentRequest: JSONObject,
     completion: (Result<ChargeResponse>) -> Unit
@@ -34,11 +34,14 @@ GooglePayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
-    token = { callback ->
-        // Obtain Wallet Token asynchronously using the callback
-        // Example: Initiate Wallet Transaction to retrieve the wallet token
-        val walletToken = // ... retrieve the token
-        callback(walletToken)
+    tokenRequest = { callback ->
+        // show widget loader
+        tokenResult.onSuccess { result ->
+            // Handle token success
+            val walletToken = result.token // ... retrieve the token
+        }.onFailure {
+            // Handle token failure success
+        }
     },
     isReadyToPayRequest = PaymentsUtil.createIsReadyToPayRequest(),
     paymentRequest = PaymentsUtil.createGooglePayRequest(
@@ -72,7 +75,7 @@ This subsection describes the parameters required by the `GooglePayWidget` compo
 | Name                  | Definition                                                                               | Type                                              | Mandatory/Optional |
 | :-------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
 | modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                    | Optional           |
-| token                 |  A callback to obtain the wallet token asynchronously                                    | `(onTokenReceived: (String) -> Unit) -> Unit`     | Mandatory          |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | isReadyToPayRequest   |  GooglePay request for determining if a user is considered ready to pay.                | `JSONObject` → `IsReadyToPayRequest`              | Mandatory          |
 | paymentRequest        |  GooglePay request for providing necessary information to support a payment.            | `JSONObject` → `PaymentDataRequest`               | Mandatory          |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
@@ -237,7 +240,9 @@ data class ChargeResponse(
 
 #### Token Callback
 
-The `token` callback is used to obtain the wallet token asynchronously. It receives a callback function `(onTokenReceived: (String) -> Unit)` as a parameter, which should be invoked with the wallet token once it's obtained.
+The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
+
+The `WalletTokenResult` acts as a token wrapper containing the actual token result.
 
 #### Completion Callback
 
@@ -253,6 +258,7 @@ PaymentRequestException(exception: Exception?) : GooglePayException(exception?.m
 InitialisationException(displayableMessage: String) : GooglePayException(displayableMessage)
 ResultException(displayableMessage: String) : GooglePayException(displayableMessage)
 CancellationException(displayableMessage: String) : GooglePayException(displayableMessage)
+InitialisationWalletTokenException(displayableMessage: String, val errorBody: String?) : GooglePayException(displayableMessage)
 UnknownException(displayableMessage: String) : GooglePayException(displayableMessage)
 ```
 
@@ -263,5 +269,6 @@ UnknownException(displayableMessage: String) : GooglePayException(displayableMes
 | InitialisationException   |  Exception thrown when there is an initialization error related to Google Pay.                |  GooglePayError      |
 | ResultException           |  Exception thrown when there is a result error related to Google Pay.                         |  GooglePayError      |
 | CancellationException     |  Exception thrown when there is a cancellation error related to Google Pay.                   |  GooglePayError      |
+| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  GooglePayError      |
 | UnknownException          |  Exception thrown when there is an unknown error related to Google Pay.                       |  GooglePayError      |
 
