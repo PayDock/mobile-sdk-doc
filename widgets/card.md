@@ -163,16 +163,18 @@ The below table describes the various inline validation errors linked to the `Ca
 
 ### 1. Overview
 
-This section provides a step-by-step guide on how to initialize and use the `CardDetailsWidget` composable in your application. The widget tokenises card details.
+This section provides a step-by-step guide on how to initialise and use the `CardDetailsWidget` composable in your application. The widget tokenises card details.
 
 The following sample code demonstrates the definition of the `CardDetailsWidget`:
 
 ```Kotlin
+@Composable
 fun CardDetailsWidget(
-    modifier: Modifier,
-    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     config: CardDetailsWidgetConfig,
-    loadingDelegate: WidgetLoadingDelegate?,
+    appearance: CardDetailsWidgetAppearance = CardDetailsAppearanceDefaults.appearance(),
+    loadingDelegate: WidgetLoadingDelegate? = null,
     completion: (Result<CardResult>) -> Unit
 ) {...}
 ```
@@ -180,7 +182,7 @@ fun CardDetailsWidget(
 The following sample code example demonstrates how to use the widget in your application:
 
 ```Kotlin
-// Initialize the CardDetailsWidget
+// Initialise the CardDetailsWidget
 CardDetailsWidget(
     modifier = Modifier
         .fillMaxWidth()
@@ -202,6 +204,7 @@ CardDetailsWidget(
             enableValidation = true // optional
         )
     ),
+    appearance = currentOrDefaultAppearance, // optional
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
     completion = { result ->
         result.onSuccess { cardResult ->
@@ -242,19 +245,22 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | :------------------     | :-------------------------------------------------------------------------------------------------------- | :----------------------------- | :----------------  |
 | modifier                |  Compose modifier for container modifications.                                                            | `Modifier`                     | Optional           |
 | enabled                 |  Controls the enabled state of this Widget.                                                               | Boolean                        | Optional           |
-| config                  |  Configuration options for the card details widget                                                        |`CardDetailsWidgetConfig`       | Required           |
+| config                  |  Configuration options for the card details widget                                                        | `CardDetailsWidgetConfig`      | Mandatory          |
+| appearance              |  Customization options for the visual appearance of the widget                                            | `CardDetailsWidgetAppearance`  | Optional           |
 | loadingDelegate         |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`        | Optional           |
 | completion              |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
 
 #### CardDetailsWidgetConfig
 
-| Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
-| ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
-| gatewayId               |  Gateway ID used for the card tokenisation.                                                               | String                         | Optional           |
-| actionText              |  The text to display on the action button (default is "Submit").                                          | String                         | Optional           |
-| showCardTitle           |  A flag indicating whether to show the card title (default is true).                                      | Boolean                        | Optional           |
-| collectCardholderName   |  A flag indicating whether to show the cardholder name input (default is true).                           | Boolean                        | Optional           |
-| allowSaveCard           |  Configuration for showing the save card UI toggle.                                                       | `SaveCardConfig`               | Optional           |  
+| Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional             |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------------------  |
+| accessToken              |  Widget access token used for internal API communication                                         | String                                             | Mandatory                      |
+| gatewayId                |  Gateway ID used for the card tokenisation.                                                      | String                                             | Optional                       |
+| actionText               |  The text to display on the action button (default is "Submit").                                 | String                                             | Optional                       |
+| showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional                       |
+| collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional                       |
+| allowSaveCard            |  Configuration for showing the save card UI toggle.                                              | `SaveCardConfig`                                   | Optional                       |  
+| schemeSupport            |  Configuration for supported card schemes and scheme validation behavior.                        | `SupportedSchemeConfig`                            | Optional                       |  
 
 #### SaveCardConfig
 | Name                | Definition                                                                                                   | Type                     | Mandatory/Optional |
@@ -315,3 +321,93 @@ UnknownException(displayableMessage: String) : CardDetailsException(displayableM
 | :------------------------ | :-------------------------------------------------------------------------------- | :------------------ |
 | TokenisingCardException   |  Exception thrown when there is an error tokenising a card.                       |  CardDetailsError   |
 | UnknownException          |  Exception thrown when there is an unknown error related to Card Details.         |  CardDetailsError   |
+
+### 5. Widget Styling
+
+Defines the visual appearance and layout attributes for the `CardDetailsWidget`. This class allows for comprehensive customisation of how card input fields (number, expiry, CVV, cardholder name), title, "save card" toggle, and the action button are presented.
+
+#### Appearance Contract
+
+The `CardDetailsWidgetAppearance` class encapsulates all configurable style properties for the widget.
+```Kotlin
+@Immutable
+class CardDetailsWidgetAppearance(
+    val verticalSpacing: Dp,
+    val horizontalSpacing: Dp,
+    val title: TextAppearance,
+    val textField: TextFieldAppearance,
+    val actionButton: ButtonAppearance,
+    val toggle: ToggleAppearance,
+    val toggleText: TextAppearance,
+    val linkText: LinkTextAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `CardDetailsAppearanceDefaults`. This uses `MaterialTheme` values for a standard look and feel. You can use this as a starting point and customise specific attributes.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    CardDetailsWidget( 
+        ...
+        appearance = CardDetailsAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `CardDetailsWidgetAppearance` or modify the default one using its `copy` method.
+
+```Kotlin
+@Composable 
+fun MyCustomCardDetailsScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearance = CardDetailsAppearanceDefaults.appearance().copy( 
+        verticalSpacing = 12.dp, 
+        title = TextAppearanceDefaults.appearance().copy( style = MaterialTheme.typography.headlineSmall.copy( // color = MyAppColors.primary ) ), 
+        textField = TextFieldAppearanceDefaults.outlineAppearance().copy( // Example: Customizing text field label color // labelColor = MyAppColors.onSurfaceVariant ), 
+        toggleText = TextAppearanceDefaults.appearance().copy( style = MaterialTheme.typography.labelMedium.copy( // color = MyAppColors.secondary ) ) 
+    )
+
+    // Alternatively, create entirely from scratch:
+    val completelyCustomAppearance = CardDetailsWidgetAppearance(
+        verticalSpacing = 10.dp,
+        horizontalSpacing = 6.dp,
+        title = TextAppearanceDefaults.appearance(/*...custom title params...*/),
+        textField = TextFieldAppearanceDefaults.filledAppearance(/*...custom text field params...*/),
+        actionButton = ButtonAppearanceDefaults.textButtonAppearance(/*...custom button params...*/),
+        toggle = ToggleAppearanceDefaults.appearance(/*...custom toggle params...*/),
+        toggleText = TextAppearanceDefaults.appearance(/*...custom toggle text params...*/),
+        linkText = LinkTextAppearanceDefaults.appearance(/*...custom link text params...*/)
+    )
+
+    CardDetailsWidget(
+        ...
+        appearance = customAppearance, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `CardDetailsWidgetAppearance`:
+
+| Name                | Description                                                                                                                                  | Type                                                            | Default Value (from `CardDetailsAppearanceDefaults`)                                                               |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `verticalSpacing`   | The vertical space between major elements in the widget (e.g., between title and inputs, inputs and toggle, toggle and action button).         | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
+| `horizontalSpacing` | The horizontal spacing within composite elements (e.g., between the two text fields in the expiry/CVV row if they were side-by-side).           | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
+| `title`             | Defines the text appearance for the widget's main title (e.g., "Card Information").                                                          | `your.package.TextAppearance` (or equivalent)                 | `TextAppearanceDefaults.appearance()` with `bodyMedium` style and `onSurface` color.                               |
+| `textField`         | Defines the appearance for all card input text fields (card number, expiry, CVV, cardholder name).                                            | `your.package.TextFieldAppearance` (or equivalent)          | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                                                 |
+| `actionButton`      | Defines the appearance of the primary submit/action button.                                                                                  | `your.package.ButtonAppearance` (or equivalent)             | `ButtonAppearanceDefaults.filledButtonAppearance()`                                                                |
+| `toggle`            | Defines the appearance of the switch or checkbox used for options like "Save card".                                                          | `your.package.ToggleAppearance` (or equivalent)             | `ToggleAppearanceDefaults.appearance()`                                                                            |
+| `toggleText`        | Defines the text appearance for the label associated with the toggle (e.g., "Save this card for future payments").                             | `your.package.TextAppearance` (or equivalent)                 | `TextAppearanceDefaults.appearance()` with `bodyMedium` style.                                                     |
+| `linkText`          | Defines the text appearance for any interactive link elements within the widget (e.g., a "Learn More" link next to the "Save card" option).     | `your.package.LinkTextAppearance` (or equivalent)             | `LinkTextAppearanceDefaults.appearance()`                                                                          |
+
+---
+
+**Note:**
+*   The appearance types (`TextAppearance`, `TextFieldAppearance`, `ButtonAppearance`, `ToggleAppearance`, `LinkTextAppearance`) would each have their own detailed documentation.
+*   `WidgetDefaults.Spacing` is assumed to be a predefined Dp value in your project.
