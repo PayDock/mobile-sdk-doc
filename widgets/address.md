@@ -27,7 +27,7 @@ The Address capture Widget captures the following fields. These fields are manda
 
 ## iOS
 
-### How to initialize the Address widget sheet in iOS
+### How to initialise the Address widget sheet in iOS
 
 ### 1. Overview
 
@@ -88,23 +88,24 @@ The following definitions provide a more detailed overview of the parameters inc
 
 ### 1. Overview
 
-The Address widget captures billing address details. This section details how to initialize and use the `AddressDetailsWidget` composable in your application. 
+The Address widget captures billing address details. This section details how to initialise and use the `AddressDetailsWidget` composable in your application. 
 
 The following sample code demonstrates the definition of the `AddressDetailsWidget`:
 
 ```Kotlin
 @Composable
 fun AddressDetailsWidget(
-    modifier: Modifier,
-    address: BillingAddress?,
-    completion: (BillingAddress) -> Unit
+    modifier: Modifier = Modifier,
+    appearance: AddressDetailsWidgetAppearance = AddressDetailsAppearanceDefaults.appearance(),
+    address: BillingAddress? = null,
+    completion: (BillingAddress) -> Unit,
 ) {...}
 ```
 
 The following sample code example demonstrates how to use the widget in your application:
 
 ```Kotlin
-// Initialize the AddressDetailsWidget
+// Initialise the AddressDetailsWidget
 AddressDetailsWidget(
    modifier = Modifier
         .fillMaxWidth()
@@ -122,22 +123,17 @@ AddressDetailsWidget(
 This subsection describes the various parameters required by the `AddressDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AddressDetailsWidget`.
 
 #### AddressDetailsWidget
-
-| Name             | Definition                                               | Type                                                      | Mandatory/Optional |
-| :--------------- | :------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
-| modifier         |  Compose modifier for container modifications            | `Modifier`                                                | Optional           |
-| address          |  The preset address to pre-fill the input fields.        | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
-| completion       |  Callback function to execute when the address is saved. | `(BillingAddress) -> Unit`                                | Mandatory          |
 
 The following sample code example demonstrates how to use the widget in your application:
 
 ```Kotlin
-// Initialize the AddressDetailsWidget
+// Initialise the AddressDetailsWidget
 AddressDetailsWidget(
    modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
     address = null, // optional (pre-populate fields)
+    appearance = currentOrDefaultAppearance, // optional
     completion = { billingAddress ->
         // Handle captured address - Update UI or perform actions
        Log.d("CardDetailsWidget", "Billing address returned. $billingAddress")
@@ -151,11 +147,12 @@ This subsection describes the various parameters required by the `AddressDetails
 
 #### AddressDetailsWidget
 
-| Name             | Definition                                               | Type                                                      | Mandatory/Optional |
-| :--------------- | :------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
-| modifier         |  Compose modifier for container modifications            | `Modifier`                                                | Optional           |
-| address          |  The preset address to pre-fill the input fields.        | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
-| completion       |  Callback function to execute when the address is saved. | `(BillingAddress) -> Unit`                                | Mandatory          |
+| Name             | Definition                                                         | Type                                                      | Mandatory/Optional |
+| :--------------- | :----------------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
+| modifier         |  Compose modifier for container modifications                      | `Modifier`                                                | Optional           |
+| appearance       |  Customization options for the visual appearance of the widget     | `AddressDetailsWidgetAppearance`                          | Optional           |
+| address          |  The preset address to pre-fill the input fields.                  | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
+| completion       |  Callback function to execute when the address is saved.           | `(BillingAddress) -> Unit`                                | Mandatory          |
 
 #### BillingAddress
 | Name          | Definition                                                                           | Type       | Mandatory/Optional                           |
@@ -175,3 +172,97 @@ This subsection describes the various parameters required by the `AddressDetails
 
 The `completion` callback is invoked after the address details is captured. It receives a `BillingAddress` once the address details have been saved.
 
+### 4. Widget Styling
+
+Defines the visual appearance and layout attributes for the `AddressDetailsWidget`. This class allows for extensive customisation of the address input form, including the address search functionality, manual input fields, title, and action buttons.
+
+#### Appearance Contract
+
+The `AddressDetailsWidgetAppearance` class encapsulates all configurable style properties for the widget.
+
+```Kotlin
+@Immutable
+class AddressDetailsWidgetAppearance(
+    val verticalSpacing: Dp,
+    val title: TextAppearance,
+    val textField: TextFieldAppearance,
+    val actionButton: ButtonAppearance,
+    val linkButton: LinkButtonAppearance,
+    val searchDropdown: SearchDropdownAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `AddressDetailsAppearanceDefaults`. This uses `MaterialTheme` values and predefined component defaults for a standard look and feel. You can use this as a starting point and customise specific attributes.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    AddressDetailsWidget( 
+        ...
+        appearance = AddressDetailsAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `AddressDetailsWidgetAppearance` or modify the default one using its `copy` method (if your class has one, as seen in the initially provided context).
+
+```Kotlin
+@Composable 
+fun MyCustomAddressScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearance = defaultFromContext.copy( // Assuming .copy() exists as per context
+        verticalSpacing = 12.dp,
+        title = TextAppearanceDefaults.appearance().copy(
+            style = MaterialTheme.typography.headlineSmall.copy(
+                // color = MyAppColors.primary
+            )
+        ),
+        textField = TextFieldAppearanceDefaults.outlineAppearance().copy(
+            // Example: Customizing text field label color
+            // labelColor = MyAppColors.onSurfaceVariant
+        ),
+        linkButton = LinkButtonAppearanceDefaults.appearance().copy(
+            // Example: Customizing link button text style
+            // textStyle = MaterialTheme.typography.labelSmall
+        )
+    )
+
+    // Alternatively, create entirely from scratch:
+    val completelyCustomAppearance = AddressDetailsWidgetAppearance(
+        verticalSpacing = 10.dp,
+        title = TextAppearanceDefaults.appearance(/*...custom title params...*/),
+        textField = TextFieldAppearanceDefaults.filledAppearance(/*...custom text field params...*/),
+        actionButton = ButtonAppearanceDefaults.textButtonAppearance(/*...custom button params...*/),
+        linkButton = LinkButtonAppearanceDefaults.appearance(/*...custom link button params...*/),
+        searchDropdown = SearchDropdownAppearanceDefaults.appearance(/*...custom search params...*/)
+    )
+
+    AddressDetailsWidget(
+        ...
+        appearance = customAppearance, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `AddressDetailsWidgetAppearance`:
+
+ Name                | Description                                                                                                                                  | Type                                                            | Default Value (from `AddressDetailsAppearanceDefaults`)                                        |
+---------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+ `verticalSpacing`   | The vertical space between major elements in the widget (e.g., between search section, manual entry link, input fields, and action button).  | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                       |
+ `title`             | Defines the text appearance for section titles, such as the title for the address search section.                                            | `TextAppearance`                   | `TextAppearanceDefaults.appearance()` with `titleMedium` style.                                |
+ `textField`         | Defines the appearance for all manual address input text fields (e.g., street, city, postal code).                                           | `TextFieldAppearance`               | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                             |
+ `actionButton`      | Defines the appearance of the primary "Save Address" button.                                                                                 | `ButtonAppearance`             | `ButtonAppearanceDefaults.filledButtonAppearance()`                                            |
+ `linkButton`        | Defines the appearance for interactive link-style buttons, such as "Enter Address Manually".                                                 | `LinkButtonAppearance`             | `LinkButtonAppearanceDefaults.appearance()`                                                    |
+ `searchDropdown`    | Defines the appearance of the address search input field and its associated dropdown results list.                                           | `SearchDropdownAppearance'         | `SearchDropdownAppearanceDefaults.appearance()`                                                |
+
+---
+
+**Note:**
+*   The appearance types (`TextAppearance`, `TextFieldAppearance`, etc.) would each have their own detailed documentation.
+*   `WidgetDefaults.Spacing` is assumed to be a predefined Dp value in your project.
