@@ -320,7 +320,7 @@ You can create a custom `GooglePayWidgetAppearance` by specifying the corner rad
 
 ##### Customising Appearance
 
-You can create a custom `ColesPayWidgetAppearance` by providing specific `ImageButtonAppearance` and `LoaderAppearance` configurations.
+You can create a custom `GooglePayWidgetAppearance` by specifying the corner radius, button type, and loader appearance. The Google Pay button itself also adapts to light/dark system themes automatically.
 
 ```Kotlin
 @Composable 
@@ -353,9 +353,9 @@ fun MyCustomGooglePayScreen() {
 
 #### Style Attributes
 
-The following attributes can be configured within `ColesPayWidgetAppearance`:
+The following attributes can be configured within `GooglePayWidgetAppearance`:
 
- Name                | Description                                                                                              | Type                               | Default Value (from `ColesPayWidgetAppearanceDefaults`)   |
+ Name                | Description                                                                                              | Type                               | Default Value (from `GooglePayAppearanceDefaults`)   |
 ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
  `cornerRadius`      | The corner radius for the Google Pay button.                                                             | `androidx.compose.ui.unit.Dp`      | `ButtonAppearanceDefaults.ButtonCornerRadius`             |
  `type`              | The type of the Google Pay button, influencing its text (e.g., "Pay", "Buy", "Checkout", "Donate", "Order", "Subscribe"). See [Google Pay Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines#style). | `com.google.pay.button.ButtonType`                             | `ButtonType.Pay`                                                                                                 |
