@@ -537,7 +537,7 @@ fun MyCustomAfterpayScreen() {
 
 The following attributes can be configured within `AfterpayWidgetAppearance`:
 
- Name                | Description                                                                                              | Type                               | Default Value (from `ColesPayWidgetAppearanceDefaults`)   |
+ Name                | Description                                                                                              | Type                               | Default Value (from `AfterpayAppearanceDefaults`)   |
 ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
 | `buttonText`  | The text displayed on the Afterpay payment button. Options are defined in `AfterpayPaymentButton.ButtonText` (e.g., `DEFAULT`, `PAY_NOW`, `BUY_NOW`). See Afterpay SDK docs. | `com.afterpay.android.AfterpayPaymentButton.ButtonText`    | `AfterpayPaymentButton.ButtonText.DEFAULT`                                                   |
 | `colorScheme` | The color scheme for the Afterpay payment button (e.g., `BLACK_ON_MINT`, `WHITE_ON_BLACK`, `MINT_ON_BLACK`). Options defined in `AfterpayColorScheme`. See Afterpay SDK docs.  | `com.afterpay.android.model.AfterpayColorScheme`           | `AfterpayColorScheme.BLACK_ON_MINT`                                                          |
