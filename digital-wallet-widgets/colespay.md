@@ -253,7 +253,6 @@ fun MyCustomColesPayScreen() {
     )
 
     // Alternatively, create entirely from scratch:
-    // Or, create entirely from scratch:
     val completelyCustomAppearance = ColesPayWidgetAppearance(
         imageButton = ImageButtonAppearance( // Assuming constructor or defaults exist
             shape = RoundedCornerShape(percent = 20),
@@ -281,7 +280,7 @@ The following attributes can be configured within `ColesPayWidgetAppearance`:
  Name                | Description                                                                                              | Type                               | Default Value (from `ColesPayWidgetAppearanceDefaults`)   |
 ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
  `imageButton`       | Defines the appearance for fixed image button, such as interactive state.                                | `ImageButtonAppearance`            | `ColesPayWidgetAppearanceDefaults.appearance()`           |
- `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `SearchDropdownAppearance`         | `SearchDropdownAppearanceDefaults.appearance()`           |
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `LoaderAppearance`                 | `LoaderAppearanceDefaults.appearance()`                   |
 
 ---
 
