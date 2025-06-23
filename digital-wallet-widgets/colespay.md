@@ -86,10 +86,12 @@ This section provides a step-by-step guide on how to initialize and use the `Col
 The following sample code demonstrates the definition of the `ColesPayWidget`:
 
 ```Kotlin
+@Composable
 fun ColesPayWidget(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    clientId: String,
+    config: ColesPayWidgetConfig,
+    appearance: ColesPayWidgetAppearance = ColesPayWidgetAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
     completion: (Result<String>) -> Unit
@@ -104,14 +106,17 @@ ColesPayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
-    clientId = merchantClientId,
+    config = ColesPayWidgetConfig(clientId = merchantClientId),
+    appearance = currentOrDefaultAppearance,
     tokenRequest = { callback ->
         // show widget loader
         tokenResult.onSuccess { result ->
             // Handle token success
             val walletToken = result.token // ... retrieve the token
+            Result.success(WalletTokenResult(token = walletToken))
         }.onFailure {
             // Handle token failure success
+            Result.failure(it)
         }
     }
 ) { result ->
@@ -132,14 +137,21 @@ This subsection describes the various parameters required by the `ColesPayWidget
 
 #### ColesPayWidget
 
-| Name                  | Definition                                                                        | Type                                              | Mandatory/Optional |
-| :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
-| modifier              |  Compose modifier for container modifications                                     | `androidx.compose.ui.Modifier`                    | Optional           |
-| enabled               |  A boolean to enable or disable the payment button                                | Boolean                                           | Optional           |
-| clientId              |  A merchant supplied client ID                                                    | String                                            | Mandatory          |
-| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
-| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.                     | `WidgetLoadingDelegate`                           | Optional          |
-| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.         | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
+| Name                  | Definition                                                                                        | Type                                                                           | Mandatory/Optional |
+| :-------------------- | :------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------- | :----------------- |
+| modifier              |  Compose modifier for container modifications                                                     | `androidx.compose.ui.Modifier`                                                 | Optional           |
+| enabled               |  A boolean to enable or disable the payment button                                                | Boolean                                                                        | Optional           |
+| config                |  The configuration details required for the Coles Pay widget                                      | `ColesPayWidgetConfig`                                                         | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget                                    | `ColesPayWidgetAppearance`                                                     | Optional           |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                                                        | Optional           |
+| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.                       | `(Result<ChargeResponse>) -> Unit`                                             | Mandatory          |
+
+#### ColesPayWidgetConfig
+
+| Name                  | Definition                                         | Type                        | Mandatory/Optional |
+| --------------------- | -------------------------------------------------- | --------------------------- |------------------  |
+| clientId              |  A merchant supplied client ID                     | String                      | Mandatory          |
 
 ### 3. Callback Explanation
 
@@ -181,14 +193,97 @@ InitialisationWalletTokenException(displayableMessage: String, val errorBody: St
 UnknownException(displayableMessage: String) : ColesPayException(displayableMessage)
 ```
 
-| Exception                 | Description                                                                                   | Error Model         |
-| :------------------------ | :-------------------------------------------------------------------------------------------- | :------------------ |
-| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for Coles Pay.                      |  ColesPayError      |
-| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  ColesPayError      |
-| CancellationException     |  Exception thrown when there is a cancellation error related to Coles Pay.                    |  ColesPayError      |
-| ParseException            |  Exception thrown when parsing of data from an API call, typically JSON.                      |  ColesPayError      |
-| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  ColesPayError      |
-| UnknownException          |  Exception thrown when there is an unknown error related to Coles Pay.                        |  ColesPayError      |
+| Exception                             | Description                                                                                   | Error Model         |
+| :------------------------------------ | :-------------------------------------------------------------------------------------------- | :------------------ |
+| FetchingUrlException                  |  Exception thrown when there is an error fetching the URL for Coles Pay.                      |  ColesPayError      |
+| WebViewException                      |  Exception thrown when there is an error while communicating with a WebView.                  |  ColesPayError      |
+| CancellationException                 |  Exception thrown when there is a cancellation error related to Coles Pay.                    |  ColesPayError      |
+| ParseException                        |  Exception thrown when parsing of data from an API call, typically JSON.                      |  ColesPayError      |
+| InitialisationWalletTokenException    |  Exception thrown when the wallet token result returns a failure result.                      |  ColesPayError      |
+| UnknownException                      |  Exception thrown when there is an unknown error related to Coles Pay.                        |  ColesPayError      |
 
 
+### 5. Widget Styling
 
+Defines the visual appearance for the `ColesPayWidget`. This primarily involves customizing the "Pay with Coles Pay" image button and the loading indicator displayed during its operation.
+
+#### Appearance Contract
+
+The `ColesPayWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Kotlin
+@Immutable
+class ColesPayWidgetAppearance(
+    val imageButton: ImageButtonAppearance,
+    val loader: LoaderAppearance
+) 
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `ColesPayWidgetAppearanceDefaults`. This configures the image button with a specific pill shape and white ripple, and the loader with a white color, designed to match typical Coles Pay branding.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    ColesPayWidget( 
+        ...
+        appearance = ColesPayWidgetAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ColesPayWidgetAppearance` by providing specific `ImageButtonAppearance` and `LoaderAppearance` configurations.
+
+```Kotlin
+@Composable 
+fun MyCustomColesPayScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearance = defaultFromContext.copy( // Assuming .copy() exists as per context
+        imageButton = ImageButtonDefaults.appearance().copy(
+            // Example: Customizing ripple colour
+            // rippleColor = Colors.Blue
+        ),
+        loader = LoaderAppearanceDefaults.appearance().copy(
+            // Example: Customizing loader colour
+            // color = Color.Red
+        )
+    )
+
+    // Alternatively, create entirely from scratch:
+    // Or, create entirely from scratch:
+    val completelyCustomAppearance = ColesPayWidgetAppearance(
+        imageButton = ImageButtonAppearance( // Assuming constructor or defaults exist
+            shape = RoundedCornerShape(percent = 20),
+            rippleColor = Color.DarkGray,
+            // ... other ImageButtonAppearance properties
+        ),
+        loader = LoaderAppearance( // Assuming constructor or defaults exist
+            color = Color.Red,
+            strokeWidth = 5.dp
+            // ... other LoaderAppearance properties
+        )
+    )
+
+    ColesPayWidget(
+        ...
+        appearance = customAppearanceFromDefaults, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ColesPayWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `ColesPayWidgetAppearanceDefaults`)   |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
+ `imageButton`       | Defines the appearance for fixed image button, such as interactive state.                                | `ImageButtonAppearance`            | `ColesPayWidgetAppearanceDefaults.appearance()`           |
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `SearchDropdownAppearance`         | `SearchDropdownAppearanceDefaults.appearance()`           |
+
+---
+
+**Note:**
+*   The `ImageButtonAppearance` and `LoaderAppearance` themselves would have their own detailed documentation explaining their configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*   
