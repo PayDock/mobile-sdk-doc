@@ -20,8 +20,8 @@ The following sample code demonstrates the definition of the `Standalone3DSWidge
 
 ```Swift
 Standalone3DSWidget(
-    token: String,
-    baseURL: URL?,
+    config: ThreeDSConfig,
+    appearance: ThreeDSWidgetAppearance = ThreeDSAppearanceDefaults.appearance(),
     completion: @escaping (Result<Standalone3DSResult, Standalone3DSError>) -> Void
 ) {...}
 ```
@@ -30,8 +30,8 @@ The following sample code example demonstrates the usage within your application
 
 ```Swift
 Standalone3DSWidget(
-    token: <Your 3DS token>,
-    baseURL: <Your base URL>,
+    config = ThreeDSConfig(token = threeDSToken),
+    appearance = currentOrDefaultAppearance
     completion: { result in
         switch result {
         case .success(let result):
@@ -51,9 +51,16 @@ The widget returns an object that contains the status of the 3DS flow and the 3D
 
 | Name                | Definition                                                                       | Type                                                           | Mandatory/Optional |
 | :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------------------- | :----------------  |
-| token               |  The standalone 3DS token used for standalone 3DS widget initialisation.         | String                                                         | Mandatory          |
-| baseURL             |  A URL that is used to resolve relative URLs within the webview.                 | URL                                                            | Optional           |
+| config              |  Configuration options for the integrated 3ds widget                                                        | `ThreeDSConfig`     | Mandatory          |
+| appearance          |  Customization options for the visual appearance of the widget                                            | `ThreeDSWidgetAppearance` | Optional           |
 | completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<Standalone3DSResult, Standalone3DSError>) -> Void`    | Mandatory          |
+
+#### ThreeDSConfig
+
+| Name                | Definition                                                                                       | Type                        | Mandatory/Optional      |
+| ------------------- | ------------------------------------------------------------------------------------------------ | --------------------------- |----------------------   |
+| token               |  The standalone 3DS token used for standalone 3DS widget initialisation.         | String                                                         | Mandatory          |
+
 
 #### MobileSDK.Standalone3DSResult
 
@@ -191,3 +198,70 @@ EventMappingException(displayableMessage: String) : Standalone3DSException(displ
 | WebViewException        |  Exception thrown when there is an error while communicating with a WebView.             |  ThreeDSError        |
 | InvalidTokenException   |  Exception thrown when the token is invalid and/or is of the incorrect format/type.      |  ThreeDSError        |
 | EventMappingException   |   Exception thrown when there is an issue mapping a web event a SDK expected event.      |  ThreeDSError        |
+
+### 5. Widget Styling
+
+Defines the visual appearance for specific elements within the `Standalone3DSWidget`. Currently, this primarily involves customising the loading indicator displayed during Standalone 3DS operations.
+
+#### Appearance Contract
+
+The `ThreeDSWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Kotlin
+@Immutable
+class ThreeDSWidgetAppearance(
+    val loader: LoaderAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `ThreeDSWidgetAppearance`. This uses a standard loader appearance. You can use this as a starting point or provide a completely custom loader configuration.
+
+
+##### Using Default Appearance
+
+
+```Kotlin
+    Standalone3DSWidget( 
+        ...
+        appearance = ThreeDSAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ThreeDSWidgetAppearance` or modify the default one using its `copy` method (if your class has one, as seen in the initially provided context).
+
+```Kotlin
+@Composable 
+fun MyCustomIntegrated3DSScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customLoaderAppearance = LoaderAppearanceDefaults.appearance().copy(
+        // type = LoaderType.Circular, 
+        // color = Color.Magenta, 
+        // size = 48.dp 
+    )
+    val customAppearance = ThreeDSWidgetAppearance(
+        loader = customLoaderAppearance
+    )
+
+    Standalone3DSWidget(
+        ...
+        appearance = customAppearance, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ThreeDSWidgetAppearance`:
+
+ Name     | Description                                                                                             | Type                                                       | Default Value (from `ThreeDSAppearanceDefaults`) |
+----------|---------------------------------------------------------------------------------------------------------|------------------------------------------------------------|-------------------------------------------------------|
+ `loader` | Defines the appearance of the loading indicator shown when the widget is processing or loading content. | `LoaderAppearance`      | `LoaderAppearanceDefaults.appearance()`               |
+
+---
+
+**Note:**
+*   The `LoaderAppearance` itself would have its own detailed documentation explaining its configurable attributes (like color, size, type, stroke width, etc.). This documentation focuses on how it's used within the `ThreeDSWidgetAppearance`.
