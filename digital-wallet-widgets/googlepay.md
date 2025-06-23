@@ -83,6 +83,7 @@ This subsection describes the parameters required by the `GooglePayWidget` compo
 | :-------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                                              | Optional           |
 | config                |  The configuration details required for the Google Pay widget                            | `GooglePayWidgetConfig`                                                     | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget                           | `GooglePayWidgetAppearance`                                                 | Optional           |
 | tokenRequest          |  A callback to obtain the wallet token result asynchronously                             | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`  | Mandatory          |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                          | Mandatory          |
 
