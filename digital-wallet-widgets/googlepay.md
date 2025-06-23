@@ -344,7 +344,7 @@ fun MyCustomGooglePayScreen() {
         )
     )
 
-    ColesPayWidget(
+    GooglePayWidget(
         ...
         appearance = customAppearanceFromDefaults, // Use your custom appearance
     )
