@@ -165,8 +165,9 @@ The code for the `AfterpayWidget` is as follows. None of the values are populate
 ```Kotlin
 fun AfterpayWidget(
     modifier: Modifier,
-    config: AfterpaySDKConfig,
     enabled: Boolean,
+    config: AfterpaySDKConfig,
+    appearance: AfterpayWidgetAppearance = AfterpayAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit,
     selectShippingOption: (
@@ -199,15 +200,18 @@ AfterpayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp),
-   tokenRequest = { callback ->
+    appearance = currentOrDefaultAppearance,
+    tokenRequest = { callback ->
         // show widget loader
         tokenResult.onSuccess { result ->
             // Handle token success
             val walletToken = result.token // ... retrieve the token
+            Result.success(WalletTokenResult(token = walletToken))
         }.onFailure {
             // Handle token failure success
+            Result.failure(it)
         }
-    },
+    }
     config = configuration,
     selectAddress = { _, provideShippingOptions ->
         val currency = Currency.getInstance(configuration.config.currency)
@@ -465,3 +469,82 @@ UnknownException(displayableMessage: String) : AfterpayException(displayableMess
 | InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  AfterpayError    |
 | UnknownException          |  Exception thrown when there is an unknown error related to Afterpay.                         |  AfterpayError    |
 
+### 5. Widget Styling
+
+Defines the visual appearance for the `AfterpayWidget`. This includes the official Afterpay payment button's text and color scheme, as well as the loading indicator displayed during the payment process.
+
+#### Appearance Contract
+
+The `AfterpayWidgetAppearance` class encapsulates the configurable style properties for the widget, leveraging the official Afterpay SDK components for the button.
+
+```Kotlin
+@Immutable
+class AfterpayWidgetAppearance(
+    val buttonText: AfterpayPaymentButton.ButtonText,
+    val colorScheme: AfterpayColorScheme,
+    val loader: LoaderAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `AfterpayAppearanceDefaults`. This uses Afterpay's default button text, the `BLACK_ON_MINT` color scheme, and a standard loader. Adherence to Afterpay's branding guidelines is crucial when customizing.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    AfterpayWidget( 
+        ...
+        appearance = AfterpayAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `AfterpayWidgetAppearance` by specifying the button text, color scheme (from `AfterpayColorScheme`), and loader appearance.
+
+```Kotlin
+@Composable 
+fun MyCustomAfterpayScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearanceFromDefaults = AfterpayAppearanceDefaults.appearance().copy( // Ensure this copy method exists on your AfterpayWidgetAppearance 
+        buttonText = AfterpayPaymentButton.ButtonText.PAY_NOW, // Change button text 
+        colorScheme = AfterpayColorScheme.WHITE_ON_BLACK, // Change color scheme 
+        loader = LoaderAppearanceDefaults.appearance().copy( // Example: Change loader color 
+            color = Color.Magenta 
+        ) 
+    )
+
+    // Alternatively, create entirely from scratch:
+    val completelyCustomAppearance = AfterpayWidgetAppearance(
+        buttonText = AfterpayPaymentButton.ButtonText.BUY_NOW,
+        colorScheme = AfterpayColorScheme.MINT_ON_BLACK,
+        loader = LoaderAppearance( // Assuming constructor or defaults exist
+            color = Color.Cyan
+            // ... other LoaderAppearance properties
+        )
+    )
+
+    AfterpayWidget(
+        ...
+        appearance = customAppearanceFromDefaults, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `AfterpayWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `ColesPayWidgetAppearanceDefaults`)   |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
+| `buttonText`  | The text displayed on the Afterpay payment button. Options are defined in `AfterpayPaymentButton.ButtonText` (e.g., `DEFAULT`, `PAY_NOW`, `BUY_NOW`). See Afterpay SDK docs. | `com.afterpay.android.AfterpayPaymentButton.ButtonText`    | `AfterpayPaymentButton.ButtonText.DEFAULT`                                                   |
+| `colorScheme` | The color scheme for the Afterpay payment button (e.g., `BLACK_ON_MINT`, `WHITE_ON_BLACK`, `MINT_ON_BLACK`). Options defined in `AfterpayColorScheme`. See Afterpay SDK docs.  | `com.afterpay.android.model.AfterpayColorScheme`           | `AfterpayColorScheme.BLACK_ON_MINT`                                                          |
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or waiting for results from the Afterpay SDK.  | `LoaderAppearance`         | `LoaderAppearanceDefaults.appearance()`           |
+
+---
+
+**Note:**
+*   The `buttonText` and `colorScheme` are from the official Afterpay Android SDK. Refer to the [Afterpay Developer Documentation](https://developers.afterpay.com/afterpay-online/docs/display-afterpay-messaging#display-payment-button) for branding guidelines and available options.
+*   The `LoaderAppearance` would have its own detailed documentation.
