@@ -17,13 +17,15 @@ The GooglePay widget facilitates payments using GooglePay services. This section
 The following sample code demonstrates the definition of the `GooglePayWidget`:
 
 ```Kotlin
+@Composable
 fun GooglePayWidget(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    config: GooglePayWidgetConfig,
+    appearance: GooglePayWidgetAppearance = GooglePayAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
-    isReadyToPayRequest: JSONObject,
-    paymentRequest: JSONObject,
+    loadingDelegate: WidgetLoadingDelegate? = null,
     completion: (Result<ChargeResponse>) -> Unit
-) {...}
+)  {...}
 ```
 
 The following sample code example demonstrates how to use the widget in your application:
@@ -34,26 +36,31 @@ GooglePayWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
+    config = GooglePayWidgetConfig(
+        isReadyToPayRequest = PaymentsUtil.createIsReadyToPayRequest(),
+        paymentRequest = PaymentsUtil.createGooglePayRequest(
+            amount = BigDecimal(AMOUNT),
+            amountLabel = AMOUNT_LABEL,
+            currencyCode = CURRENCY_CODE,
+            countryCode = COUNTRY_CODE,
+            merchantName = MERCHANT_NAME,
+            merchantIdentifier = MERCHANT_IDENTIFIER,
+            shippingAddressRequired = true,
+            shippingAddressParameters = shippingAddressParameters
+        )
+    ),
+    appearance = currentOrDefaultAppearance,
     tokenRequest = { callback ->
         // show widget loader
         tokenResult.onSuccess { result ->
             // Handle token success
             val walletToken = result.token // ... retrieve the token
+            Result.success(WalletTokenResult(token = walletToken))
         }.onFailure {
             // Handle token failure success
+            Result.failure(it)
         }
-    },
-    isReadyToPayRequest = PaymentsUtil.createIsReadyToPayRequest(),
-    paymentRequest = PaymentsUtil.createGooglePayRequest(
-        amount = BigDecimal(AMOUNT),
-        amountLabel = AMOUNT_LABEL,
-        currencyCode = CURRENCY_CODE,
-        countryCode = COUNTRY_CODE,
-        merchantName = MERCHANT_NAME,
-        merchantIdentifier = MERCHANT_IDENTIFIER,
-        shippingAddressRequired = true,
-        shippingAddressParameters = shippingAddressParameters
-    )
+    }
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { chargeResponse ->
@@ -72,13 +79,20 @@ This subsection describes the parameters required by the `GooglePayWidget` compo
 
 #### GooglePayWidget
 
-| Name                  | Definition                                                                               | Type                                              | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------ | :----------------- |
-| modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                    | Optional           |
-| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
-| isReadyToPayRequest   |  GooglePay request for determining if a user is considered ready to pay.                | `JSONObject` → `IsReadyToPayRequest`              | Mandatory          |
-| paymentRequest        |  GooglePay request for providing necessary information to support a payment.            | `JSONObject` → `PaymentDataRequest`               | Mandatory          |
-| completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                | Mandatory          |
+| Name                  | Definition                                                                               | Type                                                                        | Mandatory/Optional |
+| :-------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- | :----------------- |
+| modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                                              | Optional           |
+| config                |  The configuration details required for the Google Pay widget                            | `GooglePayWidgetConfig`                                                     | Mandatory          |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                             | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`  | Mandatory          |
+| completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                          | Mandatory          |
+
+
+#### GooglePayWidgetConfig
+
+| Name                  | Definition                                                                     | Type                                     | Mandatory/Optional |
+| --------------------- | ------------------------------------------------------------------------------ | ---------------------------------------- |------------------  |
+| isReadyToPayRequest   |  GooglePay request for determining if a user is considered ready to pay.       | `JSONObject` → `IsReadyToPayRequest`     | Mandatory          |
+| paymentRequest        |  GooglePay request for providing necessary information to support a payment.   | `JSONObject` → `PaymentDataRequest`      | Mandatory          |
 
 ### 3. How to create GooglePay request objects 
 
@@ -272,3 +286,83 @@ UnknownException(displayableMessage: String) : GooglePayException(displayableMes
 | InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  GooglePayError      |
 | UnknownException          |  Exception thrown when there is an unknown error related to Google Pay.                       |  GooglePayError      |
 
+### 9. Widget Styling
+
+Defines the visual appearance for the `GooglePayWidget`. This focuses on the styling of the official Google Pay button (its corner radius and type) and the loading indicator displayed during payment processing.
+
+#### Appearance Contract
+
+The `GooglePayWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Kotlin
+@Immutable
+class GooglePayWidgetAppearance(
+    val cornerRadius: Dp,
+    val type: ButtonType,
+    val loader: LoaderAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+You can create a custom `GooglePayWidgetAppearance` by specifying the corner radius, button type, and loader appearance. The Google Pay button itself also adapts to light/dark system themes automatically.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    GooglePayWidget( 
+        ...
+        appearance = GooglePayAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ColesPayWidgetAppearance` by providing specific `ImageButtonAppearance` and `LoaderAppearance` configurations.
+
+```Kotlin
+@Composable 
+fun MyCustomColesPayScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearanceFromDefaults = GooglePayAppearanceDefaults.appearance().copy(
+        cornerRadius = 0.dp, // Make it square 
+        type = ButtonType.Checkout, // Change button type 
+        loader = LoaderAppearanceDefaults.appearance().copy( 
+            // Example: Change loader color color = Color.Blue 
+        ) 
+    )
+
+    // Alternatively, create entirely from scratch:
+    val completelyCustomAppearance = GooglePayWidgetAppearance(
+        cornerRadius = 12.dp,
+        type = ButtonType.Subscribe,
+        loader = LoaderAppearance( // Assuming constructor or defaults exist
+            color = Color.Green
+            // ... other LoaderAppearance properties
+        )
+    )
+
+    ColesPayWidget(
+        ...
+        appearance = customAppearanceFromDefaults, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ColesPayWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `ColesPayWidgetAppearanceDefaults`)   |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
+ `cornerRadius`      | The corner radius for the Google Pay button.                                                             | `androidx.compose.ui.unit.Dp`      | `ButtonAppearanceDefaults.ButtonCornerRadius`             |
+ `type`              | The type of the Google Pay button, influencing its text (e.g., "Pay", "Buy", "Checkout", "Donate", "Order", "Subscribe"). See [Google Pay Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines#style). | `com.google.pay.button.ButtonType`                             | `ButtonType.Pay`                                                                                                 |
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `LoaderAppearance`         | `LoaderAppearanceDefaults.appearance()`           |
+
+---
+
+**Note:**
+*   The `ButtonType` is from the official `com.google.pay.button` library. The button's theme (light/dark) is automatically handled based on `isSystemInDarkTheme()`.
+*   Refer to the [Google Pay Brand Guidelines](https://developers.google.com/pay/api/web/guides/brand-guidelines) for proper usage of button types and other branding requirements
+*   The `LoaderAppearance` would have its own detailed documentation.
