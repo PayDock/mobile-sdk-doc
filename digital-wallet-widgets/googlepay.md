@@ -324,7 +324,7 @@ You can create a custom `ColesPayWidgetAppearance` by providing specific `ImageB
 
 ```Kotlin
 @Composable 
-fun MyCustomColesPayScreen() { 
+fun MyCustomGooglePayScreen() { 
     // Create appearance by using provided defaults, with custom changes
     val customAppearanceFromDefaults = GooglePayAppearanceDefaults.appearance().copy(
         cornerRadius = 0.dp, // Make it square 
