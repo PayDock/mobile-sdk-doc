@@ -378,5 +378,5 @@ The following attribute can be configured within `PayPalPaymentSourceWidgetAppea
 ---
 
 **Note:**
-*   The `actionButton` relies on your project's `ButtonAppearance` system. Refer to your internal documentation or implementation of `ButtonAppearance` (and its variants like `FilledButtonAppearance`, `OutlineButtonAppearance`, etc.) and `ButtonAppearanceDefaults` for detailed customization options (e.g., colors, typography, shape, icons).
+*   The `actionButton` relies on the `ButtonAppearance` system. Refer to your internal documentation or implementation of `ButtonAppearance` (and its variants like `FilledButtonAppearance`, `OutlineButtonAppearance`, etc.) and `ButtonAppearanceDefaults` for detailed customization options (e.g., colors, typography, shape, icons).
 *   The `PayPalVaultConfig` allows for optional `actionText` and `icon` parameters which directly affect the button's content, complementing the styling provided by `actionButton`.
