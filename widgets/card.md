@@ -410,4 +410,3 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 
 **Note:**
 *   The appearance types (`TextAppearance`, `TextFieldAppearance`, `ButtonAppearance`, `ToggleAppearance`, `LinkTextAppearance`) would each have their own detailed documentation.
-*   `WidgetDefaults.Spacing` is assumed to be a predefined Dp value in your project.
