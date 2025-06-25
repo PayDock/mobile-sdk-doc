@@ -99,12 +99,13 @@ The following sample code demonstrates the definition of the `PayPalWidget`:
 
 ```Kotlin
 fun PayPalWidget(
-    modifier: Modifier,
-    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    config: PayPalWidgetConfig = PayPalWidgetConfig(),
+    appearance: PayPalWidgetAppearance = PayPalAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
-    requestShipping: Boolean,
-    loadingDelegate: WidgetLoadingDelegate?,
-    completion: (Result<ChargeResponse>) -> Unit
+    loadingDelegate: WidgetLoadingDelegate? = null,
+    completion: (Result<ChargeResponse>) -> Unit,
 ) {...}
 ```
 
@@ -116,17 +117,18 @@ PayPalWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
-    enabled: Boolean, // optional
+    config = PayPalWidgetConfig(requestShipping = false), //optional (default: true)
     tokenRequest = { callback ->
         // show widget loader
         tokenResult.onSuccess { result ->
             // Handle token success
             val walletToken = result.token // ... retrieve the token
+            Result.success(WalletTokenResult(token = walletToken))
         }.onFailure {
             // Handle token failure success
+            Result.failure(it)
         }
     },
-    requestShipping = false //optional (default: true),
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
 ) { result ->
     // Handle the result of the payment operation
@@ -150,7 +152,9 @@ This subsection describes the various parameters required by the `PayPalWidget` 
 | :-------------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications                                                   | `androidx.compose.ui.Modifier`                | Optional           |
 | enabled               |  Controls the enabled state of this Widget.                                                     | Boolean                                       | Optional           |
-| tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget                                  | `PayPalWidgetAppearance`                      | Optional           |
+| config                |  Configuration options for the PayPal widget                                                    | `PayPalWidgetConfig`                          | Mandatory          |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                                    | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | requestShipping       |  Flag passed to determine if PayPal will ask the user for their shipping address.               | Boolean (default = `true`)                    | Optional           |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.| `WidgetLoadingDelegate`                       | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.          | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
@@ -250,3 +254,75 @@ UnknownException(displayableMessage: String) : PayPalException(displayableMessag
 | InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  PayPalError      |
 | UnknownException          |  Exception thrown when there is an unknown error related to PayPal.                           |  PayPalError      |
 
+### 5. Widget Styling
+
+Defines the visual appearance for specific elements within the `PayPalWidget`.
+The primary visual element is the PayPal button, which has its own branding guidelines. This appearance configuration mainly focuses on the loading indicator displayed during interactions with the PayPal flow.
+
+#### Appearance Contract
+
+The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, currently centered on the loader.
+
+```Kotlin
+@Immutable
+class PayPalWidgetAppearance(
+    val loader: LoaderAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `PayPalAppearanceDefaults`. This configures a specific loader appearance (black color, default stroke width) intended to be visually compatible with the standard PayPal button.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    PayPalWidget( 
+        ...
+        appearance = PayPalAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `PayPalWidgetAppearance` by providing a specific `LoaderAppearance` configuration if the default doesn't meet your needs or if you want to ensure consistency with other loaders in your app.
+
+```Kotlin
+@Composable 
+fun MyCustomPayPalScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearanceFromDefaults = PayPalAppearanceDefaults.appearance().copy(     
+        loader = LoaderAppearanceDefaults.appearance().copy( 
+            color = Color.Blue,
+            strokeWidth = 3.dp   
+        )
+    )
+
+    // Alternatively, create entirely from scratch:
+    val completelyCustomAppearance = PayPalWidgetAppearance(
+    loader = LoaderAppearanceDefaults.appearance().copy( // Or new LoaderAppearance(...)
+        color = Color.DarkGray,
+        strokeWidth = 2.dp
+        // ... other LoaderAppearance properties
+    )
+)
+
+    PayPalWidget(
+        ...
+        appearance = customAppearanceFromDefaults, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+|  Name                | Description                                                                                              | Type                               | Default Value (from `PayPalAppearanceDefaults`)   |
+| ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|---------------------------------------------------|
+| `loader`             | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `LoaderAppearance`                 | `LoaderAppearanceDefaults.appearance()`           |
+
+---
+
+**Note:**
+*   The PayPal button itself follows strict branding guidelines from PayPal and is generally not customizable beyond what the PayPal SDK or web view provides.
+*   The `LoaderAppearance` itself would have its own detailed documentation explaining its configurable attributes.
