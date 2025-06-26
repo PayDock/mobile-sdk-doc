@@ -70,5 +70,3 @@ let textAppearance = TextAppearance(padding: padding)
 let textAppearance = TextAppearance(padding: padding)
 textAppearance.padding.top = 4
 ```
-
-
