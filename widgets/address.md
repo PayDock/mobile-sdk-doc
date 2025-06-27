@@ -265,4 +265,3 @@ The following attributes can be configured within `AddressDetailsWidgetAppearanc
 
 **Note:**
 *   The appearance types (`TextAppearance`, `TextFieldAppearance`, etc.) would each have their own detailed documentation.
-*   `WidgetDefaults.Spacing` is assumed to be a predefined Dp value in your project.
