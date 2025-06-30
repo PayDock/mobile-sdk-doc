@@ -21,9 +21,11 @@ Use the following to initialize the **PayPalView**:
 ```Swift
 PayPalWidget(
     viewState: ViewState?,
+    appearance: PayPalWidgetAppearance = PayPalWidgetAppearance(),
     loadingDelegate: WidgetLoadingDelegate?,
-    payPalTokenHandler: @escaping (_ payPalToken: @escaping (String) -> Void) -> Void,
+    tokenRequest: @escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void,
     completion: @escaping (Result<ChargeResponse, PayPalError>) -> Void)
+    { ... }
 ```
 In case of successful charge, the **PayPalView** returns a `ChargeResponse` that contains all the relevant information. In case of an error, the **PayPalError** object is returned with information regarding the failure.
 
@@ -33,8 +35,8 @@ The following is an example of a full PayPalView initialization:
 struct PayPalExampleView: View {
     var body: some View {
         VStack {
-            PayPalWidget { onPayPalButtonTap in
-                onPayPalButtonTap(payPalToken)
+            PayPalWidget(appearance: PayPalWidgetAppearance()) { onPayPalButtonTap in
+                viewModel.initializeWalletCharge(completion: onPayPalButtonTap)
             } completion: { result in
                 switch result {
                 case .success(let chargeResponse): // Handle successful charge response
@@ -50,12 +52,13 @@ struct PayPalExampleView: View {
 
 #### PayPalWidget
 
-| Name             | Definition                                                                                        | Type                                            | Mandatory/Optional |
-| :--------------- | :------------------------------------------------------------------------------------------------ | :---------------------------------------------- | :----------------- |
-| viewState        |  View options that are two way fields to alter view state                                         | ViewState                                       | Optional           |
-| loadingDelegate  |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | WidgetLoadingDelegate                           | Optional           |
-| payPalToken      |  A callback to obtain the wallet token asynchronously                                             | `(String) -> Void) -> Void`                     | Mandatory          |
-| completion       |  Result callback with the Charge creation API response if successful, or error if not.            | `(Result<ChargeResponse, PayPalError>) -> Void` | Mandatory          |
+| Name             | Definition                                                                                       | Type                                                                                       | Mandatory/Optional |
+| :--------------- | :----------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- | :----------------- |
+| viewState        |  View options that are two way fields to alter view state                                        | `ViewState`                                                                                | Optional           |
+| appearance       |  Object for visual customization of the widget.                                                  | `MobileSDK.PayPalWidgetAppearance`                                                         | Optional           |
+| loadingDelegate  |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                                                                    | Optional           |
+| tokenRequest     |  A callback to obtain the wallet token asynchronously                                            | `(_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void` | Mandatory          |
+| completion       |  Result callback with the Charge creation API response if successful, or error if not.           | `(Result<ChargeResponse, PayPalError>) -> Void` | Mandatory          |
 
 #### MobileSDK.ViewState
 
@@ -75,13 +78,76 @@ The following definitions provide a more detailed overview of the parameters use
 
 #### MobileSDK.PayPalError
 
-| Name                       | Description                                                                     | Error Result            |
+| Name                      | Description                                                                      | Error Result            |
 | :------------------------ | :------------------------------------------------------------------------------- | :---------------------- |
 | errorFetchingPayPalUrl    |  Error thrown when there is an error fetching the URL for PayPal.                |  ErrorRes               |
 | errorCapturingCharge      |  Error thrown when there is an error capturing the charge for PayPal.            |  ErrorRes               |
 | webViewFailed             |  Error thrown when there is an error while communicating with a WebView.         |  NSError                |
 | transactionCanceled       |  Error thrown when user cancels the flow.                                        |  nil                    |
 | UnknownException          |  Error thrown when there is an unknown error related to PayPal.                  |  nil                    |
+
+### 5. Widget Styling
+
+Defines the visual appearance for specific elements within the `PayPalWidget`.
+The primary visual element is the PayPal button, which has its own branding guidelines. This appearance configuration mainly focuses on the loading indicator displayed during interactions with the PayPal flow.
+
+#### Appearance Contract
+
+The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, currently centered on the loader.
+
+```Swift
+public struct PayPalWidgetAppearance: ActionButtonLoaderStylableAppearance {
+    public var loader: Theme.ButtonLoader
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme`. This configures a specific loader appearance intended to be visually compatible with the standard PayPal button.
+
+##### Using Default Appearance
+
+```Swift
+    PayPalWidget( 
+        ...
+        appearance: PayPalWidgetAppearance = PayPalWidgetAppearance(),
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `PayPalWidgetAppearance` by providing a specific `LoaderAppearance` configuration if the default doesn't meet your needs or if you want to ensure consistency with other loaders in your app.
+
+```Swift
+@Composable 
+struct MyCustomPayPalScreen: View { 
+    private func myCustomAppearance() -> PayPalWidgetAppearance {
+        let buttonLoader = Theme.ButtonLoader(spinnerColor: .blue)
+        let appearance = PayPalWidgetAppearance(loader: buttonLoader)
+        return appearance
+    }
+    
+    var body: some View {
+        PayPalWidget( 
+            ...
+            appearance: PayPalWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+|  Name                | Description                                                                                              | Type                             | Default Value     |
+| ---------------------|----------------------------------------------------------------------------------------------------------|----------------------------------|-------------------|
+| `loader`             | Defines the appearance of the loading indicator shown when the widget is processing or loading content.    | `MobileSDK.Theme.ButtonLoader` | `Color.onPrimary` |
+
+---
+
+**Note:**
+*   The PayPal button itself follows strict branding guidelines from PayPal and is generally not customizable beyond what the PayPal SDK or web view provides.
+*   The `ButtonLoader` itself would have its own detailed documentation explaining its configurable attributes.
 
 ## Android
 
