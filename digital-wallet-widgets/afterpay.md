@@ -68,8 +68,8 @@ This subsection describes the parameters required by the `AfterpayWidget` view. 
 | Name                  | Definition                                                                                           | Type                                                                                                                  | Mandatory/Optional |
 | :-------------------- | :--------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
 | configuration         |  Configuration for the Afterpay SDK.                                                                 | `AfterpaySdkConfig`                                                                                                   | Mandatory          |
-| appearance            |  Configuration for the Afterpay SDK.                                                                 | `AfterpaySdkConfig`                                                                                                   | Mandatory          |
-| afterPayToken         |  A callback to obtain the wallet token asynchronously.                                               | `(_ afterPayToken: @escaping (String) -> Void) -> Void`                                                               | Mandatory          |
+| appearance            |  Object for visual customization of the widget.                                                      | `MobileSDK.AfterpayWidgetAppearance`                                                                                  | Optional           |
+| tokenRequest          |  A callback to obtain the wallet token asynchronously.                                               | `@escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void`                  | Mandatory          |
 | selectAddress         |  A callback to handle selection of shipping address.                                                 | `(_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void`                          | Optional           |
 | selectShippingOption  |  A callback to handle the selection for the shipping options.                                        | `(_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void`    | Optional           |
 | buttonWidth           |  Sets preferred widget button size based on the provided width.                                      | `CGFloat`                                                                                                             | Optional           |
@@ -79,17 +79,9 @@ This subsection describes the parameters required by the `AfterpayWidget` view. 
 
 | Name           | Definition                                                   | Type                      | Mandatory/Optional    |
 | :------------- | :----------------------------------------------------------- | :------------------------ | :-------------------- |
-| buttonTheme    |  The theme settings for the Afterpay payment button.         | `ButtonTheme`             | Optional              |
 | config         |  The main configuration settings for Afterpay.               | `AfterpayConfiguration`   | Mandatory             |
 | environment    |  Environment of the afterpay widget.                         | `Environment`             | Mandatory             |
 | options        |  Additional checkout options for Afterpay.                   | `CheckoutOptions`         | Optional              |
-
-#### ButtonTheme
-
-| Name           | Definition                                                   | Type                                        | Mandatory/Optional    |
-| :------------- | :----------------------------------------------------------- | :------------------------------------------ | :-------------------- |
-| buttonType     |  The text displayed on the payment button.                   | Enum: `Afterpay.ButtonKind`                 | Optional              |
-| colorScheme    |  The color scheme of the payment button.                     | Enum: `Afterpay.ColorScheme`                | Optional              |
 
 #### AfterpayConfiguration
 
@@ -133,7 +125,7 @@ This subsection describes the parameters required by the `AfterpayWidget` view. 
 
 #### Token Callback
 
-The `token` callback obtains the wallet token asynchronously. It receives a callback function `(_ afterPayToken: @escaping (String) -> Void) -> Void` as a parameter, and this is invoked with the wallet token once it is obtained.
+The `tokenRequest` callback obtains the wallet token asynchronously. It receives a callback function `(_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void` as a parameter, and this is invoked with the wallet token or failure once it is obtained.
 
 #### Select Address Callback
 
@@ -148,6 +140,76 @@ This is used in conjunction with the Afterpay SDK `CheckoutV2Handler.onShippingO
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `(Result<ChargeResponse, AfterpayError>) -> Void` if the payment is successful. The callback handles the outcome of the payment operation.
+
+### 5. Widget Styling
+
+Defines the visual appearance for the `AfterpayWidget`. It handles customizing the button loading indicator displayed during its operation and style of the Afterpay button.
+
+#### Appearance Contract
+
+The `AfterpayWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Swift
+public struct AfterpayWidgetAppearance: LoaderStylableAppearance {
+    public var colorScheme: Afterpay.ColorScheme
+    public var loader: Theme.OverlayLoaderAppearance
+    public var type: ButtonKind
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` default values. This configures the overlay loader.
+
+##### Using Default Appearance
+
+
+```Swift
+    AfterpayWidget( 
+        ...
+        appearance: AfterpayWidgetAppearance = AfterpayWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `AfterpayWidgetAppearance` by providing a specific `OverlayLoaderAppearance`, `Afterpay.ColorScheme` and `ButtonKind` configuration.
+
+```Swift
+struct MyCustomAfterpayScreen: View { 
+    private func myCustomAppearance() -> AfterpayWidgetAppearance {
+        let colorScheme = Afterpay.ColorScheme.light
+        let loader = Theme.OverlayLoaderAppearance(color: .red, overlayColor: .gray.opacity(0.1))
+        let type = ButtonKind.buyNow
+        let appearance = AfterpayWidgetAppearance(colorScheme: colorScheme, loader: loader, type: type)
+        return appearance
+    }
+    
+    var body: some View {
+        AfterpayWidget( 
+            ...
+            appearance: AfterpayWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `AfterpayWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `GlobalTheme`)  |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-------------------------------------|
+ `colorScheme`       | The color scheme for the Afterpay payment button See Afterpay SDK docs.                                  | `Afterpay.ColorScheme`             | `.static(.blackOnMint)`             |
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `MobileSDK.Theme.OverlayLoader`    | `Theme.loader`                      |
+ `type`              | The text displayed on the Afterpay payment button. See Afterpay SDK docs.                                | `Afterpay.ButtonKind`              | `.buyNow`                           |
+
+---
+
+**Note:**
+*   The `type` and `colorScheme` are from the official Afterpay iOS SDK. Refer to the [Afterpay Developer Documentation](https://developers.afterpay.com/afterpay-online/docs/display-afterpay-messaging#display-payment-button) for branding guidelines and available options.
+* The `OverlayLoader` has it's own detailed documentation explaining configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*  
 
 ## Android 
 
