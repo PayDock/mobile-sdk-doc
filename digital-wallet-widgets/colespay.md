@@ -123,19 +123,20 @@ A default appearance is provided by `GlobalTheme` default values. This configure
 You can create a custom `ColesPayWidgetAppearance` by providing a specific `ButtonLoader` configuration.
 
 ```Swift
-@Composable 
-fun MyCustomColesPayScreen() { 
+struct MyCustomColesPayScreen: View { 
     private func myCustomAppearance() -> ColesPayWidgetAppearance {
         let customLoader = Theme.ButtonLoader(spinnerColor: .blue)
         let appearance = ColesPayWidgetAppearance(loader: customLoader)
         return ColesPayWidgetAppearance
     }
-
-    ColesPayWidget( 
-        ...
-        appearance: ColesPayWidgetAppearance = myCustomAppearance()
-        ...
-    )
+    
+    var body: some View {
+        ColesPayWidget( 
+            ...
+            appearance: ColesPayWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
 }
 ```
 
