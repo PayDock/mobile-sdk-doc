@@ -22,7 +22,7 @@ The following sample code demonstrates the definition of the `Standalone3DSWidge
 Standalone3DSWidget(
     config: ThreeDSConfig,
     appearance: ThreeDSWidgetAppearance = ThreeDSWidgetAppearance(),
-    completion: @escaping (Result<Integrated3DSResult, Integrated3DSError>) -> Void)
+    completion: @escaping (Result<Standalone3DSResult, Standalone3DSError>) -> Void)
 ) {...}
 ```
 
@@ -51,7 +51,7 @@ The widget returns an object that contains the status of the 3DS flow and the 3D
 
 | Name                | Definition                                                                       | Type                                                           | Mandatory/Optional |
 | :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------------------- | :----------------  |
-| config              |  Configuration options for the integrated 3ds widget                             | `ThreeDSConfig`                                                | Mandatory          |
+| config              |  Configuration options for the standalone 3ds widget                             | `ThreeDSConfig`                                                | Mandatory          |
 | appearance          |  Customization options for the visual appearance of the widget                    | `ThreeDSWidgetAppearance`                                     | Optional           |
 | completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<Standalone3DSResult, Standalone3DSError>) -> Void`    | Mandatory          |
 
@@ -102,7 +102,7 @@ The following describes Standalone 3DS exceptions that can be thrown.
 
 ### 5. Widget Styling
 
-Defines the visual appearance for the `Integrated3DSWidget`. It handles customizing the overlat loader loading indicator displayed during its operation.
+Defines the visual appearance for the `Standalone3DSWidget`. It handles customizing the overlat loader loading indicator displayed during its operation.
 
 #### Appearance Contract
 
@@ -298,7 +298,7 @@ You can create a custom `ThreeDSWidgetAppearance` or modify the default one usin
 
 ```Kotlin
 @Composable 
-fun MyCustomIntegrated3DSScreen() { 
+fun MyCustomStandalone3DSScreen() { 
     // Create appearance by using provided defaults, with custom changes
     val customLoaderAppearance = LoaderAppearanceDefaults.appearance().copy(
         // type = LoaderType.Circular, 
