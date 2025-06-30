@@ -16,9 +16,12 @@ The following sample code demonstrates the definition of the `ColesPayWidget`:
 
 ```Swift
 ColesPayWidget(
-    clientId: String,
-    colesPayToken: @escaping (_ colesPayToken: @escaping (String) -> Void) -> Void,
-    completion: @escaping (Result<String, ColesPayError>) -> Void))
+    viewState: ViewState? = nil,
+    loadingDelegate: WidgetLoadingDelegate? = nil,
+    config: ColesPayConfig,
+    appearance: ColesPayWidgetAppearance = ColesPayWidgetAppearance(),
+    tokenRequest: @escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void,
+    completion: @escaping (Result<String, ColesPayError>) -> Void
 ```
 
 The following sample code demonstrates how you can use the widget in your application:
@@ -27,16 +30,20 @@ The following sample code demonstrates how you can use the widget in your applic
 struct ColesPayExampleView: View {
     @StateObject private var viewModel = ColesPayExampleVM()
     var body: some View {
-        ColesPayWidget(clientId: <merchantClientId>) { onColesPayButtonTap in
-            // Example: Initiate Wallet Transaction to retrieve the wallet token
-            viewModel.initializeWalletCharge(completion: onColesPayButtonTap)
-        } completion: { result in
-            switch result {
-            case .success(let colesPayOrderId): // Handle success
-            case .failure(let error): // Handle error
-            }
+        ColesPayWidget(
+            viewState: nil,
+            loadingDelegate: nil,
+            config: .init(clientId: <merchantClientId>),
+            appearance: ColesPayWidgetAppearance(),
+            tokenRequest: { onColesPayButtonTap in
+                viewModel.initializeWalletCharge(completion: onColesPayButtonTap)
+            }, completion: { result in
+                switch result {
+                case .success: viewModel.handleSuccess()
+                case .failure(let error): viewModel.handleError(error: error)
+                }
+            })
         }
-    }
 }
 ```
 
@@ -46,11 +53,20 @@ This subsection describes the parameters required by the `ColesPayWidget` SwiftU
 
 #### ColesPayWidget
 
+| Name                  | Definition                                                                                          | Type                                                                 | Mandatory/Optional |
+| :-------------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------- |
+| viewState             |  View options that are two way fields to alter view state                                           | `ViewState`                                                          | Optional           |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.    | `WidgetLoadingDelegate`                                              | Optional           |
+| config                |  Configuration object for setting up the widget                                                     | `MobileSDK.ColesPayConfig`                                           | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget                                      | `MobileSDK.ColesPayWidgetAppearance`                                 | Optional           |
+| tokenRequest          |  A callback to obtain the wallet token asynchronously                                               | `@escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void`    | Mandatory          |
+| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.                         | `(Result<String, ColesPayError>) -> Void`                            | Mandatory          |
+
+#### ColesPayConfig
+
 | Name                  | Definition                                                                        | Type                                                                 | Mandatory/Optional |
 | :-------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------- |
 | clientId              |  A merchant supplied client ID                                                    | String                                                               | Mandatory          |
-| colesPayToken         |  A callback to obtain the wallet token asynchronously                             | `@escaping (_ colesPayToken: @escaping (String) -> Void) -> Void`    | Mandatory          |
-| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.       | `(Result<String, ColesPayError>) -> Void`                              | Mandatory          |
 
 ### MobileSDK.ColesPayError
 
@@ -60,6 +76,7 @@ This subsection describes the parameters required by the `ColesPayWidget` SwiftU
 | colesPayUrlError            |  Error thrown when generating the ColesPay URL.                        |  nil                    |
 | webViewFailed               |  Error thrown when there is an issue communicating with the WebView.   |  NSError                |
 | transactionCanceled         |  Error thrown when user cancel the flow.                               |  nil                    |
+| initialisingWalletToken     |  Error thrown when merchant side initialization has failed.            |  String                 |
 | unknownError                |  Error thrown when there is an unknown error related to ColesPay.      |  nil                    |
 
 ### 3. Callback Explanation
@@ -68,12 +85,74 @@ This subsection describes the parameters required by the `ColesPayWidget` SwiftU
 
 > **Note**:
 >
-> The `colesPayToken` callback obtains the wallet token asynchronously. It receives a callback function `@escaping (_ colesPayToken: @escaping (String) -> Void) -> Void` as a parameter, which you must invoke with the `wallet_token` once it is obtained. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
+> The `tokenRequest` callback obtains the wallet token asynchronously. It receives a callback function `@escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void` as a parameter, which you must invoke with the success or failer once it is obtained. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.  
 
 #### Completion Callback
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<String, ColesPayError>` that contains the *ColesPayOrderId* if the payment is successful. The callback handles the outcome of the payment operation.
 
+### 5. Widget Styling
+
+Defines the visual appearance for the `ColesPayWidget`. It handles customizing the button loading indicator displayed during its operation.
+
+#### Appearance Contract
+
+The `ColesPayWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Swift
+public struct ColesPayWidgetAppearance {
+    public var loader: Theme.ButtonLoader
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` default values. This configures the loader with a white color, designed to match typical Coles Pay branding.
+
+##### Using Default Appearance
+
+
+```Swift
+    ColesPayWidget( 
+        ...
+        appearance: ColesPayWidgetAppearance = ColesPayWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ColesPayWidgetAppearance` by providing a specific `ButtonLoader` configuration.
+
+```Swift
+struct MyCustomColesPayScreen: View { 
+    private func myCustomAppearance() -> ColesPayWidgetAppearance {
+        let customLoader = Theme.ButtonLoader(spinnerColor: .blue)
+        let appearance = ColesPayWidgetAppearance(loader: customLoader)
+        return ColesPayWidgetAppearance
+    }
+    
+    var body: some View {
+        ColesPayWidget( 
+            ...
+            appearance: ColesPayWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ColesPayWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `GlobalTheme`)  |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-------------------------------------|
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `MobileSDK.Theme.ButtonLoader`     | `Color.onPrimary`                   |
+
+---
+
+**Note:**
+* The `ButtonLoader` has it's own detailed documentation explaining configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*   
 
 ## Android
 
