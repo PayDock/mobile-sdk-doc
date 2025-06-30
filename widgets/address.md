@@ -68,8 +68,8 @@ The following definitions provide a more detailed overview of the parameters inc
 #### MobileSDK.AddressWidget
 | Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
 | :------------ | :---------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------  |
-| config        |  Used for configuration of the widget behaviour                                                       | MobileSDK.AddressWidgetConfig    | Mandatory          |
-| address       |  Used for passing in the information to the address sheet to pre-populate the address fields          | MobileSDK.Address                | Optional           |
+| config        |  Used for configuration of the widget behaviour                                                       | `MobileSDK.AddressWidgetConfig`  | Mandatory          |
+| appearance    |  Customization options for the visual appearance of the widget                                        | `AddressWidgetAppearance`        | Optional           |
 
 #### MobileSDK.AddressWidgetConfig
 | Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
