@@ -38,7 +38,11 @@ The widget displays as a SwiftUI sliding bottom sheet. Once your customer has co
 The Address Widget view is as follows:
 
 ```Swift
-AddressSheetView(address: Address, isPresented: Binding<Bool>, onCompletion: Binding<MobileSDK.Address>)
+AddressSheetView(
+    config: AddressWidgetConfig,
+    appearance: AddressWidgetAppearance = AddressWidgetAppearance(),
+    completion: @escaping (Address) -> Void)
+    { ... }
 ``` 
 
 An example of the widget before any customer details have been populated is as follows. The widget is in a SwiftUI View:
@@ -49,13 +53,10 @@ import MobileSDK
 
 struct AddressExampleView: View {
     var body: some View {
-        AddressWidget { result in
-            switch result {
-            case .success(let address):
-                // Handle the address result
-            case .failure(let error): 
-                // Handle the error
-            }
+        AddressWidget(
+            config: AddressWidgetConfig(),
+            appearance: AddressWidgetAppearance()) { address in
+                // Handle received address object
         }
     }
 }
@@ -65,6 +66,12 @@ struct AddressExampleView: View {
 The following definitions provide a more detailed overview of the parameters included in the Address widget:
 
 #### MobileSDK.AddressWidget
+| Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
+| :------------ | :---------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------  |
+| config        |  Used for configuration of the widget behaviour                                                       | MobileSDK.AddressWidgetConfig    | Mandatory          |
+| address       |  Used for passing in the information to the address sheet to pre-populate the address fields          | MobileSDK.Address                | Optional           |
+
+#### MobileSDK.AddressWidgetConfig
 | Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
 | :------------ | :---------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------  |
 | address       |  Used for passing in the information to the address sheet to pre-populate the address fields          | MobileSDK.Address                | Optional           |
@@ -81,6 +88,93 @@ The following definitions provide a more detailed overview of the parameters inc
 | postcode      |  Address postcode of the customer      | Swift.String  | Optional to provide / Mandatory for the user |
 | country       |  Country of residence of the customer  | Swift.String  | Optional to provide / Mandatory for the user |
 
+### 3. Callback Explanation
+
+#### Completion Callback
+
+The `completion` callback is invoked after the address details is captured. It receives an `Address` once the address details have been saved.
+
+### 5. Widget Styling
+
+Defines the visual appearance and layout attributes for the `AddressWidget`. This allows for extensive customisation of how the address input fields and action button are presented to the user.
+
+#### Appearance Contract
+
+The `AddressWidgetAppearance` class encapsulates all configurable style properties for the widget.
+
+```Swift
+public struct AddressWidgetAppearance {
+    public var horizontalSpacing: CGFloat
+    public var verticalSpacing: CGFloat
+    public var title: Theme.TextAppearance
+    public var textField: Theme.TextFieldAppearance
+    public var actionButton: Theme.ButtonAppearance
+    public var expandSectionButton: Theme.ButtonAppearance
+    public var searchDropdown: Theme.SearchDropdownAppearance
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` values for each of the subcomponents. You can use this as a starting point and customise specific attributes as needed.
+
+##### Using Default Appearance
+
+```Swift
+    AddressWidget( 
+        ...
+        appearance: AddressWidgetAppearance = AddressWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `AddressWidgetAppearance` or modify the default one.
+
+```Swift
+struct MyCustomAddressScreen: View { 
+    private func myCustomAppearance() -> AddressWidgetAppearance {
+        let title = Theme.TextAppearance.init(text: .init(font: .init(name: "CustomFont", size: 20), isUnderlined: true, underlineColor: .black))
+        let textField = Theme.TextFieldAppearance.init(colors: .init(active: .blue), dimensions: .init(cornerRadius: 20.0))
+        let actionButton = Theme.ButtonAppearance.init(colors: .init(background: .blue))
+        let appearance = AddressWidgetAppearance(
+            verticalSpacing: 10,
+            horizontalSpacing: 16,
+            title: title,
+            textField: textField,
+            actionButton: actionButton)
+        return appearance
+    }
+    
+    var body: some View {
+            AddressWidget( 
+            ...
+            appearance: AddressWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `AddressWidgetAppearance`:
+
+| Name                   | Description                                                                                                | Type                           | Default Value                     |
+|------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------|-----------------------------------|
+| `verticalSpacing`      | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
+| `horizontalSpacing`    | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `8.0`                             |
+| `title`                | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
+| `textField`            | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
+| `actionButton`         | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
+| `expandSectionButton`  | Defines the appearance of manual entry button.                                                             | `ButtonAppearance`             | `GlobalTheme.expandSectionButton` |
+| `searchDropdown`       | Defines the appearance of the address search dropdown texfield and picker.                                 | `SearchDropdownAppearance`     | `GlobalTheme.searchDropdown`      |
+
+
+---
+
+**Note:**
+*   The `TextAppearance`, `TextFieldAppearance`, `ButtonAppearance` and `SearchDropdownAppearance` themselves would have their own detailed documentation explaining their configurable attributes (like colors, typography, borders, etc.). This documentation focuses on how they are composed within the `AddressWidgetAppearance`.
 
 ## Android
 
