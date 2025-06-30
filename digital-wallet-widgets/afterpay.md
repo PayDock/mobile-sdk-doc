@@ -23,16 +23,16 @@ For reference: [Afterpay SDK](https://github.com/afterpay/sdk-ios)
 
 The code for the `AfterpayWidget` is as follows. None of the values are populated in this example as this is a definition.
 
-
-
 ```Swift
-AfterpayyWidget(
+AfterpayWidget(
+    viewState: ViewState? = nil,
     configuration: AfterpaySdkConfig,
-    afterPayToken: @escaping (_ afterPayToken: @escaping (String) -> Void) -> Void,
+    appearance: AfterpayWidgetAppearance = AfterpayWidgetAppearance(),
+    loadingDelegate: WidgetLoadingDelegate? = nil,
+    tokenRequest: @escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void,
     selectAddress: ((_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void)?,
     selectShippingOption: ((_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void)?,
-    buttonWidth: CGFloat,
-    completion: @escaping (Result<ChargeResponse, AfterpayError>) -> Void)
+    completion: @escaping (Result<ChargeResponse, AfterpayError>) -> Void
 ) {...}
 ```
 
@@ -42,17 +42,19 @@ The following is the `AfterpayWidget` code populated with example values. This d
 ```Swift
 AfterpayWidget(
     configuration: viewModel.getAfterpayConfig(),
-    afterPayToken: { onAfterpayButtonTap in
-        viewModel.initializeWalletCharge(completion: onAfterpayButtonTap)
+    appearance: AfterpayWidgetAppearance(),
+    tokenRequest: { tokenResult in
+        viewModel.initializeWalletCharge(completion: tokenResult)
     }, selectAddress: { address, provideShippingOptions in
         // Based on the received `address` provide the available shipping options using `provideShippingOptions` completion block
     }, selectShippingOption: { shippingOption, provideShippingOptionUpdateResult in
         // Based on the received `shippingOption` provide the updated shipping option update if needed using `provideShippingOptions` completion block
-    },
-    buttonWidth: 360.0) { result in
-        switch result {
-        case .success(let chargeData): // Handle success with the provided charge data
-        case .failure(let error): // Handle error
+    }) { result in
+    switch result {
+    case .success(let chargeData): 
+        viewModel.handleSuccess(chargeData) // Handle success with the provided charge data
+    case .failure(let error):
+        viewModel.handleError(error: error) // Handle error
     }
 }
 ```
@@ -66,6 +68,7 @@ This subsection describes the parameters required by the `AfterpayWidget` view. 
 | Name                  | Definition                                                                                           | Type                                                                                                                  | Mandatory/Optional |
 | :-------------------- | :--------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
 | configuration         |  Configuration for the Afterpay SDK.                                                                 | `AfterpaySdkConfig`                                                                                                   | Mandatory          |
+| appearance            |  Configuration for the Afterpay SDK.                                                                 | `AfterpaySdkConfig`                                                                                                   | Mandatory          |
 | afterPayToken         |  A callback to obtain the wallet token asynchronously.                                               | `(_ afterPayToken: @escaping (String) -> Void) -> Void`                                                               | Mandatory          |
 | selectAddress         |  A callback to handle selection of shipping address.                                                 | `(_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void`                          | Optional           |
 | selectShippingOption  |  A callback to handle the selection for the shipping options.                                        | `(_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void`    | Optional           |
