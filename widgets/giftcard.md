@@ -49,11 +49,13 @@ struct GiftCardExampleView: View {
 ### 2. Parameter Definitions
 
 #### MobileSDK.GiftCardView
-| Name            | Definition                                                                                       | Type                              | Mandatory/Optional |
-| :-----------    | :----------------------------------------------------------------------------------------------  | :-------------------------------- | :----------------  |
-| config          |  Configuration options for the gift card widget                                                  | MobileSDK.GiftCardWidgetConfig    | Mandatory          |
-| loadingDelegate |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate             | Optional           |
-| completion      |  A completion block that returns result with token or error.                                     | `(Result<String, Error>) -> Void` | Mandatory          |
+| Name            | Definition                                                                                       | Type                                | Mandatory/Optional |
+| :-----------    | :----------------------------------------------------------------------------------------------  | :---------------------------------- | :----------------  |
+| viewState       |  View options that are two way fields to alter view state                                        | `ViewState`                         | Optional           |
+| config          |  Configuration options for the gift card widget                                                  | `MobileSDK.GiftCardWidgetConfig`    | Mandatory          |
+| appearance      |  Customization options for the visual appearance of the widget                                   | `GiftCardWidgetAppearance`          | Optional           |
+| loadingDelegate |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`             | Optional           |
+| completion      |  A completion block that returns result with token or error.                                     | `(Result<String, Error>) -> Void`   | Mandatory          |
 
 #### MobileSDK.GiftCardWidgetConfig
 | Name            | Definition                                                                                       | Type                              | Mandatory/Optional |
