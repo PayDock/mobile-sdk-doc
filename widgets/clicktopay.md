@@ -20,10 +20,10 @@ The definition of the `ClickToPayWidget` is as follows:
 
 ```Swift
 ClickToPayWidget(
-    serviceId: String,
-    accessToken: String,
-    meta: ClickToPayMeta?
-    completion: (Result<ClickToPayResult, ClickToPayError> -> Void)
+    config: ClickToPayWidgetConfig,
+    appearance: ClickToPayWidgetAppearance = ClickToPayWidgetAppearance(),
+    completion: @escaping (Result<ClickToPayResult, ClickToPayError>) -> Void
+) { ... }
 ```
 
 ### Parameter definitions
@@ -33,10 +33,16 @@ The following table defines the parameters required by the `ClickToPayWidget` vi
 #### ClickToPayWidget
 | Name                | Definition                                                                                                | Type                                                   | Mandatory/Optional |
 | :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------------------------------- | :----------------  |
+| config              |  Configuration options for the Click to Pay widget                                                        | String                                                 | Mandatory          |
+| appearance          |  Customization options for the visual appearance of the widget                                            | `ClickToPayWidgetAppearance`                           | Optional           |
+| completion          |  Result callback with the `ClickToPayResult`. Contains token if successful or error in case of failure    | `(Result<ClickToPayResult, ClickToPayError> -> Void)`  | Mandatory          |
+
+#### ClickToPayWidgetConfig
+| Name                | Definition                                                                                                | Type                                                   | Mandatory/Optional |
+| :------------------ | :-------------------------------------------------------------------------------------------------------- | :----------------------------------------------------- | :----------------  |
 | serviceId           |  This is the `id` of the SRC Service created on Paydock                                                   | String                                                 | Mandatory          |
 | accessToken         |  The access token used for authentication with the backend service.                                       | String                                                 | Mandatory          |
 | meta                |  Object that contains additional data used for the SRC Checkout.                                          | `ClickToPayMeta`                                       | Optional           |
-| completion          |  Result callback with the `ClickToPayResult`. Contains token if successful or error in case of failure    | `(Result<ClickToPayResult, ClickToPayError> -> Void)`  | Mandatory          |
 
 The following tables describe the properties of the `ClickToPayDPAData` object used by the `client-sdk`. They provide information on the data related to Mastercard's Digital Payment Application (DPA).
 
@@ -100,6 +106,76 @@ The following tables describe the properties of the `ClickToPayDPAData` object u
 ### Callback Explanation
 
 The `completion` callback is invoked after the SRC tokenisation flow is completed. The SRC flow receives a `ClickToPayResult` and, after the successful tokenisation of the SRC details, generates an OTT.
+
+### 5. Widget Styling
+
+Defines the visual appearance for the `ClickToPayWidget`. It handles customizing the overlat loader loading indicator displayed during its operation.
+
+#### Appearance Contract
+
+The `ClickToPayWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Swift
+public struct ClickToPayWidgetAppearance {asdqasdasd
+    public var loader: Theme.OverlayLoaderAppearance
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` default values. This configures the overlay loader.
+
+##### Using Default Appearance
+
+
+```Swift
+    ClickToPayWidget( 
+        ...
+        appearance: ClickToPayWidgetAppearance = ClickToPayWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ClickToPayWidgetAppearance` by providing a specific `OverlayLoaderAppearance`.
+
+```Swift
+struct MyCustomClickToPayScreen: View { 
+    private func myCustomAppearance() -> ClickToPayWidgetAppearance {
+        let loader = Theme.OverlayLoaderAppearance(color: .red, overlayColor: .gray.opacity(0.1))
+        let appearance = ClickToPayWidgetAppearance(loader: loader)
+        return appearance
+    }
+    
+    var body: some View {
+            ClickToPayWidget( 
+            ...
+            appearance: ClickToPayWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ClickToPayWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `GlobalTheme`)  |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-------------------------------------|
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `MobileSDK.Theme.OverlayLoader`    | `Theme.loader`                      |
+
+---
+
+**Note:**
+* The `OverlayLoader` has it's own detailed documentation explaining configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*  
+
+
+
+
+
+
+
 
 ## Android
 
