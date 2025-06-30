@@ -53,12 +53,13 @@ This subsection describes the parameters required by the `ColesPayWidget` SwiftU
 
 #### ColesPayWidget
 
-| Name                  | Definition                                                                                         | Type                                                                 | Mandatory/Optional |
+| Name                  | Definition                                                                                          | Type                                                                 | Mandatory/Optional |
 | :-------------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------- |
-| viewState                |  View options that are two way fields to alter view state                                        | `ViewState`                                                          | Optional           |
-| loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                                              | Optional           |
-| config              |  Configuration object for setting up the widget                                                       | `MobileSDK.ColesPayConfig`                                           | Mandatory          |
-| tokenRequest         |  A callback to obtain the wallet token asynchronously                                                | `@escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void`    | Mandatory          |
+| viewState             |  View options that are two way fields to alter view state                                           | `ViewState`                                                          | Optional           |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.    | `WidgetLoadingDelegate`                                              | Optional           |
+| config                |  Configuration object for setting up the widget                                                     | `MobileSDK.ColesPayConfig`                                           | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget                                      | `MobileSDK.ColesPayWidgetAppearance`                                 | Optional           |
+| tokenRequest          |  A callback to obtain the wallet token asynchronously                                               | `@escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void`    | Mandatory          |
 | completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.                         | `(Result<String, ColesPayError>) -> Void`                            | Mandatory          |
 
 #### ColesPayConfig
