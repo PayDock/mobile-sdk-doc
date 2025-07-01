@@ -94,7 +94,7 @@ The following definitions provide a more detailed overview of the parameters inc
 
 The `completion` callback is invoked after the address details is captured. It receives an `Address` once the address details have been saved.
 
-### 5. Widget Styling
+### 4. Widget Styling
 
 Defines the visual appearance and layout attributes for the `AddressWidget`. This allows for extensive customisation of how the address input fields and action button are presented to the user.
 

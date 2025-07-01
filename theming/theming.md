@@ -123,11 +123,11 @@ Each of the following SDK Widgets provides an `appearance` parameter that accept
 *   **`AddressDetailsWidget`**: For collecting billing or shipping address information. Style its various address input fields, labels, and any associated action buttons.
     *   *See its specific styling guide: [Styling the Address Details Widget](../widgets/address.md#4-widget-styling)*
 *   **`ClickToPayWidget`**: For integrating with Click to Pay services. Customise the appearance of the Click to Pay button/prompt and any related UI elements presented by this widget.
-    *   *See its specific styling guide: [Styling the Click To Pay Widget](../widgets/clicktopay.md#4-widget-styling)*
+    *   *See its specific styling guide: [Styling the Click To Pay Widget](../widgets/clicktopay.md#5-widget-styling)*
 *   **`AfterpayWidget`**: For displaying Afterpay payment options and messaging. Style the Afterpay branding elements, informational text, and any interactive components according to Afterpay's guidelines and your app's theme.
     *   *See its specific styling guide: [Styling the Afterpay Widget](../digital-wallet-widgets/afterpay.md#5-widget-styling)*
-*   **`GooglePayWidget`**: For integrating Google Pay. While Google Pay has its own button branding guidelines, this widget might allow customization of surrounding elements or presentational aspects if any are controlled by the SDK.
-    *   *See its specific styling guide: [Styling the Google Pay Widget](../digital-wallet-widgets/googlepay.md#9-widget-styling)*
+*   **`ApplePayWidget`**: For integrating Apple Pay. While Apple Pay has its own button branding guidelines, this widget will allow configuration of the look of the native button and the text within..
+    *   *See its specific styling guide: [Styling the Google Pay Widget](../digital-wallet-widgets/applepay.md#widget-styling)*
 *   **`ColesPayWidget`**: For integrating with Coles Pay. Customise the appearance of Coles Pay specific UI elements, buttons, and branding.
     *   *See its specific styling guide: [Styling the Coles Pay Widget](../digital-wallet-widgets/colespay.md#5-widget-styling)*
 *   **`PayPalSavePaymentSourceWidget`**: For saving PayPal as a payment source. Style the PayPal button, informational text, and any UI elements related to the vaulting process.
