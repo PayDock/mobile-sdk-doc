@@ -98,7 +98,7 @@ The following tables describe the properties of the `ClickToPayDPAData` object u
 
 #### MobileSDK.ClickToPayError
 
-| Name                       | Description                                                                     | Error Result            |
+| Name                      | Description                                                                      | Error Result            |
 | :------------------------ | :------------------------------------------------------------------------------- | :---------------------- |
 | webViewFailed             |  Error thrown when there is an error while communicating with a WebView.         |  NSError                |
 | UnknownException          |  Error thrown when there is an unknown error related to ClickToPay.              |  nil                    |
