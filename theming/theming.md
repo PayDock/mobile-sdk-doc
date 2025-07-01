@@ -127,7 +127,7 @@ Each of the following SDK Widgets provides an `appearance` parameter that accept
 *   **`AfterpayWidget`**: For displaying Afterpay payment options and messaging. Style the Afterpay branding elements, informational text, and any interactive components according to Afterpay's guidelines and your app's theme.
     *   *See its specific styling guide: [Styling the Afterpay Widget](../digital-wallet-widgets/afterpay.md#5-widget-styling)*
 *   **`ApplePayWidget`**: For integrating Apple Pay. While Apple Pay has its own button branding guidelines, this widget will allow configuration of the look of the native button and the text within..
-    *   *See its specific styling guide: [Styling the Google Pay Widget](../digital-wallet-widgets/applepay.md#widget-styling)*
+    *   *See its specific styling guide: [Styling the Apple Pay Widget](../digital-wallet-widgets/applepay.md#widget-styling)*
 *   **`ColesPayWidget`**: For integrating with Coles Pay. Customise the appearance of Coles Pay specific UI elements, buttons, and branding.
     *   *See its specific styling guide: [Styling the Coles Pay Widget](../digital-wallet-widgets/colespay.md#5-widget-styling)*
 *   **`PayPalSavePaymentSourceWidget`**: For saving PayPal as a payment source. Style the PayPal button, informational text, and any UI elements related to the vaulting process.
