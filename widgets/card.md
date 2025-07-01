@@ -37,12 +37,13 @@ struct CardDetailsWidgetView: View {
                 CardDetailsWidget(
                     viewState: nil,
                     config: getConfig(),
+                    appearance: CardDetailsWidgetAppearance = CardDetailsWidgetAppearance(),
                     loadingDelegate: nil,
                     completion: { result in
-                    switch result {
-                    case .success(let result): // handle success
-                    case .failure(let error): // handle failure
-                    }
+                        switch result {
+                        case .success(let result): // handle success
+                        case .failure(let error): // handle failure
+                        }
                 })
             }
         }
@@ -106,6 +107,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
 | viewState                |  View options that are two way fields to alter view state                                        | ViewState                                          | Optional           |
 | config                   |  Configuration options for the card details widget                                               | `CardDetailsWidgetConfig`                          | Required           |
+| appearance               |  Customization options for the visual appearance of the widget                                   | `CardDetailsWidgetAppearance`                      | Optional           |
 | loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate                              | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
@@ -156,6 +158,90 @@ The below table describes the various inline validation errors linked to the `Ca
 | errorTokenisingCard       |  Error thrown when provided widget failed card tokenisation                |  ErrorRes               |
 | unknownError              |  Error thrown when there is an unknown error related to card tokenisation  |  nil                    |
 
+### 3. Widget Styling
+
+Defines the visual appearance and layout attributes for the `CardDetailsWidget`. This allows for extensive customisation of how the various elemets are displayed to the user.
+
+#### Appearance Contract
+
+The `CardDetailsWidgetAppearance` class encapsulates all configurable style properties for the widget.
+
+```Swift
+public struct CardDetailsWidgetAppearance {
+    public var verticalSpacing: CGFloat
+    public var horizontalSpacing: CGFloat
+    public var title: Theme.TextAppearance
+    public var textField: Theme.TextFieldAppearance
+    public var actionButton: Theme.ButtonAppearance
+    public var toolbarButton: Theme.ButtonAppearance
+    public var toggle: Theme.ToggleAppearance
+    public var toggleText: Theme.TextAppearance
+    public var linkText: Theme.TextAppearance
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` values for each of the subcomponents. You can use this as a starting point and customise specific attributes as needed.
+
+##### Using Default Appearance
+
+```Swift
+    CardDetailsWidget( 
+        ...
+        appearance: CardDetailsWidgetAppearance = CardDetailsWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `CardDetailsWidgetAppearance` or modify the default one.
+
+```Swift
+struct MyCustomCardDetailsScreen: View { 
+    private func myCustomAppearance() -> CardDetailsWidgetAppearance {
+        let title = Theme.TextAppearance.init(text: .init(font: .init(name: "CustomFont", size: 20), isUnderlined: true, underlineColor: .black))
+        let textField = Theme.TextFieldAppearance.init(colors: .init(active: .blue), dimensions: .init(cornerRadius: 20.0))
+        let actionButton = Theme.ButtonAppearance.init(colors: .init(background: .blue))
+        let appearance = CardDetailsWidgetAppearance(
+            verticalSpacing: 10,
+            horizontalSpacing: 16,
+            title: title,
+            textField: textField,
+            actionButton: actionButton)
+        return appearance
+    }
+    
+    var body: some View {
+                CardDetailsWidget( 
+            ...
+            appearance: CardDetailsWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `CardDetailsWidgetAppearance`:
+
+| Name                   | Description                                                                                                | Type                           | Default Value                     |
+|------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------|-----------------------------------|
+| `verticalSpacing`      | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
+| `horizontalSpacing`    | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `8.0`                             |
+| `title`                | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
+| `textField`            | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
+| `actionButton`         | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
+| `toolbarButton`        | Defines the appearance of the keyboard accessory button.                                                   | `ButtonAppearance`             | `GlobalTheme.toolbarButton`       |
+| `toggle`               | Defines the appearance of the toggle element.                                                              | `ToggleAppearance`             | `GlobalTheme.toggle`              |
+| `toggleText`           | Defines the appearance of the text linked to the toggle.                                                   | `TextAppearance`               | `GlobalTheme.toggleText`          |
+| `linkText`             | Defines the appearance of the link element in the UI.                                                      | `TextAppearance`               | `GlobalTheme.linkText`            |
+
+---
+
+**Note:**
+*   The `TextAppearance`, `TextFieldAppearance`, `ButtonAppearance` and `ToggleAppearance` themselves would have their own detailed documentation explaining their configurable attributes (like colors, typography, borders, etc.). This documentation focuses on how they are composed within the `CardDetailsWidgetAppearance`.
 
 ## Android
 
