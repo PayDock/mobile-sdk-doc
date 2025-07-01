@@ -117,7 +117,7 @@ While you interact directly with `[WidgetName]Appearance` classes for the SDK Wi
 Each of the following SDK Widgets provides an `appearance` parameter that accepts a widget-specific `Appearance` class (e.g., `CardDetailsAppearance`). This allows you to fine-tune their look and feel. Refer to the dedicated styling guide for each widget to see the available customization properties and examples:
 
 *   **`CardDetailsWidget`**: For collecting credit/debit card information. Allows customization of its input fields, labels, action buttons, and overall container.
-    *   *See its specific styling guide: [Styling the Card Details Widget](../widgets/card.md#5-widget-styling)*
+    *   *See its specific styling guide: [Styling the Card Details Widget](../widgets/card.md#3-widget-styling)*
 *   **`GiftCardWidget`**: For entering gift card details. Customise its input fields for card number and PIN, balance check elements, and action buttons.
     *   *See its specific styling guide: [Styling the Gift Card Widget](../widgets/giftcard.md#5-widget-styling)*
 *   **`AddressDetailsWidget`**: For collecting billing or shipping address information. Style its various address input fields, labels, and any associated action buttons.
