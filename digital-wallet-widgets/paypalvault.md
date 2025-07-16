@@ -21,10 +21,12 @@ This section provides a step-by-step guide on how to initialize and use the `Pay
 The following sample code demonstrates the definition of the `PayPalSavePaymentSourceWidget`:
 
 ```Swift
-    PayPalSavePaymentSourceWidget(viewState: ViewState?,
-                                  config: PayPalVaultConfig,
-                                  loadingDelegate: WidgetLoadingDelegate?,
-                                  completion: @escaping (Result<PayPalVaultResult, PayPalVaultError>) -> Void)
+    PayPalSavePaymentSourceWidget(
+        viewState: ViewState?,
+        config: PayPalVaultConfig,
+        loadingDelegate: WidgetLoadingDelegate?,
+        appearance: PayPalVaultAppearance = PayPalVaultAppearance(),
+        completion: @escaping (Result<PayPalVaultResult, PayPalVaultError>) -> Void)
     {...}
 ```
 
@@ -32,10 +34,11 @@ The following sample code example demonstrates the usage within your application
 
 ```Swift
 let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id", actionText: nil)
-PayPalSavePaymentSourceWidget(viewState: ViewState(state: .disabled),
-                              config: config,
-                              loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading) 
-                              { result in
+PayPalSavePaymentSourceWidget(
+    viewState: ViewState(state: .disabled),
+    config: config,
+    loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading) 
+    appearance: PayPalVaultAppearance()) { result in
     switch result {
     case let .success(payPalVaultResult):
         // Handle success
@@ -56,6 +59,7 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 | viewState             |  View options that are two way fields to alter view state                                         | ViewState                                              | Optional           |
 | config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                                    | Mandatory          |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                                | Optional           |
+| appearance            |  Object for visual customization of the widget.                                                   | `MobileSDK.PayPalVaultAppearance`                      | Optional           |
 | completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `Result<PayPalVaultResult, PayPalVaultError> -> Void`  | Mandatory          |
 
 #### PayPalVaultConfig
@@ -151,6 +155,70 @@ public enum PayPalVaultError: Error {
 | userCancelled            |  Exception thrown when user manually cancels the flow.                             |  PayPalVaultError      |
 | unknownError             |  Exception thrown during the PayPal SDK  process.                                  |  PayPalVaultError      |
 
+### 5. Widget Styling
+
+Defines the visual appearance for specific elements within the `PayPalSavePaymentSourceWidget`.
+This appearance configuration mainly focuses on the button customization used for initiating the PayPal Vault flow.
+
+#### Appearance Contract
+
+The `PayPalVaultAppearance` class encapsulates the configurable style properties for the widget, currently centered on the button.
+
+```Swift
+public struct PayPalVaultAppearance {
+    public var actionButton: Theme.ButtonAppearance
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme`. This configures a specific button appearance intended to be visually compatible with the resot of the SDK buttons.
+
+##### Using Default Appearance
+
+```Swift
+    PayPalSavePaymentSourceWidget( 
+        ...
+        appearance: PayPalVaultAppearance = PayPalVaultAppearance(),
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `PayPalVaultAppearance` by providing a specific `Theme.ButtonAppearance` configuration if the default doesn't meet your needs or if you want to ensure consistency with other buttons in your app.
+
+```Swift
+struct MyCustomPayPalCaultScreen: View { 
+    private func myCustomAppearance() -> PayPalVaultAppearance {
+        let buttonColors: Theme.ButtonColors = Theme.ButtonColors(background: .black, text: .white)
+        let buttonDimensions: Theme.ButtonDimensions = Theme.ButtonDimensions(cornerRadius: 10)
+        let button = Theme.ButtonAppearance(colors: buttonColors, dimensions: buttonDimensions)
+        let appearance = PayPalVaultAppearance(button: button)
+        return appearance
+    }
+    
+    var body: some View {
+        PayPalSavePaymentSourceWidget( 
+            ...
+            appearance: PayPalVaultAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+|  Name                | Description                                                                                              | Type                               | Default Value              |
+| ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|----------------------------|
+| `actionButton`       | Defines the appearance of the action button used for initialization of the vault flow.                   | `MobileSDK.Theme.ButtonAppearance` | `GlobalTheme.actionButton` |
+
+---
+
+**Note:**
+*   The `actionButton` relies on the `ButtonAppearance` system. Refer to your internal documentation or implementation of `ButtonAppearance` for detailed customization options (e.g., colors, fonts, dimensions...).
+*   The `PayPalVaultConfig` allows for optional `actionText` and `icon` parameters which directly affect the button's content, complementing the styling provided by `actionButton`.
+
 ## Android
 
 ## How to use the PayPalSavePaymentSourceWidget
@@ -166,11 +234,13 @@ This section provides a step-by-step guide on how to initialize and use the `Pay
 The following sample code demonstrates the definition of the `PayPalSavePaymentSourceWidget`:
 
 ```Kotlin
+@Composable
 fun PayPalSavePaymentSourceWidget(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
+    enabled: Boolean = true,
     config: PayPalVaultConfig,
-    loadingDelegate: WidgetLoadingDelegate?,
+    appearance: PayPalPaymentSourceWidgetAppearance = PayPalPaymentSourceAppearanceDefaults.appearance(),
+    loadingDelegate: WidgetLoadingDelegate? = null,
     completion: (Result<PayPalVaultResult>) -> Unit,
 ) {...}
 ```
@@ -188,6 +258,7 @@ PayPalSavePaymentSourceWidget(
             actionText = "custom button text", // optional
             icon = ButtonIcon.Vector(Icons.Filled.Add) || ButtonIcon.DrawableRes(R.drawable.ic_add)// optional
         ),
+        appearance = currentOrDefaultAppearance
         loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
 ) { result ->
     // Handle the result of the operation
@@ -212,6 +283,7 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 | modifier              |  Compose modifier for container modifications                                                     | `androidx.compose.ui.Modifier`                    | Optional           |
 | enabled               |  Controls the enabled state of this Widget.                                                       | Boolean                                           | Optional           |
 | config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                               | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget                                    | `PayPalPaymentSourceWidgetAppearance`             | Optional           |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                           | Optional           |
 | completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `(Result<PayPalVaultResult>) -> Unit`             | Mandatory          |
 
@@ -300,3 +372,79 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 | PayPalSDKException                |  Exception thrown during PayPal SDK operations.                                               |  PayPalVaultError      |
 | CancellationException             |  Exception thrown when cancelling PayPal vault flow.                                          |  PayPalVaultError      |
 | UnknownException                  |  Exception thrown when an unknown error occurs in PayPal Vault operations.                    |  PayPalVaultError      |
+
+### 4. Widget Styling
+
+Defines the visual appearance for the `PayPalSavePaymentSourceWidget`. This primarily involves customizing the action button used to initiate the PayPal linking flow.
+
+#### Appearance Contract
+
+The `PayPalPaymentSourceWidgetAppearance` class encapsulates the configurable style properties for the widget's action button.
+
+```Kotlin
+@Immutable
+class PayPalPaymentSourceWidgetAppearance(
+    val actionButton: ButtonAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `PayPalPaymentSourceAppearanceDefaults`. This uses a standard outline button style provided by `ButtonAppearanceDefaults.outlineButtonAppearance()`.
+
+##### Using Default Appearance
+
+
+```Kotlin
+    PayPalSavePaymentSourceWidget( 
+        ...
+        appearance = PayPalPaymentSourceAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `PayPalPaymentSourceWidgetAppearance` by providing your own `ButtonAppearance` instance for the `actionButton`. This allows you to use different button styles (e.g., filled, text, icon) and customize their specific properties like colors, shapes, typography, etc., as supported by your `ButtonAppearance` implementation.
+
+```Kotlin
+@Composable 
+fun MyCustomAfterpayScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customAppearanceFromDefaults = PayPalPaymentSourceAppearanceDefaults.appearance().copy(
+        actionButton = ButtonAppearanceDefaults.filledButtonAppearance().copy(
+            // typographyStyle = MaterialTheme.typography.labelLarge
+        )
+    )
+
+    // Alternatively, create entirely from scratch:
+    val customFilledButtonAppearance = PayPalPaymentSourceWidgetAppearance(
+        actionButton = ButtonAppearanceDefaults.filledButtonAppearance().copy(
+            // colors = ButtonDefaults.filledButtonColors(
+            //     containerColor = Color.Blue,
+            //     contentColor = Color.White
+            // ),
+            // shape = RoundedCornerShape(8.dp)
+        )
+    )
+
+
+    PayPalSavePaymentSourceWidget(
+        ...
+        appearance = customAppearanceFromDefaults, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attribute can be configured within `PayPalPaymentSourceWidgetAppearance`:
+
+| Name           | Description                                                                                                                                                             | Type               | Default Value (from `PayPalPaymentSourceAppearanceDefaults`) |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------------------------------------------------------|
+| `actionButton` | Defines the appearance of the button used to initiate the PayPal account linking flow. Accepts any object conforming to the `ButtonAppearance` interface/class structure. | `ButtonAppearance` | `ButtonAppearanceDefaults.outlineButtonAppearance()`         |
+
+---
+
+**Note:**
+*   The `actionButton` relies on the `ButtonAppearance` system. Refer to your internal documentation or implementation of `ButtonAppearance` (and its variants like `FilledButtonAppearance`, `OutlineButtonAppearance`, etc.) and `ButtonAppearanceDefaults` for detailed customization options (e.g., colors, typography, shape, icons).
+*   The `PayPalVaultConfig` allows for optional `actionText` and `icon` parameters which directly affect the button's content, complementing the styling provided by `actionButton`.
