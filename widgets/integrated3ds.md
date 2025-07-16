@@ -20,9 +20,9 @@ The following sample code demonstrates the definition of the `Integrated3DSWidge
 
 ```Swift
 Integrated3DSWidget(
-    token: String,
-    baseURL: URL?,
-    completion: @escaping (Result<Integrated3DSResult, Integrated3DSError>) -> Void
+    config: ThreeDSConfig,
+    appearance: ThreeDSWidgetAppearance = ThreeDSWidgetAppearance(),
+    completion: @escaping (Result<Integrated3DSResult, Integrated3DSError>) -> Void)
 ) {...}
 ```
 
@@ -30,15 +30,16 @@ The following sample code example demonstrates the usage within your application
 
 ```Swift
 Integrated3DSWidget(
-    token: <Your 3DS token>,
-    baseURL: <Your base URL>,
+    config: .init(token: viewModel.token3DS),
+    appearance: ThreeDSWidgetAppearance(),
     completion: { result in
         switch result {
         case .success(let result):
-            // handle success
+            viewModel.handle3dsEvent(result)
+                                                
         case .failure(let error):
-            // handle failure
-        }
+            viewModel.handleFailure(error: error)
+    }
 })
 ```
 
@@ -51,9 +52,15 @@ The widget returns an object that contains the status of the 3DS flow and the 3D
 
 | Name                | Definition                                                                       | Type                                                           | Mandatory/Optional |
 | :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------------------- | :----------------  |
-| token               |  The integrated 3DS token used for integrated 3DS widget initialisation.         | String                                                         | Mandatory          |
-| baseURL             |  A URL that is used to resolve relative URLs within the webview.                 | URL                                                            | Optional           |
+| config              |  Configuration options for the integrated 3ds widget                             | `ThreeDSConfig`                                                | Mandatory          |
+| appearance          |  Object for visual customization of the widget.                                  | `MobileSDK.ThreeDSWidgetAppearance`                            | Optional           |
 | completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<Integrated3DSResult, Integrated3DSError>) -> Void`    | Mandatory          |
+
+#### ThreeDSConfig 
+
+| Name                | Definition                                                                       | Type                                                           | Mandatory/Optional |
+| :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------------------- | :----------------  |
+| token               |  The Integrated 3DS token used for Integrated 3DS widget initialization.         | `String`                                                       | Mandatory          |
 
 #### MobileSDK.Integrated3DSResult
 
@@ -93,6 +100,69 @@ The following describes Integrated 3DS exceptions that can be thrown.
 | invalidToken              |  Exception thrown when the token is invalid and/or is of the incorrect format/type |  nil                    |
 | mappingFailed             |  Exception thrown when there is an issue mapping a web event a SDK expected event. |  nil                    |
 
+### 5. Widget Styling
+
+Defines the visual appearance for the `Integrated3DSWidget`. It handles customizing the overlat loader loading indicator displayed during its operation.
+
+#### Appearance Contract
+
+The `ThreeDSWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Swift
+public struct ThreeDSWidgetAppearance {
+    public var loader: Theme.OverlayLoaderAppearance
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` default values. This configures the overlay loader.
+
+##### Using Default Appearance
+
+
+```Swift
+    Integrated3DSWidget( 
+        ...
+        appearance: ThreeDSWidgetAppearance = ThreeDSWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ThreeDSWidgetAppearance` by providing a specific `OverlayLoaderAppearance`.
+
+```Swift
+struct MyCustom3DSScreen: View { 
+    private func myCustomAppearance() -> ThreeDSWidgetAppearance {
+        let loader = Theme.OverlayLoaderAppearance(color: .red, overlayColor: .gray.opacity(0.1))
+        let appearance = ThreeDSWidgetAppearance(loader: loader)
+        return appearance
+    }
+    
+    var body: some View {
+        Integrated3DSWidget( 
+            ...
+            appearance: ThreeDSWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ThreeDSWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `GlobalTheme`)  |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-------------------------------------|
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `MobileSDK.Theme.OverlayLoader`    | `Theme.loader`                      |
+
+---
+
+**Note:**
+* The `OverlayLoader` has it's own detailed documentation explaining configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*  
+
 ## Android
 
 ## How to use the Integrated 3DS Widget
@@ -108,8 +178,9 @@ The following sample code demonstrates the definition of the `Integrated3DSWidge
 ```Kotlin
 @Composable
 fun Integrated3DSWidget(
-    token: String,
-    completion: (Result<Integrated3DSResult>) -> Unit
+    config: ThreeDSConfig,
+    appearance: ThreeDSWidgetAppearance = ThreeDSAppearanceDefaults.appearance(),
+    completion: (Result<Integrated3DSResult>) -> Unit,
 ) {...}
 ```
 
@@ -117,7 +188,10 @@ The following sample code example demonstrates the usage within your application
 
 ```Kotlin
 // Initialize the Integrated3DSWidget
-Integrated3DSWidget(token = threeDSToken) { result ->
+Integrated3DSWidget(
+    config = ThreeDSConfig(token = threeDSToken),
+    appearance = currentOrDefaultAppearance
+) { result ->
     result.onSuccess { threeDSResult ->
          // Handle success - Update UI or perform actions
         Log.d("Integrated3DSWidget", "Payment successful. $threeDSResult")
@@ -136,8 +210,15 @@ This subsection describes the various parameters required by the `Integrated3DSW
 
 | Name                | Definition                                                                       | Type                                 | Mandatory/Optional |
 | :------------------ | :------------------------------------------------------------------------------- | :----------------------------------- | :----------------  |
-| token               |  The Integrated 3DS token used for Integrated 3DS widget initialization.                               | String                               | Mandatory          |
+| config              |  Configuration options for the integrated 3ds widget                                                        | `ThreeDSConfig`     | Mandatory          |
+| appearance          |  Customization options for the visual appearance of the widget                                            | `ThreeDSWidgetAppearance` | Optional           |
 | completion          |  Result callback with the Integrated 3DS authentication if successful, or error if not.     | `(Result<Integrated3DSResult>) -> Unit`    | Mandatory          |
+
+#### ThreeDSConfig
+
+| Name                | Definition                                                                                       | Type                        | Mandatory/Optional      |
+| ------------------- | ------------------------------------------------------------------------------------------------ | --------------------------- |----------------------   |
+| token               |  The Integrated 3DS token used for Integrated 3DS widget initialization.                               | String                               | Mandatory          |
 
 #### Integrated3DSResult
 
@@ -191,3 +272,70 @@ EventMappingException(displayableMessage: String) : Integrated3DSException(displ
 | WebViewException        |  Exception thrown when there is an error while communicating with a WebView.             |  ThreeDSError        |
 | InvalidTokenException   |  Exception thrown when the token is invalid and/or is of the incorrect format/type.      |  ThreeDSError        |
 | EventMappingException   |   Exception thrown when there is an issue mapping a web event a SDK expected event.      |  ThreeDSError        |
+
+### 5. Widget Styling
+
+Defines the visual appearance for specific elements within the `Integrated3DSWidget`. Currently, this primarily involves customising the loading indicator displayed during Integrated 3DS operations.
+
+#### Appearance Contract
+
+The `ThreeDSWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Kotlin
+@Immutable
+class ThreeDSWidgetAppearance(
+    val loader: LoaderAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `ThreeDSWidgetAppearance`. This uses a standard loader appearance. You can use this as a starting point or provide a completely custom loader configuration.
+
+
+##### Using Default Appearance
+
+
+```Kotlin
+    Integrated3DSWidget( 
+        ...
+        appearance = ThreeDSAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ThreeDSWidgetAppearance` or modify the default one using its `copy` method (if your class has one, as seen in the initially provided context).
+
+```Kotlin
+@Composable 
+fun MyCustomIntegrated3DSScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customLoaderAppearance = LoaderAppearanceDefaults.appearance().copy(
+        // type = LoaderType.Circular, 
+        // color = Color.Magenta, 
+        // size = 48.dp 
+    )
+    val customAppearance = ThreeDSWidgetAppearance(
+        loader = customLoaderAppearance
+    )
+
+    Integrated3DSWidget(
+        ...
+        appearance = customAppearance, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ThreeDSWidgetAppearance`:
+
+ Name     | Description                                                                                             | Type                                                       | Default Value (from `ThreeDSAppearanceDefaults`) |
+----------|---------------------------------------------------------------------------------------------------------|------------------------------------------------------------|-------------------------------------------------------|
+ `loader` | Defines the appearance of the loading indicator shown when the widget is processing or loading content. | `LoaderAppearance`      | `LoaderAppearanceDefaults.appearance()`               |
+
+---
+
+**Note:**
+*   The `LoaderAppearance` itself would have its own detailed documentation explaining its configurable attributes (like color, size, type, stroke width, etc.). This documentation focuses on how it's used within the `ThreeDSWidgetAppearance`.

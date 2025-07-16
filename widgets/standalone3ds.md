@@ -20,9 +20,9 @@ The following sample code demonstrates the definition of the `Standalone3DSWidge
 
 ```Swift
 Standalone3DSWidget(
-    token: String,
-    baseURL: URL?,
-    completion: @escaping (Result<Standalone3DSResult, Standalone3DSError>) -> Void
+    config: ThreeDSConfig,
+    appearance: ThreeDSWidgetAppearance = ThreeDSWidgetAppearance(),
+    completion: @escaping (Result<Standalone3DSResult, Standalone3DSError>) -> Void)
 ) {...}
 ```
 
@@ -30,15 +30,15 @@ The following sample code example demonstrates the usage within your application
 
 ```Swift
 Standalone3DSWidget(
-    token: <Your 3DS token>,
-    baseURL: <Your base URL>,
+    config: .init(token: viewModel.token3DS),
+    appearance: ThreeDSWidgetAppearance(),
     completion: { result in
         switch result {
         case .success(let result):
-            // handle success
+            viewModel.handle3dsEvent(result)
         case .failure(let error):
-            // handle failure
-        }
+            viewModel.handleFailure(error: error)
+    }
 })
 ```
 
@@ -51,9 +51,16 @@ The widget returns an object that contains the status of the 3DS flow and the 3D
 
 | Name                | Definition                                                                       | Type                                                           | Mandatory/Optional |
 | :------------------ | :------------------------------------------------------------------------------- | :------------------------------------------------------------- | :----------------  |
-| token               |  The standalone 3DS token used for standalone 3DS widget initialisation.         | String                                                         | Mandatory          |
-| baseURL             |  A URL that is used to resolve relative URLs within the webview.                 | URL                                                            | Optional           |
+| config              |  Configuration options for the standalone 3ds widget                             | `ThreeDSConfig`                                                | Mandatory          |
+| appearance          |  Customization options for the visual appearance of the widget                    | `ThreeDSWidgetAppearance`                                     | Optional           |
 | completion          |  Result callback with the 3DS authentication if successful, or error if not.     | `(Result<Standalone3DSResult, Standalone3DSError>) -> Void`    | Mandatory          |
+
+#### ThreeDSConfig
+
+| Name                | Definition                                                                                       | Type                        | Mandatory/Optional    |
+| ------------------- | ------------------------------------------------------------------------------------------------ | --------------------------- |---------------------- |
+| token               |  The standalone 3DS token used for standalone 3DS widget initialisation.                         | String                      | Mandatory             |
+
 
 #### MobileSDK.Standalone3DSResult
 
@@ -92,6 +99,69 @@ The following describes Standalone 3DS exceptions that can be thrown.
 | webViewFailed             |  Error thrown when there is an error while communicating with a WebView.           |  NSError                |
 | invalidToken              |  Exception thrown when the token is invalid and/or is of the incorrect format/type |  NSError                |
 | mappingFailed             |  Exception thrown when there is an issue mapping a web event a SDK expected event. |  nil                    |
+
+### 5. Widget Styling
+
+Defines the visual appearance for the `Standalone3DSWidget`. It handles customizing the overlat loader loading indicator displayed during its operation.
+
+#### Appearance Contract
+
+The `ThreeDSWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Swift
+public struct ThreeDSWidgetAppearance {
+    public var loader: Theme.OverlayLoaderAppearance
+}
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `GlobalTheme` default values. This configures the overlay loader.
+
+##### Using Default Appearance
+
+
+```Swift
+    Standalone3DSWidget( 
+        ...
+        appearance: ThreeDSWidgetAppearance = ThreeDSWidgetAppearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ThreeDSWidgetAppearance` by providing a specific `OverlayLoaderAppearance`.
+
+```Swift
+struct MyCustom3DSScreen: View { 
+    private func myCustomAppearance() -> ThreeDSWidgetAppearance {
+        let loader = Theme.OverlayLoaderAppearance(color: .red, overlayColor: .gray.opacity(0.1))
+        let appearance = ThreeDSWidgetAppearance(loader: loader)
+        return appearance
+    }
+    
+    var body: some View {
+            Standalone3DSWidget( 
+            ...
+            appearance: ThreeDSWidgetAppearance = myCustomAppearance()
+            ...
+        )
+    }
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ThreeDSWidgetAppearance`:
+
+ Name                | Description                                                                                              | Type                               | Default Value (from `GlobalTheme`)  |
+---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-------------------------------------|
+ `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `MobileSDK.Theme.OverlayLoader`    | `Theme.loader`                      |
+
+---
+
+**Note:**
+* The `OverlayLoader` has it's own detailed documentation explaining configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*  
 
 ## Android
 
@@ -191,3 +261,70 @@ EventMappingException(displayableMessage: String) : Standalone3DSException(displ
 | WebViewException        |  Exception thrown when there is an error while communicating with a WebView.             |  ThreeDSError        |
 | InvalidTokenException   |  Exception thrown when the token is invalid and/or is of the incorrect format/type.      |  ThreeDSError        |
 | EventMappingException   |   Exception thrown when there is an issue mapping a web event a SDK expected event.      |  ThreeDSError        |
+
+### 5. Widget Styling
+
+Defines the visual appearance for specific elements within the `Standalone3DSWidget`. Currently, this primarily involves customising the loading indicator displayed during Standalone 3DS operations.
+
+#### Appearance Contract
+
+The `ThreeDSWidgetAppearance` class encapsulates the configurable style properties for the widget.
+
+```Kotlin
+@Immutable
+class ThreeDSWidgetAppearance(
+    val loader: LoaderAppearance
+)
+```
+
+#### Default Appearance & Customisation
+
+A default appearance is provided by `ThreeDSWidgetAppearance`. This uses a standard loader appearance. You can use this as a starting point or provide a completely custom loader configuration.
+
+
+##### Using Default Appearance
+
+
+```Kotlin
+    Standalone3DSWidget( 
+        ...
+        appearance = ThreeDSAppearanceDefaults.appearance() // Uses the default appearance
+    )
+```
+
+##### Customising Appearance
+
+You can create a custom `ThreeDSWidgetAppearance` or modify the default one using its `copy` method (if your class has one, as seen in the initially provided context).
+
+```Kotlin
+@Composable 
+fun MyCustomStandalone3DSScreen() { 
+    // Create appearance by using provided defaults, with custom changes
+    val customLoaderAppearance = LoaderAppearanceDefaults.appearance().copy(
+        // type = LoaderType.Circular, 
+        // color = Color.Magenta, 
+        // size = 48.dp 
+    )
+    val customAppearance = ThreeDSWidgetAppearance(
+        loader = customLoaderAppearance
+    )
+
+    Standalone3DSWidget(
+        ...
+        appearance = customAppearance, // Use your custom appearance
+    )
+}
+```
+
+#### Style Attributes
+
+The following attributes can be configured within `ThreeDSWidgetAppearance`:
+
+ Name     | Description                                                                                             | Type                                                       | Default Value (from `ThreeDSAppearanceDefaults`) |
+----------|---------------------------------------------------------------------------------------------------------|------------------------------------------------------------|-------------------------------------------------------|
+ `loader` | Defines the appearance of the loading indicator shown when the widget is processing or loading content. | `LoaderAppearance`      | `LoaderAppearanceDefaults.appearance()`               |
+
+---
+
+**Note:**
+*   The `LoaderAppearance` itself would have its own detailed documentation explaining its configurable attributes (like color, size, type, stroke width, etc.). This documentation focuses on how it's used within the `ThreeDSWidgetAppearance`.

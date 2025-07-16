@@ -19,9 +19,11 @@ The following sample code example demonstrates the usage within your application
 do {
     let config = PayPalDataCollectorConfig(accessToken: "yout_access_token", gatewayId: "your_gateway_id")
     let util = try await PayPalDataCollectorUtil.initialise(config: config)
-    util.collectDeviceData(additionalData: [:]) // Add additional data dictionary if needed
+    let correlationId = try util.collectDeviceId(additionalData: [:]) // Add additional data dictionary if needed
 } catch let PayPalDataCollectorError.initialisationClientId(error: errorResponse) {
     // Handle initialisation error
+} catch let PayPalDataCollectorError.parsingError
+    // Handle parsing error
 } catch let PayPalDataCollectorError.unknownError(requestError) {
     // Handle unknown error
 }
@@ -52,7 +54,7 @@ public struct PayPalDataCollectorConfig {
 The following sample code demonstrates the `collectDeviceData()` usage and params:
 
 ```Swift
-public func collectDeviceData(additionalData: [String: String] = [:]) -> String
+public func collectDeviceId(additionalData: [String: String] = [:]) throws -> String
 ```
 
 
@@ -72,6 +74,7 @@ The following describes `PayPalDataCollectorUtil` errors that can be thrown.
 | Error                             | Description                                                                               | Error Model                 |
 | :-------------------------------- | :---------------------------------------------------------------------------------------- | :-------------------------- |
 | initialisationClientId            |  Error thrown when trying to retrieve the clientId to initialise the DataCollector        |  PayPalDataCollectorError   |
+| parsingError                      |  Error thrown when parsing the receiver object from the PayPal SDK                        |  PayPalDataCollectorError   |
 | unknownError                      |  Error thrown when an unknown error occurs in PayPalDataCollector initialisation.         |  PayPalDataCollectorError   |
 
 ## Android
@@ -152,10 +155,10 @@ data class PayPalDataCollectorConfig(
 | accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
 | gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
 
-The following sample code demonstrates the `collectDeviceInfo()` usage and params:
+The following sample code demonstrates the `collectDeviceId()` usage and params:
 
 ```Kotlin
-fun collectDeviceInfo(
+fun collectDeviceId(
         context: Context,
         hasUserLocationConsent: Boolean = false,
         clientMetadataId: String? = null,
@@ -164,7 +167,7 @@ fun collectDeviceInfo(
 ```
 
 ```Kotlin
-val clientMetadataId = payPalDataCollectorUtil?.collectDeviceInfo(context)
+val clientMetadataId = payPalDataCollectorUtil?.collectDeviceId(context)
 ```
 
 > **Note**:
