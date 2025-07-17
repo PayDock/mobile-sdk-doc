@@ -178,7 +178,7 @@ The following attributes can be configured within `AddressWidgetAppearance`:
 
 ## Android
 
-## How to use the AddressDetailsWidget
+### How to use the AddressDetailsWidget
 
 ### 1. Overview
 
@@ -251,6 +251,8 @@ This subsection describes the various parameters required by the `AddressDetails
 #### BillingAddress
 | Name          | Definition                                                                           | Type       | Mandatory/Optional                           |
 | :------------ | :----------------------------------------------------------------------------------- | :--------- | :------------------------------------------  |
+| firstName     |  The first name of the user associated with the billing address                      | String     | Optional to provide and for the user         |
+| lastName      |  The last name of the user associated with the billing address                       | String     | Optional to provide and for the user         |
 | name          |  The name associated with the billing address                                        | String     | Optional to provide and for the user         |
 | addressLine1  |  The first line of the billing address, typically containing street information      | String     | Optional to provide / Mandatory for the user |
 | addressLine2  |  The optional second line of the billing address, often used for additional details  | String     | Optional to provide and for the user         |
