@@ -150,4 +150,4 @@ After adding the dependency:
 
 Your Android project is now configured to use the Paydock Mobile SDK. You can proceed to [initialize the SDK](/setup/initialise.md) and start implementing payment functionality in your application.
 
-**Note:** The SDK requires Android API level 21 (Android 5.0) or higher.
+**Note:** The SDK requires Android API level 24 (Android 7.0) or higher.
