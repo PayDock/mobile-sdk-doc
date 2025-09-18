@@ -164,15 +164,16 @@ This section provides a step-by-step guide on how to initialize and use the `Pay
 The following sample code demonstrates the definition of the `PayPalWidget`:
 
 ```Kotlin
+@Composable
 fun PayPalWidget(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    config: PayPalWidgetConfig = PayPalWidgetConfig(),
+    config: PayPalWidgetConfig,
     appearance: PayPalWidgetAppearance = PayPalAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
     completion: (Result<ChargeResponse>) -> Unit,
-) {...}
+)
 ```
 
 The following sample code example demonstrates the usage within your application:
@@ -182,28 +183,35 @@ The following sample code example demonstrates the usage within your application
 PayPalWidget(
     modifier = Modifier
         .fillMaxWidth()
-        .padding(16.dp), // optional
-    config = PayPalWidgetConfig(requestShipping = false), //optional (default: true)
+        .padding(16.dp),
+    enabled = true,
+     config = PayPalWidgetConfig(
+        accessToken = "your_widget_access_token",
+        gatewayId = "your_paypal_gateway_id",
+        requestShipping = false // Optional: set to false for digital goods
+    ),
+    appearance = PayPalAppearanceDefaults.appearance(), // Use default or custom appearance
     tokenRequest = { callback ->
-        // show widget loader
-        tokenResult.onSuccess { result ->
-            // Handle token success
-            val walletToken = result.token // ... retrieve the token
-            Result.success(WalletTokenResult(token = walletToken))
-        }.onFailure {
-            // Handle token failure success
-            Result.failure(it)
+        // Perform your wallet token request here
+        viewModel.getWalletToken { tokenResult ->
+            tokenResult.onSuccess { result ->
+                // Handle token success
+                callback(Result.success(WalletTokenResult(token = result.token)))
+            }.onFailure { error ->
+                // Handle token failure
+                callback(Result.failure(error))
+            }
         }
     },
-    loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
+    loadingDelegate = null, // Optional: delegate class to handle loading
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { chargeResponse ->
-        // Handle success - Update UI or perform actions
-        Log.d("PayPalWidget", "Payment successful.")
+        // Handle successful payment
+        Log.d("PayPalWidget", "Payment successful: ${chargeResponse.resource.data?.amount}")
     }.onFailure { exception ->
-        // Handle failure - Show error message or take appropriate action
-        Log.e("PayPalWidget", "Payment failed. Error: ${exception.message}")
+        // Handle payment failure
+        Log.e("PayPalWidget", "Payment failed: ${exception.message}")
     }
 }
 ```
@@ -218,12 +226,31 @@ This subsection describes the various parameters required by the `PayPalWidget` 
 | :-------------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications                                                   | `androidx.compose.ui.Modifier`                | Optional           |
 | enabled               |  Controls the enabled state of this Widget.                                                     | Boolean                                       | Optional           |
-| appearance            |  Customization options for the visual appearance of the widget                                  | `PayPalWidgetAppearance`                      | Optional           |
-| config                |  Configuration options for the PayPal widget                                                    | `PayPalWidgetConfig`                          | Mandatory          |
-| tokenRequest          |  A callback to obtain the wallet token result asynchronously                                    | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
-| requestShipping       |  Flag passed to determine if PayPal will ask the user for their shipping address.               | Boolean (default = `true`)                    | Optional           |
-| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.| `WidgetLoadingDelegate`                       | Optional           |
+| config                |  Configuration options for the PayPal widget (includes shipping preferences)                   | `PayPalWidgetConfig`                          | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget including button styling        | `PayPalWidgetAppearance`                      | Optional           |
+| tokenRequest          |  A callback to obtain the wallet token result asynchronously                                    | `(tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.| `WidgetLoadingDelegate?`                       | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.          | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
+
+#### PayPalWidgetConfig
+
+This subsection describes the configuration parameters required by the `PayPalWidgetConfig`. This data class holds various configuration options that customize the behavior of the PayPal widget and manages PayPal transactions within the application.
+
+The following sample code demonstrates the configuration structure:
+
+```Kotlin
+data class PayPalWidgetConfig(
+    val accessToken: String,
+    val gatewayId: String,
+    val requestShipping: Boolean = true
+)
+```
+
+| Name                  | Definition                                                                                      | Type                                          | Mandatory/Optional |
+| :-------------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
+| accessToken           | The OAuth access token required for authenticating API requests to PayPal services. This token ensures secure communication and authorizes operations on behalf of the user or merchant.                                                   | String                | Mandatory           |
+| gatewayId             | The unique identifier for the payment gateway used to route transactions. This ID directs payments through the correct processing channels.                                                    | String                          | Mandatory           |
+| requestShipping       | A boolean indicating whether shipping information should be requested from the user during the PayPal checkout flow. Setting this to `false` can streamline the checkout process for digital goods or services where shipping is not applicable.                | Boolean (default = `true`)                    | Optional           |
 
 #### ChargeResponse
 
@@ -298,85 +325,131 @@ interface WidgetLoadingDelegate {
 
 The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.
 
-#### 4. Error/Exceptions Mapping
+### 4. Error/Exceptions Mapping
 
-The following describes PayPal exceptions that can be thrown. 
+The following describes PayPal exceptions that can be thrown. All exceptions extend from the base `PayPalException` class.
 
 ```Kotlin
-FetchingUrlException(error: ApiErrorResponse) : PayPalException(error.displayableMessage)
-CapturingChargeException(error: ApiErrorResponse) : PayPalException(error.displayableMessage)
-WebViewException(code: Int?, displayableMessage: String) : PayPalException(displayableMessage)
-CancellationException(displayableMessage: String) : PayPalException(displayableMessage)
-InitialisationWalletTokenException(displayableMessage: String, val errorBody: String?) : PayPalException(displayableMessage)
-UnknownException(displayableMessage: String) : PayPalException(displayableMessage)
+sealed class PayPalException(displayableMessage: String) : SdkException(displayableMessage) {
+    data class FetchingUrlException(val error: ApiErrorResponse) : PayPalException(error.displayableMessage)
+    data class CapturingChargeException(val error: ApiErrorResponse) : PayPalException(error.displayableMessage)
+    class WebViewException(val code: Int? = null, displayableMessage: String) : PayPalException(displayableMessage)
+    class CancellationException(displayableMessage: String) : PayPalException(displayableMessage)
+    class ParseException(displayableMessage: String, val errorBody: String?) : PayPalException(displayableMessage)
+    class InitialisationWalletTokenException(displayableMessage: String) : PayPalException(displayableMessage)
+    data class GetPayPalClientIdException(val error: ApiErrorResponse) : PayPalException(error.displayableMessage)
+    class ConfigurationException(displayableMessage: String) : PayPalException(displayableMessage)
+    class UnknownException(displayableMessage: String) : PayPalException(displayableMessage)
+}
 ```
 
-| Exception                 | Description                                                                                   | Error Model       |
-| :------------------------ | :-------------------------------------------------------------------------------------------- | :---------------- |
-| FetchingUrlException      |  Exception thrown when there is an error fetching the URL for PayPal.                         |  PayPalError      |
-| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for PayPal.                     |  PayPalError      |
-| WebViewException          |  Exception thrown when there is an error while communicating with a WebView.                  |  PayPalError      |
-| CancellationException     |  Exception thrown when there is a cancellation error related to PayPal.                       |  PayPalError      |
-| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  PayPalError      |
-| UnknownException          |  Exception thrown when there is an unknown error related to PayPal.                           |  PayPalError      |
+| Exception                        | Description                                                                                   |
+| :------------------------------- | :-------------------------------------------------------------------------------------------- |
+| FetchingUrlException             | Exception thrown when there is an error fetching the URL for PayPal.                         |
+| CapturingChargeException         | Exception thrown when there is an error capturing the charge for PayPal.                     |
+| WebViewException                 | Exception thrown when there is an error while communicating with a WebView.                  |
+| CancellationException            | Exception thrown when there is a cancellation error related to PayPal.                       |
+| ParseException                   | Exception thrown when there is an error parsing data from an API call (typically JSON).      |
+| InitialisationWalletTokenException | Exception thrown when there is an error during the initialisation of the PayPal wallet token. |
+| GetPayPalClientIdException       | Exception thrown when there is an error retrieving the PayPal Client ID.                     |
+| ConfigurationException           | Exception thrown when a required configuration is missing or invalid for the PayPal flow.    |
+| UnknownException                 | Exception thrown when there is an unknown error related to PayPal.                           |
 
 ### 5. Widget Styling
 
 Defines the visual appearance for specific elements within the `PayPalWidget`.
-The primary visual element is the PayPal button, which has its own branding guidelines. This appearance configuration mainly focuses on the loading indicator displayed during interactions with the PayPal flow.
+With the migration to the PayPal web SDK, the widget now supports comprehensive button customization including color, label, and shape options, in addition to the loading indicator styling.
 
 #### Appearance Contract
 
-The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, currently centered on the loader.
+The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, including both the loader and PayPal button styling options.
 
 ```Kotlin
 @Immutable
 class PayPalWidgetAppearance(
-    val loader: LoaderAppearance
-)
+    val loader: LoaderAppearance,
+    val buttonColour: PayPalButtonColor,
+    val buttonLabel: PayPalButtonLabel,
+    val buttonShape: PaymentButtonShape,
+) {
+    fun copy(
+        loader: LoaderAppearance = this.loader,
+        paypalColor: PayPalButtonColor = this.buttonColour,
+        paypalLabel: PayPalButtonLabel = this.buttonLabel,
+        buttonShape: PaymentButtonShape = this.buttonShape,
+    ): PayPalWidgetAppearance = PayPalWidgetAppearance(
+        loader = loader.copy(),
+        buttonColour = paypalColor,
+        buttonLabel = paypalLabel,
+        buttonShape = buttonShape,
+    )
+}
 ```
 
 #### Default Appearance & Customisation
 
-A default appearance is provided by `PayPalAppearanceDefaults`. This configures a specific loader appearance (black color, default stroke width) intended to be visually compatible with the standard PayPal button.
+A default appearance is provided by `PayPalAppearanceDefaults`. This configures:
+- Loader: Black color with button loader width
+- Button color: Gold (PayPal's signature color)
+- Button label: PayPal wordmark
+- Button shape: Rounded corners
 
 ##### Using Default Appearance
 
+```Kotlin
+PayPalWidget( 
+    ...
+    appearance = PayPalAppearanceDefaults.appearance() // Uses the default appearance
+)
+```
+
+The default appearance is configured as follows:
 
 ```Kotlin
-    PayPalWidget( 
-        ...
-        appearance = PayPalAppearanceDefaults.appearance() // Uses the default appearance
+object PayPalAppearanceDefaults {
+    @Composable
+    fun appearance(): PayPalWidgetAppearance = PayPalWidgetAppearance(
+        loader = LoaderAppearanceDefaults.appearance()
+            .copy(strokeWidth = ButtonAppearanceDefaults.ButtonLoaderWidth, color = Color.Black),
+        buttonColour = PayPalButtonColor.GOLD,
+        buttonLabel = PayPalButtonLabel.PAYPAL,
+        buttonShape = PaymentButtonShape.ROUNDED,
     )
+}
 ```
 
 ##### Customising Appearance
 
-You can create a custom `PayPalWidgetAppearance` by providing a specific `LoaderAppearance` configuration if the default doesn't meet your needs or if you want to ensure consistency with other loaders in your app.
+You can create a custom `PayPalWidgetAppearance` by modifying any combination of the loader, button color, label, or shape properties.
 
 ```Kotlin
 @Composable 
 fun MyCustomPayPalScreen() { 
-    // Create appearance by using provided defaults, with custom changes
-    val customAppearanceFromDefaults = PayPalAppearanceDefaults.appearance().copy(     
-        loader = LoaderAppearanceDefaults.appearance().copy( 
+    // Create appearance by customizing specific properties
+    val customAppearance = PayPalAppearanceDefaults.appearance().copy(
+        loader = LoaderAppearanceDefaults.appearance().copy(
             color = Color.Blue,
-            strokeWidth = 3.dp   
-        )
+            strokeWidth = 3.dp
+        ),
+        paypalColor = PayPalButtonColor.BLUE,
+        paypalLabel = PayPalButtonLabel.CHECKOUT,
+        buttonShape = PaymentButtonShape.RECTANGLE
     )
 
     // Alternatively, create entirely from scratch:
     val completelyCustomAppearance = PayPalWidgetAppearance(
-    loader = LoaderAppearanceDefaults.appearance().copy( // Or new LoaderAppearance(...)
-        color = Color.DarkGray,
-        strokeWidth = 2.dp
-        // ... other LoaderAppearance properties
+        loader = LoaderAppearanceDefaults.appearance().copy(
+            color = Color.DarkGray,
+            strokeWidth = 2.dp
+        ),
+        buttonColour = PayPalButtonColor.SILVER,
+        buttonLabel = PayPalButtonLabel.PAY,
+        buttonShape = PaymentButtonShape.ROUNDED
     )
-)
 
     PayPalWidget(
         ...
-        appearance = customAppearanceFromDefaults, // Use your custom appearance
+        appearance = customAppearance, // Use your custom appearance
     )
 }
 ```
@@ -384,11 +457,37 @@ fun MyCustomPayPalScreen() {
 #### Style Attributes
 
 |  Name                | Description                                                                                              | Type                               | Default Value (from `PayPalAppearanceDefaults`)   |
-| ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|---------------------------------------------------|
-| `loader`             | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `LoaderAppearance`                 | `LoaderAppearanceDefaults.appearance()`           |
+| ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|----------------------------------------------------|
+| `loader`             | Defines the appearance of the loading indicator shown when the widget is processing or loading content.  | `LoaderAppearance`                 | Black color with button loader width              |
+| `buttonColour`       | Sets the color scheme of the PayPal button.                                                             | `PayPalButtonColor`                | `PayPalButtonColor.GOLD`                           |
+| `buttonLabel`        | Controls the text/label displayed on the PayPal button.                                                 | `PayPalButtonLabel`                | `PayPalButtonLabel.PAYPAL`                         |
+| `buttonShape`        | Defines the shape/border radius of the PayPal button.                                                   | `PaymentButtonShape`               | `PaymentButtonShape.ROUNDED`                       |
+
+#### PayPal Button Color Options
+
+The `PayPalButtonColor` enum provides the following color options:
+- `GOLD` - PayPal's signature gold color (recommended)
+- `BLUE` - PayPal blue color scheme
+- `SILVER` - Silver/gray color scheme
+- `WHITE` - White background with colored text
+- `BLACK` - Black background with white text
+
+#### PayPal Button Label Options
+
+The `PayPalButtonLabel` enum provides the following label options:
+- `PAYPAL` - Shows only the PayPal wordmark
+- `CHECKOUT` - Shows "Checkout with PayPal"
+- `PAY` - Shows "Pay with PayPal"
+- `BUYNOW` - Shows "Buy Now with PayPal"
+
+#### Payment Button Shape Options
+
+The `PaymentButtonShape` enum provides the following shape options:
+- `ROUNDED` - Rounded corners (recommended)
+- `RECTANGLE` - Sharp rectangular corners
 
 ---
 
 **Note:**
-*   The PayPal button itself follows strict branding guidelines from PayPal and is generally not customizable beyond what the PayPal SDK or web view provides.
+*   The PayPal button styling follows PayPal's official design guidelines and uses the PayPal web SDK for rendering.
 *   The `LoaderAppearance` itself would have its own detailed documentation explaining its configurable attributes.
