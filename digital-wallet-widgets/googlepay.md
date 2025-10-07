@@ -267,25 +267,35 @@ The `completion` callback is invoked after the payment operation is completed. I
 
 The following describes the Google Pay exceptions that can be thrown. 
 
-```Kotlin
-CapturingChargeException(error: ApiErrorResponse) : GooglePayException(error.displayableMessage)
-PaymentRequestException(exception: Exception?) : GooglePayException(exception?.message ?: defaultMessage)
-InitialisationException(displayableMessage: String) : GooglePayException(displayableMessage)
-ResultException(displayableMessage: String) : GooglePayException(displayableMessage)
-CancellationException(displayableMessage: String) : GooglePayException(displayableMessage)
-InitialisationWalletTokenException(displayableMessage: String, val errorBody: String?) : GooglePayException(displayableMessage)
-UnknownException(displayableMessage: String) : GooglePayException(displayableMessage)
-```
+**Parent sealed class for exceptions thrown when there's an error related to Google Pay integration.**
 
-| Exception                 | Description                                                                                   | Error Model          |
-| :------------------------ | :-------------------------------------------------------------------------------------------- | :------------------- |
-| CapturingChargeException  |  Exception thrown when there is an error capturing the charge for Google Pay.                 |  GooglePayError      |
-| PaymentRequestException   |  Exception thrown when there is an error during the payment request process for Google Pay.   |  GooglePayError      |
-| InitialisationException   |  Exception thrown when there is an initialization error related to Google Pay.                |  GooglePayError      |
-| ResultException           |  Exception thrown when there is a result error related to Google Pay.                         |  GooglePayError      |
-| CancellationException     |  Exception thrown when there is a cancellation error related to Google Pay.                   |  GooglePayError      |
-| InitialisationWalletTokenException            |  Exception thrown when the wallet token result returns a failure result.  |  GooglePayError      |
-| UnknownException          |  Exception thrown when there is an unknown error related to Google Pay.                       |  GooglePayError      |
+| Exception                             | Description                                                                                                                                  | Key Properties / Parameters |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------- |
+| `CapturingChargeException`            | Exception thrown when there is an error capturing the charge for Google Pay. The displayable message is derived from the error response.       | `error: ApiErrorResponse`   |
+| `InitialisationException`           | Exception thrown when there is an initialization error related to Google Pay.                                                                | `displayableMessage: String`|
+| `ResultException`                   | Exception thrown when there is a result error related to Google Pay from Paydock's side after Google Pay.                                      | `displayableMessage: String`|
+| `CancellationException`             | Exception thrown when there is a user-initiated cancellation from Paydock's UI (e.g. close button). This is distinct from `SDKException.CancelledBySdk`. | `displayableMessage: String`|
+| `ParseException`                      | Represents an exception that occurs during the parsing of data from an API call, typically JSON.                                             | `displayableMessage: String`, `errorBody: String?` |
+| `InitialisationWalletTokenException`  | Exception thrown when there is an error during the initialisation of the Google Pay wallet token.                                            | `displayableMessage: String`|
+| `UnknownException`                  | Exception thrown when there is an unknown error related to Google Pay that doesn't fit into other more specific categories.                  | `displayableMessage: String`|
+
+---
+
+### `SDKException` (Sealed Child of `GooglePayException`)
+
+**Represents exceptions that originate directly from the Google Pay SDK's status codes. Each specific exception within this sealed class maps to a `CommonStatusCode`.**
+
+| Exception                             | Description                                                                                                                                   | Key Parameters                  |
+| :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ |
+| `  ↳ CancelledBySdk`                 | Corresponds to `CommonStatusCodes.CANCELED`. The Google Pay flow was not completed successfully. This could be due to various reasons, not necessarily an explicit user cancellation. | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ NetworkError`                   | Corresponds to `CommonStatusCodes.NETWORK_ERROR`. A network issue prevented the Google Pay operation from completing.                           | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ Timeout`                        | Corresponds to `CommonStatusCodes.TIMEOUT`. The Google Pay operation timed out.                                                                | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ DeveloperError`                 | Corresponds to `CommonStatusCodes.DEVELOPER_ERROR`. An issue with the integration configuration or parameters. The displayable message should be user-friendly. | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ ServiceError`                   | Corresponds to generic errors like `CommonStatusCodes.INTERNAL_ERROR`, `CommonStatusCodes.ERROR`, `CommonStatusCodes.INTERRUPTED`. An unexpected or internal error occurred within the Google Pay services. | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ PlayServicesError`              | Corresponds to errors related to Google Play Services availability or account issues (e.g., `SERVICE_VERSION_UPDATE_REQUIRED`, `SERVICE_DISABLED`, etc.). | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ ResolutionFailed`               | Corresponds to `CommonStatusCodes.RESOLUTION_REQUIRED` when the resolution fails or cannot be launched.                                       | `displayableMessage: String`, `statusCodeString: String` |
+| `  ↳ UnknownSdkException`            | For any other unhandled or unknown status codes from the Google Pay SDK.                                                                      | `displayableMessage: String`, `statusCodeString: String` |
+
 
 ### 9. Widget Styling
 
