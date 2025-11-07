@@ -6,6 +6,24 @@
 
 ![Creditcard View](/img/Credit_card.png)
 
+## Supported Card Schemes
+
+The Card Tokenisation Widget supports the following card schemes:
+
+| Card Scheme   | Display Name              |
+|---------------|---------------------------|
+| AMEX          | American Express          |
+| AUSBC         | Australian Bank Card      |
+| DINERS        | Diners Club               |
+| DISCOVER      | Discover                  |
+| JAPCB         | JCB                       |
+| MASTERCARD    | MasterCard                |
+| SOLO          | Solo                      |
+| VISA          | Visa                      |
+| UNIONPAY      | UnionPay International    |
+
+You can limit validation to specific schemes by configuring the `supportedSchemes` parameter in your widget configuration. This allows you to restrict which card types your application will accept based on your business requirements.
+
 ## iOS
 
 ## How to use the Card Tokenisation widget in iOS
