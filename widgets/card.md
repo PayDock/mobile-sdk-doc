@@ -279,6 +279,7 @@ fun CardDetailsWidget(
     config: CardDetailsWidgetConfig,
     appearance: CardDetailsWidgetAppearance = CardDetailsAppearanceDefaults.appearance(),
     loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (Result<CardResult>) -> Unit
 ) {...}
 ```
@@ -310,6 +311,7 @@ CardDetailsWidget(
     ),
     appearance = currentOrDefaultAppearance, // optional
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // Delegate class to handle events
     completion = { result ->
         result.onSuccess { cardResult ->
             // Handle success - Update UI or perform actions
@@ -352,6 +354,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | config                  |  Configuration options for the card details widget                                                        | `CardDetailsWidgetConfig`      | Mandatory          |
 | appearance              |  Customization options for the visual appearance of the widget                                            | `CardDetailsWidgetAppearance`  | Optional           |
 | loadingDelegate         |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`        | Optional           |
+| eventDelegate           |  Delegate for handling widget events such as button clicks, toggle interactions, and link clicks.         | `WidgetEventDelegate`          | Optional           |
 | completion              |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
 
 #### CardDetailsWidgetConfig
@@ -407,6 +410,73 @@ interface WidgetLoadingDelegate {
     fun widgetLoadingDidFinish()
 }
 ```
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks, toggle interactions, and link clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Card Details Events
+
+The Card Details Widget triggers the following events:
+
+**Tokenisation Event** - Triggered when the tokenisation button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "TokenisationButton",
+    "action": "click", 
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+**Toggle Event** - Triggered when the save card toggle is clicked:
+
+```json
+{
+  "type": "Toggle",
+  "properties": {
+    "name": "SaveCardToggle",
+    "action": "click",
+    "state": "true / false"
+  }
+}
+```
+
+**TextLink Event** - Triggered when the privacy policy link is clicked:
+
+```json
+{
+  "type": "LinkText", 
+  "properties": {
+    "name": "PrivacyPolicyLink",
+    "action": "click",
+    "url": "(Whatever is set by merchant)"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
+| `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
 
 #### Completion Callback
 

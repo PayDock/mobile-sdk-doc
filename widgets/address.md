@@ -190,8 +190,10 @@ The following sample code demonstrates the definition of the `AddressDetailsWidg
 @Composable
 fun AddressDetailsWidget(
     modifier: Modifier = Modifier,
+    config: AddressDetailsWidgetConfig,
     appearance: AddressDetailsWidgetAppearance = AddressDetailsAppearanceDefaults.appearance(),
     address: BillingAddress? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (BillingAddress) -> Unit,
 ) {...}
 ```
@@ -204,33 +206,14 @@ AddressDetailsWidget(
    modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
-    address = null, // optional (pre-populate fields)
-    completion = { billingAddress ->
-        // Handle captured address - Update UI or perform actions
-       Log.d("CardDetailsWidget", "Billing address returned. $billingAddress")
-    }
-)
-```
-
-### 2. Parameter definitions
-
-This subsection describes the various parameters required by the `AddressDetailsWidget` composable. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AddressDetailsWidget`.
-
-#### AddressDetailsWidget
-
-The following sample code example demonstrates how to use the widget in your application:
-
-```Kotlin
-// Initialise the AddressDetailsWidget
-AddressDetailsWidget(
-   modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp), // optional
-    address = null, // optional (pre-populate fields)
+    config = AddressDetailsWidgetConfig(
+        address = null // optional - pre-populate address fields
+    ),
     appearance = currentOrDefaultAppearance, // optional
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // optional - Delegate class to handle events
     completion = { billingAddress ->
         // Handle captured address - Update UI or perform actions
-       Log.d("CardDetailsWidget", "Billing address returned. $billingAddress")
+       Log.d("AddressDetailsWidget", "Billing address returned. $billingAddress")
     }
 )
 ```
@@ -244,9 +227,19 @@ This subsection describes the various parameters required by the `AddressDetails
 | Name             | Definition                                                         | Type                                                      | Mandatory/Optional |
 | :--------------- | :----------------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
 | modifier         |  Compose modifier for container modifications                      | `Modifier`                                                | Optional           |
+| config           |  Configuration options for the address details widget              | `AddressDetailsWidgetConfig`                              | Mandatory          |
 | appearance       |  Customization options for the visual appearance of the widget     | `AddressDetailsWidgetAppearance`                          | Optional           |
 | address          |  The preset address to pre-fill the input fields.                  | `com.paydock.feature.address.domain.model.BillingAddress` | Optional           |
+| eventDelegate    |  Delegate for handling widget events such as button clicks.        | `WidgetEventDelegate`                                     | Optional           |
 | completion       |  Callback function to execute when the address is saved.           | `(BillingAddress) -> Unit`                                | Mandatory          |
+
+#### AddressDetailsWidgetConfig
+
+Configuration data class for the Address Details Widget. This class holds the necessary parameters to initialize and display the address details form within the Paydock SDK.
+
+| Name             | Definition                                                                                            | Type                                                      | Mandatory/Optional |
+| :--------------- | :---------------------------------------------------------------------------------------------------- | :-------------------------------------------------------- | :----------------  |
+| address          |  An optional [BillingAddress] object to pre-populate the address form fields. If null, the form will be displayed with empty fields. | `BillingAddress?`                                         | Optional           |
 
 #### BillingAddress
 | Name          | Definition                                                                           | Type       | Mandatory/Optional                           |
@@ -263,6 +256,57 @@ This subsection describes the various parameters required by the `AddressDetails
 | phoneNumber   |  The phone number associated with the billing address                                | String     | Optional to provide and for the user         |
 
 ### 3. Callback Explanation
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Address Details Events
+
+The Address Details Widget triggers the following events:
+
+**Save Event** - Triggered when the save button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "SaveButton",
+    "action": "click",
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+**Manual Entry Event** - Triggered when the manual entry button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "ManualEntryButton",
+    "action": "click"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element (Save Event only) | String | Optional |
 
 #### Completion Callback
 

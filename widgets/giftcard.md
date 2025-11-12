@@ -166,6 +166,7 @@ fun GiftCardWidget(
     config: GiftCardWidgetConfig,
     appearance: GiftCardWidgetAppearance = GiftCardAppearanceDefaults.appearance(),
     loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (Result<String>) -> Unit,
 ) {...}
 ```
@@ -183,13 +184,15 @@ GiftCardWidget(
         storePin = true
     ),
     appearance = currentOrDefaultAppearance, // optional
+    loadingDelegate = DELEGATE_INSTANCE, // optional - Delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // optional - Delegate class to handle events
     completion = { result ->
         result.onSuccess { token ->
             // Handle success - Update UI or perform actions
             Log.d("GiftCardWidget", "Tokenisation successful. Card token: $token")
         }.onFailure { throwable ->
             // Handle failure - Show error message or take appropriate action
-            Log.e("GiftCardWidget", "Tokenisation failed. Error: ${exception.message}")
+            Log.e("GiftCardWidget", "Tokenisation failed. Error: ${throwable.message}")
         }
     }
 )
@@ -208,6 +211,7 @@ This subsection describes the various parameters required by the `GiftCardWidget
 | config              |  Configuration options for the gift card widget                                                           | `GiftCardWidgetConfig`      | Mandatory          |
 | appearance          |  Customization options for the visual appearance of the widget                                            | `GiftCardWidgetAppearance`  | Optional           |
 | loadingDelegate     |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`     | Optional           |
+| eventDelegate       |  Delegate for handling widget events such as button clicks.                                                | `WidgetEventDelegate`        | Optional           |
 | completion          |  Result callback with the gift card details tokenisation API response if successful, or error if not.     | `(Result<String>) -> Unit`  | Mandatory          |
 
 #### GiftCardWidgetConfig
@@ -233,6 +237,45 @@ interface WidgetLoadingDelegate {
     fun widgetLoadingDidFinish()
 }
 ```
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Gift Card Events
+
+The Gift Card Widget triggers the following events:
+
+**Tokenisation Event** - Triggered when the tokenisation button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "TokenisationButton",
+    "action": "click",
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element | String | Optional |
 
 #### Completion Callback
 

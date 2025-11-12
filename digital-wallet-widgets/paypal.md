@@ -201,6 +201,7 @@ fun PayPalWidget(
     appearance: PayPalWidgetAppearance = PayPalAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (Result<ChargeResponse>) -> Unit,
 )
 ```
@@ -233,6 +234,7 @@ PayPalWidget(
         }
     },
     loadingDelegate = null, // Optional: delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // Optional: delegate class to handle events
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { chargeResponse ->
@@ -259,6 +261,7 @@ This subsection describes the various parameters required by the `PayPalWidget` 
 | appearance            |  Customization options for the visual appearance of the widget including button styling        | `PayPalWidgetAppearance`                      | Optional           |
 | tokenRequest          |  A callback to obtain the wallet token result asynchronously                                    | `(tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.| `WidgetLoadingDelegate?`                       | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                     | `WidgetEventDelegate?`                         | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.          | `(Result<ChargeResponse>) -> Unit`            | Mandatory          |
 
 #### PayPalWidgetConfig
@@ -349,6 +352,43 @@ interface WidgetLoadingDelegate {
     fun widgetLoadingDidFinish()
 }
 ```
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### PayPal Events
+
+The PayPal Widget triggers the following events:
+
+**PayPal Start Checkout Event** - Triggered when the PayPal checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "PayPalCheckoutButton",
+    "action": "click"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
 
 #### Completion Callback
 
