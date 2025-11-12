@@ -173,6 +173,7 @@ fun ColesPayWidget(
     appearance: ColesPayWidgetAppearance = ColesPayWidgetAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (Result<String>) -> Unit
 ) {...}
 ```
@@ -197,7 +198,9 @@ ColesPayWidget(
             // Handle token failure success
             Result.failure(it)
         }
-    }
+    },
+    loadingDelegate = DELEGATE_INSTANCE, // optional - Delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // optional - Delegate class to handle events
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { colesPayOrderId ->
@@ -224,7 +227,8 @@ This subsection describes the various parameters required by the `ColesPayWidget
 | appearance            |  Customization options for the visual appearance of the widget                                    | `ColesPayWidgetAppearance`                                                     | Optional           |
 | tokenRequest          |  A callback to obtain the wallet token result asynchronously                                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                                                        | Optional           |
-| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.                       | `(Result<ChargeResponse>) -> Unit`                                             | Mandatory          |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                       | `WidgetEventDelegate`                                                           | Optional           |
+| completion            |  Result callback with the *ColesPayOrderId* if successful, or error if not.                       | `(Result<String>) -> Unit`                                                     | Mandatory          |
 
 #### ColesPayWidgetConfig
 
@@ -254,6 +258,43 @@ interface WidgetLoadingDelegate {
     fun widgetLoadingDidFinish()
 }
 ```
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Coles Pay Events
+
+The Coles Pay Widget triggers the following events:
+
+**Coles Pay Start Checkout Event** - Triggered when the Coles Pay checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "ColesPayCheckoutButton",
+    "action": "click"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
 
 #### Completion Callback
 

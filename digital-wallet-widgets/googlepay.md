@@ -20,10 +20,12 @@ The following sample code demonstrates the definition of the `GooglePayWidget`:
 @Composable
 fun GooglePayWidget(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     config: GooglePayWidgetConfig,
     appearance: GooglePayWidgetAppearance = GooglePayAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (Result<ChargeResponse>) -> Unit
 )  {...}
 ```
@@ -60,7 +62,9 @@ GooglePayWidget(
             // Handle token failure success
             Result.failure(it)
         }
-    }
+    },
+    loadingDelegate = DELEGATE_INSTANCE, // optional - Delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // optional - Delegate class to handle events
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { chargeResponse ->
@@ -82,9 +86,12 @@ This subsection describes the parameters required by the `GooglePayWidget` compo
 | Name                  | Definition                                                                               | Type                                                                        | Mandatory/Optional |
 | :-------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- | :----------------- |
 | modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                                              | Optional           |
+| enabled               |  Controls the enabled state of this Widget.                                             | Boolean                                                                      | Optional           |
 | config                |  The configuration details required for the Google Pay widget                            | `GooglePayWidgetConfig`                                                     | Mandatory          |
 | appearance            |  Customization options for the visual appearance of the widget                           | `GooglePayWidgetAppearance`                                                 | Optional           |
 | tokenRequest          |  A callback to obtain the wallet token result asynchronously                             | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`  | Mandatory          |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                                                  | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                              | `WidgetEventDelegate`                                                       | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                          | Mandatory          |
 
 
@@ -258,6 +265,43 @@ data class ChargeResponse(
 The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
 
 The `WalletTokenResult` acts as a token wrapper containing the actual token result.
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Google Pay Events
+
+The Google Pay Widget triggers the following events:
+
+**Google Pay Start Checkout Event** - Triggered when the Google Pay checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "GooglePayCheckoutButton",
+    "action": "click"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
 
 #### Completion Callback
 

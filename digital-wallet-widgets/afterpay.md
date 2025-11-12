@@ -228,19 +228,24 @@ For reference: [Afterpay SDK](https://github.com/afterpay/sdk-android)
 The code for the `AfterpayWidget` is as follows. None of the values are populated in this example as this is a definition.
 
 ```Kotlin
+@Composable
 fun AfterpayWidget(
-    modifier: Modifier,
-    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     config: AfterpaySDKConfig,
     appearance: AfterpayWidgetAppearance = AfterpayAppearanceDefaults.appearance(),
     tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
-    selectAddress: (address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit,
+    selectAddress: (
+        address: BillingAddress,
+        provideShippingOptions: (List<AfterpayShippingOption>) -> Unit
+    ) -> Unit = { _, _ -> },
     selectShippingOption: (
         shippingOption: AfterpayShippingOption,
-        provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit
-    ) -> Unit,
-    loadingDelegate: WidgetLoadingDelegate?,
-    completion: (Result<ChargeResponse>) -> Unit
+        provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit,
+    ) -> Unit = { _, _ -> },
+    loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
+    completion: (Result<ChargeResponse>) -> Unit,
 ) {...}
 ```
 
@@ -319,7 +324,9 @@ AfterpayWidget(
                 null
             }
         provideShippingOptionUpdateResult(result)
-    }
+    },
+    loadingDelegate = DELEGATE_INSTANCE, // optional - Delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // optional - Delegate class to handle events
 ) { result ->
     result.onSuccess {
         Log.d("[AfterpayWidget]", "Success: $it")
@@ -345,6 +352,7 @@ This subsection describes the parameters required by the `AfterpayWidget` compos
 | selectAddress         |  A callback to handle selection of shipping address.                                     | `(address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit`                                          | Optional           |
 | selectShippingOption  |  A callback to handle selection of shipping option.                                      | `selectShippingOption: (shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit)` | Optional           |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.                           | `WidgetLoadingDelegate`                                                                             | Optional          |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                | `WidgetEventDelegate`                                                                              | Optional           |
 | completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                                                                                           | Mandatory          |
 
 #### AfterpaySDKConfig
@@ -499,6 +507,43 @@ interface WidgetLoadingDelegate {
     fun widgetLoadingDidFinish()
 }
 ```
+
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Afterpay Events
+
+The Afterpay Widget triggers the following events:
+
+**AfterPay Start Checkout Event** - Triggered when the Afterpay checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "AfterPayCheckoutButton",
+    "action": "click"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
 
 #### Completion Callback
 
