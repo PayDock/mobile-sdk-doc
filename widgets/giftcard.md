@@ -308,6 +308,8 @@ The `GiftCardWidgetAppearance` class encapsulates all configurable style propert
 class GiftCardWidgetAppearance(
     val verticalSpacing: Dp,
     val horizontalSpacing: Dp,
+    val textFieldVerticalSpacing: Dp,
+    val textFieldHorizontalSpacing: Dp,
     val textField: TextFieldAppearance,
     val actionButton: ButtonAppearance,
 )
@@ -367,12 +369,14 @@ fun MyCustomGiftCardScreen() {
 
 The following attributes can be configured within `GiftCardWidgetAppearance`:
 
-| Name                | Description                                                                                                | Type                                                        | Default Value (from `GiftCardAppearanceDefaults`) |
-|---------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|---------------------------------------------------|
-| `verticalSpacing`   | The vertical space between the row of input fields (card number, PIN) and the action button below it.      | `androidx.compose.ui.unit.Dp`                               | `WidgetDefaults.Spacing` (e.g., 16.dp)            |
-| `horizontalSpacing` | The horizontal space between the card number input field and the PIN input field within their shared row.  | `androidx.compose.ui.unit.Dp`                               | `WidgetDefaults.Spacing` (e.g., 16.dp)            |
-| `textField`         | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`         | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` |
-| `actionButton`      | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `ButtonAppearanceDefaults.filledButtonAppearance()` |
+| Name                          | Description                                                                                                | Type                                                        | Default Value (from `GiftCardAppearanceDefaults`) |
+|-------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|---------------------------------------------------|
+| `verticalSpacing`             | The vertical space between the row of input fields (card number, PIN) and the action button below it.      | `androidx.compose.ui.unit.Dp`                               | `WidgetDefaults.Spacing` (e.g., 16.dp)            |
+| `horizontalSpacing`           | The horizontal space between the card number input field and the PIN input field within their shared row.  | `androidx.compose.ui.unit.Dp`                               | `WidgetDefaults.Spacing` (e.g., 16.dp)            |
+| `textFieldVerticalSpacing`    | The vertical spacing between text input fields.                                                            | `androidx.compose.ui.unit.Dp`                               | `WidgetDefaults.Spacing` (e.g., 16.dp)            |
+| `textFieldHorizontalSpacing`  | The horizontal spacing between text input fields.                                                          | `androidx.compose.ui.unit.Dp`                               | `WidgetDefaults.Spacing` (e.g., 16.dp)            |
+| `textField`                   | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`         | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` |
+| `actionButton`                | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `ButtonAppearanceDefaults.filledButtonAppearance()` |
 
 ---
 

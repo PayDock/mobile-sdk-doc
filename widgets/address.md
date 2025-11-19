@@ -323,7 +323,10 @@ The `AddressDetailsWidgetAppearance` class encapsulates all configurable style p
 ```Kotlin
 @Immutable
 class AddressDetailsWidgetAppearance(
+    val horizontalSpacing: Dp,
     val verticalSpacing: Dp,
+    val textFieldVerticalSpacing: Dp,
+    val textFieldHorizontalSpacing: Dp,
     val title: TextAppearance,
     val textField: TextFieldAppearance,
     val actionButton: ButtonAppearance,
@@ -392,14 +395,17 @@ fun MyCustomAddressScreen() {
 
 The following attributes can be configured within `AddressDetailsWidgetAppearance`:
 
- Name                | Description                                                                                                                                  | Type                                                            | Default Value (from `AddressDetailsAppearanceDefaults`)                                        |
----------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|------------------------------------------------------------------------------------------------|
- `verticalSpacing`   | The vertical space between major elements in the widget (e.g., between search section, manual entry link, input fields, and action button).  | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                       |
- `title`             | Defines the text appearance for section titles, such as the title for the address search section.                                            | `TextAppearance`                   | `TextAppearanceDefaults.appearance()` with `titleMedium` style.                                |
- `textField`         | Defines the appearance for all manual address input text fields (e.g., street, city, postal code).                                           | `TextFieldAppearance`               | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                             |
- `actionButton`      | Defines the appearance of the primary "Save Address" button.                                                                                 | `ButtonAppearance`             | `ButtonAppearanceDefaults.filledButtonAppearance()`                                            |
- `linkButton`        | Defines the appearance for interactive link-style buttons, such as "Enter Address Manually".                                                 | `LinkButtonAppearance`             | `LinkButtonAppearanceDefaults.appearance()`                                                    |
- `searchDropdown`    | Defines the appearance of the address search input field and its associated dropdown results list.                                           | `SearchDropdownAppearance'         | `SearchDropdownAppearanceDefaults.appearance()`                                                |
+ Name                          | Description                                                                                                                                  | Type                                                            | Default Value (from `AddressDetailsAppearanceDefaults`)                                        |
+-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+ `horizontalSpacing`           | The horizontal spacing between elements in the widget.                                                                                       | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                       |
+ `verticalSpacing`             | The vertical space between major elements in the widget (e.g., between search section, manual entry link, input fields, and action button).  | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                       |
+ `textFieldVerticalSpacing`    | The vertical spacing between text input fields.                                                                                              | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                       |
+ `textFieldHorizontalSpacing`  | The horizontal spacing between text input fields.                                                                                            | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                       |
+ `title`                       | Defines the text appearance for section titles, such as the title for the address search section.                                            | `TextAppearance`                   | `TextAppearanceDefaults.appearance()` with `titleMedium` style.                                |
+ `textField`                   | Defines the appearance for all manual address input text fields (e.g., street, city, postal code).                                           | `TextFieldAppearance`               | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                             |
+ `actionButton`                | Defines the appearance of the primary "Save Address" button.                                                                                 | `ButtonAppearance`             | `ButtonAppearanceDefaults.filledButtonAppearance()`                                            |
+ `linkButton`                  | Defines the appearance for interactive link-style buttons, such as "Enter Address Manually".                                                 | `LinkButtonAppearance`             | `LinkButtonAppearanceDefaults.appearance()`                                                    |
+ `searchDropdown`              | Defines the appearance of the address search input field and its associated dropdown results list.                                           | `SearchDropdownAppearance`         | `SearchDropdownAppearanceDefaults.appearance()`                                                |
 
 ---
 
