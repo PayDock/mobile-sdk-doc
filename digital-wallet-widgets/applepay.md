@@ -17,6 +17,7 @@ The logic of this widget exists as a single view that you can initialise and emb
 ```Swift
 ApplePayWidget(
     appearance: ApplePayWidgetAppearance = ApplePayWidgetAppearance(),
+    eventDelegate: WidgetEventDelegate? = nil,
     createPaymentRequest: @escaping (_ createPaymentRequestResult: @escaping (Result<ApplePayRequestResult, ApplePayRequestError>) -> Void) -> Void,
     completion: @escaping (Result<ChargeResponse, ApplePayError>) -> Void
     ) { ... }
@@ -96,6 +97,14 @@ func getApplePayRequest() -> ApplePayRequest {
     return applePayRequest
 }
 ```
+
+### Parameter Definitions
+
+| Name                  | Definition                                                                                           | Type                                                                                                                  | Mandatory/Optional |
+| :-------------------- | :--------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
+| appearance            |  Object for visual customization of the widget.                                                      | `MobileSDK.ApplePayWidgetAppearance`                                                                                  | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                          | `MobileSDK.WidgetEventDelegate`                                                                                       | Optional           |
+| completion            |  Result callback with the Charge creation API response if successful, or an error if unsuccessful.   | `(Result<ChargeResponse, ApplePayError>) -> Void)`                                                                    | Mandatory          |
 
 #### Token Callback
 
@@ -194,3 +203,34 @@ The following attributes can be configured within `ApplePayWidgetAppearance`:
 -------------------- | -------------------------------------------------------------- | -----------------------------------|-------------------------------------|
  `type`              | Defines the text within the button                             | `PassKit.PKPaymentButtonType`      | `.plain`                            |
  `style`             | Defines the color scheme of the button.                        | `PassKit.PKPaymentButtonStyle`     | `.automatic`                        |
+ 
+### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### ApplePay Events
+
+The ApplePay Widget triggers the following events:
+
+**ApplePay Start Checkout Event** - Triggered when the ApplePay checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "ApplePayCheckoutButton",
+    "action": "click"
+  }
+}
+```

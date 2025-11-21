@@ -23,6 +23,7 @@ GiftCardWidget(
     config: GiftCardWidgetConfig,
     appearance: GiftCardWidgetAppearance = GiftCardWidgetAppearance(),
     loadingDelegate: WidgetLoadingDelegate? = nil,
+    eventDelegate: WidgetEventDelegate? = nil,
     completion: @escaping (Result<GiftCardResult, GiftCardError>) -> Void)
     { ... }
 ```
@@ -55,6 +56,7 @@ struct GiftCardExampleView: View {
 | config          |  Configuration options for the gift card widget                                                  | `MobileSDK.GiftCardWidgetConfig`    | Mandatory          |
 | appearance      |  Customization options for the visual appearance of the widget                                   | `GiftCardWidgetAppearance`          | Optional           |
 | loadingDelegate |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`             | Optional           |
+| eventDelegate   |  Delegate for handling widget events such as button clicks.                                      | `MobileSDK.WidgetEventDelegate`     | Optional           |
 | completion      |  A completion block that returns result with token or error.                                     | `(Result<String, Error>) -> Void`   | Mandatory          |
 
 #### MobileSDK.GiftCardWidgetConfig
@@ -82,6 +84,7 @@ The `GiftCardWidgetAppearance` class encapsulates all configurable style propert
 public struct GiftCardWidgetAppearance {
     public var verticalSpacing: CGFloat
     public var horizontalSpacing: CGFloat
+    public var textFieldVerticalSpacing: CGFloat
     public var title: Theme.TextAppearance
     public var textField: Theme.TextFieldAppearance
     public var actionButton: Theme.ButtonAppearance
@@ -135,18 +138,73 @@ struct MyCustomGiftCardScreen: View {
 
 The following attributes can be configured within `GiftCardWidgetAppearance`:
 
-| Name                | Description                                                                                                | Type                           | Default Value              |
-|---------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
-| `verticalSpacing`   | The vertical space between the row of input fields (card number, PIN) and the action button below it.      | `CGFloat`                      | `16.0`                     |
-| `horizontalSpacing` | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `6.0`                      |
-| `textField`         | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`    |
-| `actionButton`      | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton` |
-| `toolbarButton`     | Defines the appearance of the  submit button.                                                              | `ButtonAppearance`             | `GlobalTheme.toolbarButton`|
+| Name                           | Description                                                                                                | Type                           | Default Value              |
+|--------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| `verticalSpacing`              | The vertical space between the row of input fields (card number, PIN) and the action button below it.      | `CGFloat`                      | `16.0`                     |
+| `horizontalSpacing`            | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `6.0`                      |
+| `textFieldVerticalSpacing`     | The vertical space between the textfields in the widget.                                                   | `CGFloat`                      | `8.0`                             |
+| `textField`                    | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`    |
+| `actionButton`                 | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton` |
+| `toolbarButton`                | Defines the appearance of the  submit button.                                                              | `ButtonAppearance`             | `GlobalTheme.toolbarButton`|
 
 ---
 
 **Note:**
 *   The `TextFieldAppearance` and `ButtonAppearance` themselves would have their own detailed documentation explaining their configurable attributes (like colors, typography, borders, etc.). This documentation focuses on how they are composed within the `GiftCardWidgetAppearance`.
+
+### 6. WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Swift
+protocol WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    func loadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    func loadingDidFinish()
+}
+```
+
+#### 7. WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    func widgetEvent(event: Event)
+}
+```
+
+##### Gift Card Events
+
+The Gift Card Widget triggers the following events:
+
+**Tokenisation Event** - Triggered when the tokenisation button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "TokenisationButton",
+    "action": "click",
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element | String | Optional |
 
 ## Android
 

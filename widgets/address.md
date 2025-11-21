@@ -14,12 +14,12 @@ Paydock's Address Widget enables your customer to prefill a form with either an 
 
 The Address capture Widget captures the following fields. These fields are mandatory for your customer to add, and optional for the merchant to provide.   
 
-| Name          | Definition                         | Mandatory/Optional                           |
-| ------------- | ---------------------------------- | -------------------------------------------  |
+| Name          | Definition                             | Mandatory/Optional                               |
+| ------------- | -------------------------------------- | ------------------------------------------------ |
 | firstName     |  First name of the customer            | Optional to provide / Mandatory for the customer |
 | lastName      |  Last name of the customer             | Optional to provide / Mandatory for the customer |
 | addressLine1  |  First line of the customer's address  | Optional to provide / Mandatory for the customer |
-| addressLine2  |  Secondary optional address line   | Optional to provide and for the customer         |
+| addressLine2  |  Secondary optional address line       | Optional to provide and for the customer         |
 | city          |  City of residence of the customer     | Optional to provide / Mandatory for the customer |
 | state         |  State of residence of the customer    | Optional to provide / Mandatory for the customer |
 | postcode      |  Address postcode of the customer      | Optional to provide / Mandatory for the customer |
@@ -41,6 +41,7 @@ The Address Widget view is as follows:
 AddressSheetView(
     config: AddressWidgetConfig,
     appearance: AddressWidgetAppearance = AddressWidgetAppearance(),
+    eventDelegate: WidgetEventDelegate? = nil,
     completion: @escaping (Address) -> Void)
     { ... }
 ``` 
@@ -70,6 +71,7 @@ The following definitions provide a more detailed overview of the parameters inc
 | :------------ | :---------------------------------------------------------------------------------------------------- | :------------------------------- | :----------------  |
 | config        |  Used for configuration of the widget behaviour                                                       | `MobileSDK.AddressWidgetConfig`  | Mandatory          |
 | appearance    |  Customization options for the visual appearance of the widget                                        | `AddressWidgetAppearance`        | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                   | `MobileSDK.WidgetEventDelegate`  | Optional           |
 
 #### MobileSDK.AddressWidgetConfig
 | Name          | Definition                                                                                            | Type                             | Mandatory/Optional |
@@ -106,6 +108,7 @@ The `AddressWidgetAppearance` class encapsulates all configurable style properti
 public struct AddressWidgetAppearance {
     public var horizontalSpacing: CGFloat
     public var verticalSpacing: CGFloat
+    public var textFieldVerticalSpacing: CGFloat
     public var title: Theme.TextAppearance
     public var textField: Theme.TextFieldAppearance
     public var actionButton: Theme.ButtonAppearance
@@ -160,21 +163,72 @@ struct MyCustomAddressScreen: View {
 
 The following attributes can be configured within `AddressWidgetAppearance`:
 
-| Name                   | Description                                                                                                | Type                           | Default Value                     |
-|------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------|-----------------------------------|
-| `verticalSpacing`      | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
-| `horizontalSpacing`    | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `8.0`                             |
-| `title`                | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
-| `textField`            | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
-| `actionButton`         | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
-| `expandSectionButton`  | Defines the appearance of manual entry button.                                                             | `ButtonAppearance`             | `GlobalTheme.expandSectionButton` |
-| `searchDropdown`       | Defines the appearance of the address search dropdown texfield and picker.                                 | `SearchDropdownAppearance`     | `GlobalTheme.searchDropdown`      |
-
+| Name                           | Description                                                                                                | Type                           | Default Value                     |
+|--------------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------|-----------------------------------|
+| `verticalSpacing`              | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
+| `horizontalSpacing`            | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `16.0`                             |
+| `textFieldVerticalSpacing`     | The vertical space between the textfields in the widget.                                                   | `CGFloat`                      | `8.0`                             |
+| `title`                        | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
+| `textField`                    | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
+| `actionButton`                 | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
+| `expandSectionButton`          | Defines the appearance of manual entry button.                                                             | `ButtonAppearance`             | `GlobalTheme.expandSectionButton` |
+| `searchDropdown`               | Defines the appearance of the address search dropdown texfield and picker.                                 | `SearchDropdownAppearance`     | `GlobalTheme.searchDropdown`      |
 
 ---
 
 **Note:**
 *   The `TextAppearance`, `TextFieldAppearance`, `ButtonAppearance` and `SearchDropdownAppearance` themselves would have their own detailed documentation explaining their configurable attributes (like colors, typography, borders, etc.). This documentation focuses on how they are composed within the `AddressWidgetAppearance`.
+
+### 5. WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Address Events
+
+The Address Widget triggers the following events:
+
+**Save Event** - Triggered when the save button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "SaveButton",
+    "action": "click",
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+**Manual Entry Event** - Triggered when the manual entry button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "ManualEntryButton",
+    "action": "click"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element (Save Event only) | String | Optional |
 
 ## Android
 
