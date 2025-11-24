@@ -25,6 +25,7 @@ The following sample code demonstrates the definition of the `PayPalSavePaymentS
         viewState: ViewState?,
         config: PayPalVaultConfig,
         loadingDelegate: WidgetLoadingDelegate?,
+        eventDelegate: WidgetEventDelegate? = nil,
         appearance: PayPalVaultAppearance = PayPalVaultAppearance(),
         completion: @escaping (Result<PayPalVaultResult, PayPalVaultError>) -> Void)
     {...}
@@ -38,6 +39,7 @@ PayPalSavePaymentSourceWidget(
     viewState: ViewState(state: .disabled),
     config: config,
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading) 
+    eventDelegate = DELEGATE_INSTANCE, // Delegate class to handle events) 
     appearance: PayPalVaultAppearance()) { result in
     switch result {
     case let .success(payPalVaultResult):
@@ -59,6 +61,7 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 | viewState             |  View options that are two way fields to alter view state                                         | ViewState                                              | Optional           |
 | config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                                    | Mandatory          |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                                | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                       | `MobileSDK.WidgetEventDelegate`                        | Optional           |
 | appearance            |  Object for visual customization of the widget.                                                   | `MobileSDK.PayPalVaultAppearance`                      | Optional           |
 | completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `Result<PayPalVaultResult, PayPalVaultError> -> Void`  | Mandatory          |
 
@@ -219,6 +222,52 @@ struct MyCustomPayPalCaultScreen: View {
 *   The `actionButton` relies on the `ButtonAppearance` system. Refer to your internal documentation or implementation of `ButtonAppearance` for detailed customization options (e.g., colors, fonts, dimensions...).
 *   The `PayPalVaultConfig` allows for optional `actionText` and `icon` parameters which directly affect the button's content, complementing the styling provided by `actionButton`.
 
+### 6. WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Swift
+protocol WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    func loadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    func loadingDidFinish()
+}
+```
+
+### 7. WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### PayPal Vault Events
+
+The Afterpay Widget triggers the following events:
+
+**PayPal Start Vault Event** - Triggered when the PayPal Vault checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "PayPalVaultButton",
+    "action": "click"
+  }
+}
+```
+
 ## Android
 
 ## How to use the PayPalSavePaymentSourceWidget
@@ -287,7 +336,7 @@ This subsection describes the various parameters required by the `PayPalSavePaym
 | config                |  The configuration for PayPal Vault widget.                                                       | `PayPalVaultConfig`                               | Mandatory          |
 | appearance            |  Customization options for the visual appearance of the widget                                    | `PayPalPaymentSourceWidgetAppearance`             | Optional           |
 | loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.  | `WidgetLoadingDelegate`                           | Optional           |
-| eventDelegate         |  Delegate for handling widget events such as button clicks.                                       | `WidgetEventDelegate`                              | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                       | `WidgetEventDelegate`                             | Optional           |
 | completion            |  Result callback when the PayPal Vault linking process completes either successful, or error.     | `(Result<PayPalVaultResult>) -> Unit`             | Mandatory          |
 
 #### PayPalVaultConfig

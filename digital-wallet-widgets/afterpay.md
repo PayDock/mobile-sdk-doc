@@ -29,6 +29,7 @@ AfterpayWidget(
     configuration: AfterpaySdkConfig,
     appearance: AfterpayWidgetAppearance = AfterpayWidgetAppearance(),
     loadingDelegate: WidgetLoadingDelegate? = nil,
+    eventDelegate: WidgetEventDelegate? = nil,
     tokenRequest: @escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void,
     selectAddress: ((_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void)?,
     selectShippingOption: ((_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void)?,
@@ -69,6 +70,8 @@ This subsection describes the parameters required by the `AfterpayWidget` view. 
 | :-------------------- | :--------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
 | configuration         |  Configuration for the Afterpay SDK.                                                                 | `AfterpaySdkConfig`                                                                                                   | Mandatory          |
 | appearance            |  Object for visual customization of the widget.                                                      | `MobileSDK.AfterpayWidgetAppearance`                                                                                  | Optional           |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.     | `MobileSDK.WidgetLoadingDelegate`                                                                                     | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                          | `MobileSDK.WidgetEventDelegate`                                                                                       | Optional           |
 | tokenRequest          |  A callback to obtain the wallet token asynchronously.                                               | `@escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void`                  | Mandatory          |
 | selectAddress         |  A callback to handle selection of shipping address.                                                 | `(_ address: ShippingAddress, _ provideShippingOptions: ([ShippingOption]) -> Void) -> Void`                          | Optional           |
 | selectShippingOption  |  A callback to handle the selection for the shipping options.                                        | `(_ shippingOption: ShippingOption, _ provideShippingOptionUpdateResult: (ShippingOptionUpdate?) -> Void) -> Void`    | Optional           |
@@ -210,6 +213,52 @@ The following attributes can be configured within `AfterpayWidgetAppearance`:
 **Note:**
 *   The `type` and `colorScheme` are from the official Afterpay iOS SDK. Refer to the [Afterpay Developer Documentation](https://developers.afterpay.com/afterpay-online/docs/display-afterpay-messaging#display-payment-button) for branding guidelines and available options.
 * The `OverlayLoader` has it's own detailed documentation explaining configurable attributes (like colors, shapes, typography if applicable, stroke width, etc.).*  
+
+### 5. WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Swift
+protocol WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    func loadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    func loadingDidFinish()
+}
+```
+
+### 6. WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: WidgetEvent)
+}
+```
+
+##### Afterpay Events
+
+The Afterpay Widget triggers the following events:
+
+**AfterPay Start Checkout Event** - Triggered when the Afterpay checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "AfterPayCheckoutButton",
+    "action": "click"
+  }
+}
+```
 
 ## Android 
 

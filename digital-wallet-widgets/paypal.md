@@ -24,6 +24,7 @@ PayPalWidget(
     appearance: PayPalWidgetAppearance = PayPalWidgetAppearance(),
     config: PayPalWidgetConfig
     loadingDelegate: WidgetLoadingDelegate?,
+    eventDelegate: WidgetEventDelegate? = nil,
     tokenRequest: @escaping (_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void,
     completion: @escaping (Result<ChargeResponse, PayPalError>) -> Void)
     { ... }
@@ -68,6 +69,7 @@ struct PayPalExampleView: View {
 | appearance       |  Object for visual customization of the widget.                                                  | `MobileSDK.PayPalWidgetAppearance`                                                         | Optional           |
 | config           |  Object for configuring the setup and behaviour of the widget.                                   | `MobileSDK.PayPalWidgetConfig`                                                             | Mandatory          |
 | loadingDelegate  |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                                                                    | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                 | `MobileSDK.WidgetEventDelegate`                                                            | Optional           |
 | tokenRequest     |  A callback to obtain the wallet token asynchronously                                            | `(_ tokenResult: @escaping (Result<WalletTokenResult, WalletTokenError>) -> Void) -> Void` | Mandatory          |
 | completion       |  Result callback with the Charge creation API response if successful, or error if not.           | `(Result<ChargeResponse, PayPalError>) -> Void` | Mandatory                                | Mandatory          |
 
@@ -177,6 +179,52 @@ struct MyCustomPayPalScreen: View {
 **Note:**
 *   The PayPal button itself follows strict branding guidelines from PayPal and is generally not customizable beyond what the PayPal SDK or web view provides.
 *   The `ButtonLoader` itself would have its own detailed documentation explaining its configurable attributes.
+
+### 6. WidgetLoadingDelegate
+
+This `loadingDelegate` allows the calling app to take control of the internal widget loading states. When set, internal loaders will not be shown. 
+It defines methods to handle the start and finish of a loading process. This can be accompanied by the `enabled` flag to signal to the widget that the calling app may be loading.
+
+```Swift
+protocol WidgetLoadingDelegate {
+    // Called when a widget's loading process starts.
+    func loadingDidStart()
+
+    // Called when a widget's loading process finishes.
+    func loadingDidFinish()
+}
+```
+
+### 7. WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### PayPal Events
+
+The PayPal Widget triggers the following events:
+
+**AfterPay Start Checkout Event** - Triggered when the PayPal checkout button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "PayPayCheckoutButton",
+    "action": "click"
+  }
+}
+```
 
 ## Android
 
