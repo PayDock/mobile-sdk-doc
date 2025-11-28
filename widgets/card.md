@@ -6,6 +6,24 @@
 
 ![Creditcard View](/img/Credit_card.png)
 
+## Supported Card Schemes
+
+The Card Tokenisation Widget supports the following card schemes:
+
+| Card Scheme   | Display Name              |
+|---------------|---------------------------|
+| AMEX          | American Express          |
+| AUSBC         | Australian Bank Card      |
+| DINERS        | Diners Club               |
+| DISCOVER      | Discover                  |
+| JAPCB         | JCB                       |
+| MASTERCARD    | MasterCard                |
+| SOLO          | Solo                      |
+| VISA          | Visa                      |
+| UNIONPAY      | UnionPay International    |
+
+You can limit validation to specific schemes by configuring the `supportedSchemes` parameter in your widget configuration. This allows you to restrict which card types your application will accept based on your business requirements.
+
 ## iOS
 
 ## How to use the Card Tokenisation widget in iOS
@@ -23,7 +41,9 @@ View details are as follows:
 ```Swift
 CardDetailsWidget(viewState: ViewState? = nil
                   config: CardDetailsWidgetConfig,
+                  appearance: CardDetailsWidgetAppearance = CardDetailsWidgetAppearance(),
                   loadingDelegate: WidgetLoadingDelegate? = nil,
+                  eventDelegate: WidgetEventDelegate? = nil,
                   completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
 
@@ -108,7 +128,8 @@ The below table describes the various inline validation errors linked to the `Ca
 | viewState                |  View options that are two way fields to alter view state                                        | ViewState                                          | Optional           |
 | config                   |  Configuration options for the card details widget                                               | `CardDetailsWidgetConfig`                          | Required           |
 | appearance               |  Customization options for the visual appearance of the widget                                   | `CardDetailsWidgetAppearance`                      | Optional           |
-| loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | WidgetLoadingDelegate                              | Optional           |
+| loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                            | Optional           |
+| eventDelegate            |  Delegate for handling widget events such as button clicks.                                      | `MobileSDK.WidgetEventDelegate`                    | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
 #### MobileSDK.ViewState
@@ -170,6 +191,7 @@ The `CardDetailsWidgetAppearance` class encapsulates all configurable style prop
 public struct CardDetailsWidgetAppearance {
     public var verticalSpacing: CGFloat
     public var horizontalSpacing: CGFloat
+    public var textFieldVerticalSpacing: CGFloat
     public var title: Theme.TextAppearance
     public var textField: Theme.TextFieldAppearance
     public var actionButton: Theme.ButtonAppearance
@@ -226,22 +248,90 @@ struct MyCustomCardDetailsScreen: View {
 
 The following attributes can be configured within `CardDetailsWidgetAppearance`:
 
-| Name                   | Description                                                                                                | Type                           | Default Value                     |
-|------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------|-----------------------------------|
-| `verticalSpacing`      | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
-| `horizontalSpacing`    | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `8.0`                             |
-| `title`                | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
-| `textField`            | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
-| `actionButton`         | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
-| `toolbarButton`        | Defines the appearance of the keyboard accessory button.                                                   | `ButtonAppearance`             | `GlobalTheme.toolbarButton`       |
-| `toggle`               | Defines the appearance of the toggle element.                                                              | `ToggleAppearance`             | `GlobalTheme.toggle`              |
-| `toggleText`           | Defines the appearance of the text linked to the toggle.                                                   | `TextAppearance`               | `GlobalTheme.toggleText`          |
-| `linkText`             | Defines the appearance of the link element in the UI.                                                      | `TextAppearance`               | `GlobalTheme.linkText`            |
+| Name                           | Description                                                                                                | Type                           | Default Value                     |
+|--------------------------------|------------------------------------------------------------------------------------------------------------|--------------------------------|-----------------------------------|
+| `verticalSpacing`              | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
+| `horizontalSpacing`            | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `16.0`                             |
+| `textFieldVerticalSpacing`     | The vertical space between the textfields in the widget.                                                   | `CGFloat`                      | `8.0`                             |
+| `title`                        | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
+| `textField`                    | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
+| `actionButton`                 | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
+| `toolbarButton`                | Defines the appearance of the keyboard accessory button.                                                   | `ButtonAppearance`             | `GlobalTheme.toolbarButton`       |
+| `toggle`                       | Defines the appearance of the toggle element.                                                              | `ToggleAppearance`             | `GlobalTheme.toggle`              |
+| `toggleText`                   | Defines the appearance of the text linked to the toggle.                                                   | `TextAppearance`               | `GlobalTheme.toggleText`          |
+| `linkText`                     | Defines the appearance of the link element in the UI.                                                      | `TextAppearance`               | `GlobalTheme.linkText`            |
 
 ---
 
 **Note:**
 *   The `TextAppearance`, `TextFieldAppearance`, `ButtonAppearance` and `ToggleAppearance` themselves would have their own detailed documentation explaining their configurable attributes (like colors, typography, borders, etc.). This documentation focuses on how they are composed within the `CardDetailsWidgetAppearance`.
+
+### 4. WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks, toggle interactions, and link clicks. This is useful for analytics and tracking purposes.
+
+```Swift
+protocol WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    func widgetEvent(event: WidgetEvent)
+}
+```
+
+##### Card Details Events
+
+The Card Details Widget triggers the following events:
+
+**Tokenisation Event** - Triggered when the tokenisation button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "TokenisationButton",
+    "action": "click", 
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+**Toggle Event** - Triggered when the save card toggle is clicked:
+
+```json
+{
+  "type": "Toggle",
+  "properties": {
+    "name": "SaveCardToggle",
+    "action": "click",
+    "state": "true / false"
+  }
+}
+```
+
+**TextLink Event** - Triggered when the privacy policy link is clicked:
+
+```json
+{
+  "type": "LinkText", 
+  "properties": {
+    "name": "PrivacyPolicyLink",
+    "action": "click",
+    "url": "(Whatever is set by merchant)"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
+| `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
 
 ## Android
 
@@ -261,6 +351,7 @@ fun CardDetailsWidget(
     config: CardDetailsWidgetConfig,
     appearance: CardDetailsWidgetAppearance = CardDetailsAppearanceDefaults.appearance(),
     loadingDelegate: WidgetLoadingDelegate? = null,
+    eventDelegate: WidgetEventDelegate? = null,
     completion: (Result<CardResult>) -> Unit
 ) {...}
 ```
@@ -292,6 +383,7 @@ CardDetailsWidget(
     ),
     appearance = currentOrDefaultAppearance, // optional
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
+    eventDelegate = EVENT_DELEGATE_INSTANCE, // Delegate class to handle events
     completion = { result ->
         result.onSuccess { cardResult ->
             // Handle success - Update UI or perform actions
@@ -334,6 +426,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | config                  |  Configuration options for the card details widget                                                        | `CardDetailsWidgetConfig`      | Mandatory          |
 | appearance              |  Customization options for the visual appearance of the widget                                            | `CardDetailsWidgetAppearance`  | Optional           |
 | loadingDelegate         |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown.          | `WidgetLoadingDelegate`        | Optional           |
+| eventDelegate           |  Delegate for handling widget events such as button clicks, toggle interactions, and link clicks.         | `WidgetEventDelegate`          | Optional           |
 | completion              |  Result callback with the card details tokenisation API response if successful, or error if not.          | `(Result<CardResult>) -> Unit` | Mandatory          |
 
 #### CardDetailsWidgetConfig
@@ -390,6 +483,73 @@ interface WidgetLoadingDelegate {
 }
 ```
 
+#### WidgetEventDelegate
+
+This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks, toggle interactions, and link clicks. This is useful for analytics and tracking purposes.
+
+```Kotlin
+interface WidgetEventDelegate {
+    /**
+     * Called when a widget event occurs.
+     *
+     * @param event The event that occurred, containing the event type and properties.
+     */
+    fun widgetEvent(event: Event)
+}
+```
+
+##### Card Details Events
+
+The Card Details Widget triggers the following events:
+
+**Tokenisation Event** - Triggered when the tokenisation button is clicked:
+
+```json
+{
+  "type": "Button",
+  "properties": {
+    "name": "TokenisationButton",
+    "action": "click", 
+    "text": "(Whatever is set by merchant)"
+  }
+}
+```
+
+**Toggle Event** - Triggered when the save card toggle is clicked:
+
+```json
+{
+  "type": "Toggle",
+  "properties": {
+    "name": "SaveCardToggle",
+    "action": "click",
+    "state": "true / false"
+  }
+}
+```
+
+**TextLink Event** - Triggered when the privacy policy link is clicked:
+
+```json
+{
+  "type": "LinkText", 
+  "properties": {
+    "name": "PrivacyPolicyLink",
+    "action": "click",
+    "url": "(Whatever is set by merchant)"
+  }
+}
+```
+
+| Property | Description | Type | Optional/Required |
+|----------|-------------|------|-------------------|
+| `type` | The type of UI element that triggered the event | String | Required |
+| `properties.name` | The name identifier of the specific element | String | Required |
+| `properties.action` | The action performed on the element | String (Enum) | Required |
+| `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
+| `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
+
 #### Completion Callback
 
 The `completion` callback is invoked after the card tokenisation operation is completed. It receives a `Result<CardResult>`. The `Result<CardResult>` contains the token and the toggled state flag of the user selection to save the card details.
@@ -420,6 +580,8 @@ The `CardDetailsWidgetAppearance` class encapsulates all configurable style prop
 class CardDetailsWidgetAppearance(
     val verticalSpacing: Dp,
     val horizontalSpacing: Dp,
+    val textFieldVerticalSpacing: Dp,
+    val textFieldHorizontalSpacing: Dp,
     val title: TextAppearance,
     val textField: TextFieldAppearance,
     val actionButton: ButtonAppearance,
@@ -481,16 +643,18 @@ fun MyCustomCardDetailsScreen() {
 
 The following attributes can be configured within `CardDetailsWidgetAppearance`:
 
-| Name                | Description                                                                                                                                  | Type                                                            | Default Value (from `CardDetailsAppearanceDefaults`)                                                               |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| `verticalSpacing`   | The vertical space between major elements in the widget (e.g., between title and inputs, inputs and toggle, toggle and action button).         | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
-| `horizontalSpacing` | The horizontal spacing within composite elements (e.g., between the two text fields in the expiry/CVV row if they were side-by-side).           | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
-| `title`             | Defines the text appearance for the widget's main title (e.g., "Card Information").                                                          | `TextAppearance`               | `TextAppearanceDefaults.appearance()` with `bodyMedium` style and `onSurface` color.                               |
-| `textField`         | Defines the appearance for all card input text fields (card number, expiry, CVV, cardholder name).                                            | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                                                 |
-| `actionButton`      | Defines the appearance of the primary submit/action button.                                                                                  | `ButtonAppearance`           | `ButtonAppearanceDefaults.filledButtonAppearance()`                                                                |
-| `toggle`            | Defines the appearance of the switch or checkbox used for options like "Save card".                                                          | `ToggleAppearance`             | `ToggleAppearanceDefaults.appearance()`                                                                            |
-| `toggleText`        | Defines the text appearance for the label associated with the toggle (e.g., "Save this card for future payments").                             | `TextAppearance`             | `TextAppearanceDefaults.appearance()` with `bodyMedium` style.                                                     |
-| `linkText`          | Defines the text appearance for any interactive link elements within the widget (e.g., a "Learn More" link next to the "Save card" option).     | `LinkTextAppearance`           | `LinkTextAppearanceDefaults.appearance()`                                                                          |
+| Name                          | Description                                                                                                                                  | Type                                                            | Default Value (from `CardDetailsAppearanceDefaults`)                                                               |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `verticalSpacing`             | The vertical space between major elements in the widget (e.g., between title and inputs, inputs and toggle, toggle and action button).         | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
+| `horizontalSpacing`           | The horizontal spacing within composite elements (e.g., between the two text fields in the expiry/CVV row if they were side-by-side).           | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
+| `textFieldVerticalSpacing`    | The vertical spacing between text input fields.                                                                                              | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
+| `textFieldHorizontalSpacing`  | The horizontal spacing between text input fields.                                                                                            | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
+| `title`                       | Defines the text appearance for the widget's main title (e.g., "Card Information").                                                          | `TextAppearance`               | `TextAppearanceDefaults.appearance()` with `bodyMedium` style and `onSurface` color.                               |
+| `textField`                   | Defines the appearance for all card input text fields (card number, expiry, CVV, cardholder name).                                            | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                                                 |
+| `actionButton`                | Defines the appearance of the primary submit/action button.                                                                                  | `ButtonAppearance`           | `ButtonAppearanceDefaults.filledButtonAppearance()`                                                                |
+| `toggle`                      | Defines the appearance of the switch or checkbox used for options like "Save card".                                                          | `ToggleAppearance`             | `ToggleAppearanceDefaults.appearance()`                                                                            |
+| `toggleText`                  | Defines the text appearance for the label associated with the toggle (e.g., "Save this card for future payments").                             | `TextAppearance`             | `TextAppearanceDefaults.appearance()` with `bodyMedium` style.                                                     |
+| `linkText`                    | Defines the text appearance for any interactive link elements within the widget (e.g., a "Learn More" link next to the "Save card" option).     | `LinkTextAppearance`           | `LinkTextAppearanceDefaults.appearance()`                                                                          |
 
 ---
 
