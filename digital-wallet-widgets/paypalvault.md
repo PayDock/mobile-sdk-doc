@@ -34,7 +34,7 @@ The following sample code demonstrates the definition of the `PayPalSavePaymentS
 The following sample code example demonstrates the usage within your application:
 
 ```Swift
-let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id", actionText: nil)
+let config = PayPalVaultConfig(accessToken: "your_access_token", gatewayId: "your_gateway_id")
 PayPalSavePaymentSourceWidget(
     viewState: ViewState(state: .disabled),
     config: config,
@@ -75,7 +75,6 @@ The following sample code demonstrates the response structure:
 public struct PayPalVaultConfig {
     public let accessToken: String
     public let gatewayId: String
-    public let actionText: String?
 }
 ```
 
@@ -83,26 +82,6 @@ public struct PayPalVaultConfig {
 | :------------- | :------------------------------------------------------------------------------- | :------------------------- | :----------------- |
 | accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
 | gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
-| actionText     |  The text to be displayed on the button. Defaults to "Link PayPal account".      | String                     | Optional           |
-| icon           |  Type of the icon you want to display in the PayPal Vault button.                | Icon                       | Optional           |
-
-#### PayPalVaultConfig.Icon
-
-Enum defining various icon types for the PayPalVault button
-
-```Swift
-public enum Icon {
-    case none
-    case defaultIcon
-    case customIcon(image: Image)
-}
-```
-
-| Name              | Definition                                               | Type           | Mandatory/Optional |
-| :---------------- | :------------------------------------------------------- | :------------- | :----------------- |
-| none              |  Vault button will not display any icon.                 | Enum           | Optional           |
-| defaultIcon       |  Vault button will display the default Link icon         | Enum           | Optional           |
-| customIcon(Image) |  Vault button will display the Image() that you provide  | Enum           | Optional           |
 
 #### PayPalVaultResult
 
@@ -220,7 +199,6 @@ struct MyCustomPayPalCaultScreen: View {
 
 **Note:**
 *   The `actionButton` relies on the `ButtonAppearance` system. Refer to your internal documentation or implementation of `ButtonAppearance` for detailed customization options (e.g., colors, fonts, dimensions...).
-*   The `PayPalVaultConfig` allows for optional `actionText` and `icon` parameters which directly affect the button's content, complementing the styling provided by `actionButton`.
 
 ### 6. WidgetLoadingDelegate
 
