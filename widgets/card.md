@@ -85,10 +85,9 @@ struct CardDetailsWidgetView: View {
         let config = CardDetailsWidgetConfig(
             gatewayId: "<insert gateway id>", // optional
             accessToken: "<access token>", // mandatory
-            actionText: "<override default action text>", // optional
-            showCardTitle: true, // whether to show card title view
             collectCardholderName: true, // whether to show cardholder name field
             allowSaveCard: saveCardConfig,
+            storeSecurityCode: true, // optional - whether to store CVV when tokenizing
             schemeSupport: supportedSchemesConfig)
         
         return config
@@ -145,10 +144,9 @@ The below table describes the various inline validation errors linked to the `Ca
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
 | gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
 | accessToken              |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
-| actionText               |  Text in the main action button that initiates tokenisation (default is "Submit")                | String                                             | Optional           |
-| showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional           |
 | collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional           |
 | allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | `SaveCardConfig`                                   | Optional           |
+| storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `nil`, the parameter is not sent.  | Boolean                       | Optional           |
 | schemeSupport            |  Configures the card scheme support and validation behavior                                      | `SupportedSchemesConfig`                           | Optional           |
 
 #### MobileSDK.SaveCardConfig

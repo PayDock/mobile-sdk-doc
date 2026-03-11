@@ -116,7 +116,7 @@ Defines the visual appearance for the `ClickToPayWidget`. It handles customizing
 The `ClickToPayWidgetAppearance` class encapsulates the configurable style properties for the widget.
 
 ```Swift
-public struct ClickToPayWidgetAppearance {asdqasdasd
+public struct ClickToPayWidgetAppearance {
     public var loader: Theme.OverlayLoaderAppearance
 }
 ```

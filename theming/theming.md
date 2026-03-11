@@ -22,6 +22,9 @@ The **Theme()** component is as follows:
 
 ```Swift
 public struct Theme {
+    public var horizontalSpacing: CGFloat          // Default: 16
+    public var verticalSpacing: CGFloat            // Default: 16
+    public var textFieldVerticalSpacing: CGFloat   // Default: 8
     public var textField: TextFieldAppearance
     public var searchDropdown: SearchDropdownAppearance
     public var actionButton: ButtonAppearance
@@ -34,6 +37,24 @@ public struct Theme {
     public var title: TextAppearance
 }
 ```
+
+#### Theme Properties
+
+| Name                       | Definition                                                              | Type                      | Default Value |
+| :------------------------- | :---------------------------------------------------------------------- | :------------------------ | :------------ |
+| horizontalSpacing          | Horizontal space between elements in widget layouts.                    | `CGFloat`                 | `16`          |
+| verticalSpacing            | Vertical space between major sections in widget layouts.                | `CGFloat`                 | `16`          |
+| textFieldVerticalSpacing   | Vertical space between text fields within a widget.                     | `CGFloat`                 | `8`           |
+| textField                  | Appearance for text input fields.                                       | `TextFieldAppearance`     | Default       |
+| searchDropdown             | Appearance for search dropdown components.                              | `SearchDropdownAppearance`| Default       |
+| actionButton               | Appearance for primary action buttons.                                  | `ButtonAppearance`        | Default       |
+| expandSectionButton        | Appearance for expand/collapse section buttons (link-style).            | `ButtonAppearance`        | Default       |
+| toolbarButton              | Appearance for keyboard toolbar buttons.                                | `ButtonAppearance`        | Default       |
+| loader                     | Appearance for overlay loading indicators.                              | `OverlayLoaderAppearance` | Default       |
+| toggle                     | Appearance for toggle/switch components.                                | `ToggleAppearance`        | Default       |
+| linkText                   | Appearance for link-styled text (e.g., privacy policy links).           | `TextAppearance`          | Default       |
+| toggleText                 | Appearance for text associated with toggles.                            | `TextAppearance`          | Default       |
+| title                      | Appearance for section title text.                                      | `TextAppearance`          | Default       |
 
 **What This Means for You:**
 

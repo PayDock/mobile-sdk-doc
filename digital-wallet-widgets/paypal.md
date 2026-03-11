@@ -117,10 +117,15 @@ The primary visual element is the PayPal button, which has its own branding guid
 
 #### Appearance Contract
 
-The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, currently centered on the loader.
+The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, including button styling and loader appearance.
 
 ```Swift
 public struct PayPalWidgetAppearance: ActionButtonLoaderStylableAppearance {
+    public var buttonInsets: NSDirectionalEdgeInsets?
+    public var buttonColor: PayPalButton.Color
+    public var buttonEdges: PaymentButtonEdges
+    public var buttonSize: PaymentButtonSize
+    public var buttonLabel: PayPalButton.Label?
     public var loader: Theme.ButtonLoader
 }
 ```
