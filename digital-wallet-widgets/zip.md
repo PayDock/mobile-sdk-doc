@@ -15,7 +15,7 @@ Use the Zip Widget to integrate with Zip payments. This handles the communicatio
 
 Follow this guide to initialize and then use the `ZipWidget` widget in your application. This widget enables you to use Zip in your Payment flow.
 
-For reference: [Zip Partner Portal](https://www.zippartner.co/)
+For reference: [Zip](https://zip.co/au)
 
 > **Note**:
 >
@@ -244,7 +244,7 @@ The following attributes can be configured within `ZipWidgetAppearance`:
 ---
 
 **Note:**
-* The button styles follow Zip's official brand guidelines. Refer to the [Zip Partner Portal](https://www.zippartner.co/) for branding guidelines and requirements.
+* The button styles follow Zip's official brand guidelines. Refer to the [Zip website](https://zip.co/au) for branding guidelines and requirements.
 * The `cornerRadius` is fixed at 8.0 and cannot be changed to maintain brand compliance.
 
 ### 6. WidgetLoadingDelegate
