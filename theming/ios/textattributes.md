@@ -38,15 +38,22 @@ public struct TextAttributes {
 
 | Property             | Type         | Description                                                         |
 | -------------------- | ------------ | ------------------------------------------------------------------- |
-| `name`               | `String`     | The font name used for rendering the text.                          |
-| `textsizeColor`      | `CGFloat`    | The font size used for rendering the text.                          |
+| `type`               | `FontType`   | The font type - either `.system` or `.custom(name: String)`.        |
+| `size`               | `CGFloat`    | The font size used for rendering the text.                          |
+
+#### FontType (Enum)
+
+| Case                 | Description                                                         |
+| -------------------- | ------------------------------------------------------------------- |
+| `.system`            | Uses the system font.                                               |
+| `.custom(name:)`     | Uses a custom font with the specified font name.                    |
 
 ### Default TextAttributes
 
 A default `TextAttributes` instance can be created using the default initializer, which provides a baseline style.
 
 ```swift
-public init(font: CustomFont = CustomFont(name: "FFF-AcidGrotesk-Normal", size: 14.0),
+public init(font: CustomFont = CustomFont(type: .system, size: 14.0),
             textColor: Color = .defaultText,
             isUnderlined: Bool = true,
             underlineColor: Color = .clear,
@@ -71,9 +78,10 @@ let textAppearance = TextAppearance(text: TextAttributes())
 **2. Creating a Custom TextAttributes from Scratch:**
 
 ```swift
-let font = CustomFont(name: "HelveticaNeue-Bold", size: 16.0)
+// Using a custom font
+let customFont = CustomFont(type: .custom(name: "HelveticaNeue-Bold"), size: 16.0)
 let textAttributes = TextAttributes(
-    font: font,
+    font: customFont,
     textColor: .black,
     isUnderlined: false,
     underlineColor: .clear,
@@ -82,6 +90,10 @@ let textAttributes = TextAttributes(
     isItalic: true
 )
 let textAppearance = TextAppearance(text: textAttributes)
+
+// Using the system font
+let systemFont = CustomFont(type: .system, size: 16.0)
+let systemTextAttributes = TextAttributes(font: systemFont, textColor: .black)
 ```
 
 **3. Modifying a Specific Property:**

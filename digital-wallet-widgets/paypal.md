@@ -117,10 +117,15 @@ The primary visual element is the PayPal button, which has its own branding guid
 
 #### Appearance Contract
 
-The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, currently centered on the loader.
+The `PayPalWidgetAppearance` class encapsulates the configurable style properties for the widget, including button styling and loader appearance.
 
 ```Swift
 public struct PayPalWidgetAppearance: ActionButtonLoaderStylableAppearance {
+    public var buttonInsets: NSDirectionalEdgeInsets?
+    public var buttonColor: PayPalButton.Color
+    public var buttonEdges: PaymentButtonEdges
+    public var buttonSize: PaymentButtonSize
+    public var buttonLabel: PayPalButton.Label?
     public var loader: Theme.ButtonLoader
 }
 ```
@@ -322,15 +327,17 @@ The following sample code demonstrates the configuration structure:
 data class PayPalWidgetConfig(
     val accessToken: String,
     val gatewayId: String,
-    val requestShipping: Boolean = true
+    val requestShipping: Boolean = true,
+    val fundingSource: PayPalFundingSource = PayPalFundingSource.PAYPAL
 )
 ```
 
-| Name                  | Definition                                                                                      | Type                                          | Mandatory/Optional |
-| :-------------------- | :---------------------------------------------------------------------------------------------- | :-------------------------------------------- | :----------------- |
-| accessToken           | The OAuth access token required for authenticating API requests to PayPal services. This token ensures secure communication and authorizes operations on behalf of the user or merchant.                                                   | String                | Mandatory           |
-| gatewayId             | The unique identifier for the payment gateway used to route transactions. This ID directs payments through the correct processing channels.                                                    | String                          | Mandatory           |
-| requestShipping       | A boolean indicating whether shipping information should be requested from the user during the PayPal checkout flow. Setting this to `false` can streamline the checkout process for digital goods or services where shipping is not applicable.                | Boolean (default = `true`)                    | Optional           |
+| Name            | Definition                                                                                                                                                                                                 | Type                  | Mandatory/Optional |
+| :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------- | :----------------- |
+| accessToken     | The OAuth access token required for authenticating API requests to PayPal services. This token ensures secure communication and authorizes operations on behalf of the user or merchant.                 | `String`              | Mandatory          |
+| gatewayId       | The unique identifier for the payment gateway used to route transactions. This ID directs payments through the correct processing channels.                                                             | `String`              | Mandatory          |
+| requestShipping | A boolean indicating whether shipping information should be requested from the user during the PayPal checkout flow. Setting this to `false` can streamline the checkout process for digital goods or services where shipping is not applicable. | `Boolean` (default `true`) | Optional    |
+| fundingSource   | The preferred PayPal funding source to display (for example, PayPal Credit or Pay Later). This influences which PayPal experience is promoted to eligible customers.                                     | `PayPalFundingSource` | Optional           |
 
 #### ChargeResponse
 

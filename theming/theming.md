@@ -22,6 +22,9 @@ The **Theme()** component is as follows:
 
 ```Swift
 public struct Theme {
+    public var horizontalSpacing: CGFloat          // Default: 16
+    public var verticalSpacing: CGFloat            // Default: 16
+    public var textFieldVerticalSpacing: CGFloat   // Default: 8
     public var textField: TextFieldAppearance
     public var searchDropdown: SearchDropdownAppearance
     public var actionButton: ButtonAppearance
@@ -34,6 +37,24 @@ public struct Theme {
     public var title: TextAppearance
 }
 ```
+
+#### Theme Properties
+
+| Name                       | Definition                                                              | Type                      | Default Value |
+| :------------------------- | :---------------------------------------------------------------------- | :------------------------ | :------------ |
+| horizontalSpacing          | Horizontal space between elements in widget layouts.                    | `CGFloat`                 | `16`          |
+| verticalSpacing            | Vertical space between major sections in widget layouts.                | `CGFloat`                 | `16`          |
+| textFieldVerticalSpacing   | Vertical space between text fields within a widget.                     | `CGFloat`                 | `8`           |
+| textField                  | Appearance for text input fields.                                       | `TextFieldAppearance`     | Default       |
+| searchDropdown             | Appearance for search dropdown components.                              | `SearchDropdownAppearance`| Default       |
+| actionButton               | Appearance for primary action buttons.                                  | `ButtonAppearance`        | Default       |
+| expandSectionButton        | Appearance for expand/collapse section buttons (link-style).            | `ButtonAppearance`        | Default       |
+| toolbarButton              | Appearance for keyboard toolbar buttons.                                | `ButtonAppearance`        | Default       |
+| loader                     | Appearance for overlay loading indicators.                              | `OverlayLoaderAppearance` | Default       |
+| toggle                     | Appearance for toggle/switch components.                                | `ToggleAppearance`        | Default       |
+| linkText                   | Appearance for link-styled text (e.g., privacy policy links).           | `TextAppearance`          | Default       |
+| toggleText                 | Appearance for text associated with toggles.                            | `TextAppearance`          | Default       |
+| title                      | Appearance for section title text.                                      | `TextAppearance`          | Default       |
 
 **What This Means for You:**
 
@@ -48,7 +69,7 @@ The following examples showcase how the MobileSDK can be customised:
 1. The following shows the default for the MobileSDK, and so there is no customization: 
 
 ```Swift
-let config = MobileSDKConfig(environment: .staging)
+let config = MobileSDKConfig(environment: .sandbox)
 MobileSDK.shared.configureMobileSDK(config: config)
 ```
 
@@ -130,6 +151,8 @@ Each of the following SDK Widgets provides an `appearance` parameter that accept
     *   *See its specific styling guide: [Styling the Apple Pay Widget](../digital-wallet-widgets/applepay.md#widget-styling)*
 *   **`ColesPayWidget`**: For integrating with Coles Pay. Customise the appearance of Coles Pay specific UI elements, buttons, and branding.
     *   *See its specific styling guide: [Styling the Coles Pay Widget](../digital-wallet-widgets/colespay.md#5-widget-styling)*
+*   **`ZipWidget`**: For integrating with Zip Buy Now Pay Later. Customise the appearance of the Zip payment button following Zip's brand guidelines.
+    *   *See its specific styling guide: [Styling the Zip Widget](../digital-wallet-widgets/zip.md#5-widget-styling)*
 *   **`PayPalSavePaymentSourceWidget`**: For saving PayPal as a payment source. Style the PayPal button, informational text, and any UI elements related to the vaulting process.
     *   *See its specific styling guide: [Styling the PayPal Save Payment Source Widget](../digital-wallet-widgets/paypalvault.md#4-widget-styling)*
 *   **`Integrated3DS`**: For handling 3D Secure challenges within an integrated flow. While the core challenge UI is often presented in a web view controlled by the issuer, this widget might allow styling of any surrounding SDK-provided chrome or loading indicators.
