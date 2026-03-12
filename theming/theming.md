@@ -334,6 +334,8 @@ Each of the following SDK Widgets provides an `appearance` parameter that accept
     *   *See its specific styling guide: [Styling the Google Pay Widget](../digital-wallet-widgets/googlepay.md#9-widget-styling)*
 *   **`ColesPayWidget`**: For integrating with Coles Pay. Customise the appearance of Coles Pay specific UI elements, buttons, and branding.
     *   *See its specific styling guide: [Styling the Coles Pay Widget](../digital-wallet-widgets/colespay.md#5-widget-styling)*
+*   **`ZipWidget`**: For integrating with Zip Buy Now Pay Later. Customise the appearance of the Zip payment button and loader in line with Zip brand guidelines.
+    *   *See its specific styling guide: [Styling the Zip Widget](../digital-wallet-widgets/zip.md#7-widget-styling)*
 *   **`PayPalSavePaymentSourceWidget`**: For saving PayPal as a payment source. Style the PayPal button, informational text, and any UI elements related to the vaulting process.
     *   *See its specific styling guide: [Styling the PayPal Save Payment Source Widget](../digital-wallet-widgets/paypalvault.md#4-widget-styling)*
 *   **`Integrated3DS`**: For handling 3D Secure challenges within an integrated flow. While the core challenge UI is often presented in a web view controlled by the issuer, this widget might allow styling of any surrounding SDK-provided chrome or loading indicators.
