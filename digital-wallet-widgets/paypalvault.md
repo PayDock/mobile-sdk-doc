@@ -279,12 +279,10 @@ The following sample code example demonstrates the usage within your application
 // Initialize the PayPalSavePaymentSourceWidget
 PayPalSavePaymentSourceWidget(
         modifier = Modifier.padding(16.dp),
-        enabled: Boolean, // optional
+        enabled = true, // optional
         config = PayPalVaultConfig(
-            accessToken = [access_token],
-            gatewayId = [pay_pal_gateway_id],
-            actionText = "custom button text", // optional
-            icon = ButtonIcon.Vector(Icons.Filled.Add) || ButtonIcon.DrawableRes(R.drawable.ic_add)// optional
+            accessToken = ACCESS_TOKEN,
+            gatewayId = PAYPAL_GATEWAY_ID,
         ),
         appearance = currentOrDefaultAppearance, // optional
         loadingDelegate = DELEGATE_INSTANCE, // optional - Delegate class to handle loading
@@ -327,17 +325,13 @@ The following sample code demonstrates the response structure:
 data class PayPalVaultConfig(
     val accessToken: String,
     val gatewayId: String,
-    val actionText: String? = null,
-    val icon: ButtonIcon? = ButtonIcon.DrawableRes(R.drawable.ic_link)
 )
 ```
 
-| Name           | Definition                                                                       | Type                       | Mandatory/Optional |
-| :------------- | :------------------------------------------------------------------------------- | :------------------------- | :----------------- |
-| accessToken    |  The OAuth access token required for authenticating API requests.                | String                     | Mandatory          |
-| gatewayId      |  The PayPal gateway ID used to identify the payment gateway.                     | String                     | Mandatory          |
-| actionText     |  The text to be displayed on the button. Defaults to "Link PayPal account".      | String                     | Optional           |
-| icon           |  The icon to display on the button. Allows for `ImageVector` or `DrawableRes`.   | `ButtonIcon`               | Optional           |
+| Name        | Definition                                                                    | Type     | Mandatory/Optional |
+| :---------- | :---------------------------------------------------------------------------- | :------- | :----------------- |
+| accessToken | The OAuth access token required for authenticating API requests.             | `String` | Mandatory          |
+| gatewayId   | The PayPal gateway ID used to identify the payment gateway.                  | `String` | Mandatory          |
 
 
 #### PayPalVaultResult
@@ -348,13 +342,15 @@ The following sample code demonstrates the response structure:
 
 ```Kotlin
 data class PayPalVaultResult(
-    val token: String
+    val token: String,
+    val email: String
 )
 ```
 
-| Name           | Definition                                                                       | Type                       | 
-| :------------- | :------------------------------------------------------------------------------- | :------------------------- | 
-| token          |  The token generated from the PayPal Vault process.                              | String                     | 
+| Name   | Definition                                                  | Type     |
+| :----- | :---------------------------------------------------------- | :------- |
+| token  | The token generated from the PayPal Vault process.         | `String` |
+| email  | The email address associated with the vaulted PayPal user. | `String` |
 
 ### 3. Callback Explanation
 
@@ -431,14 +427,14 @@ UnknownException(displayableMessage: String) : PayPalVaultException(displayableM
 >
 > PayPalSDKException: result of vaulting a PayPal payment method completes with an error.
 
-| Exception                         | Description                                                                                   | Error Model            |
-| :-------------------------------- | :-------------------------------------------------------------------------------------------- | :--------------------- |
-| CreateSetupTokenException         |  Exception thrown when there is an error creating a setup token.                              |  PayPalVaultError      |
-| GetPayPalClientIdException        |  Exception thrown when there is an error retrieving the PayPal client ID.                     |  PayPalVaultError      |
-| CreatePaymentTokenException       |  Exception thrown when there is an error creating a payment token.                            |  PayPalVaultError      |
-| PayPalSDKException                |  Exception thrown during PayPal SDK operations.                                               |  PayPalVaultError      |
-| CancellationException             |  Exception thrown when cancelling PayPal vault flow.                                          |  PayPalVaultError      |
-| UnknownException                  |  Exception thrown when an unknown error occurs in PayPal Vault operations.                    |  PayPalVaultError      |
+| Exception                         | Description                                                                                   | Error Model           |
+| :-------------------------------- | :-------------------------------------------------------------------------------------------- | :-------------------- |
+| CreateSetupTokenException         | Exception thrown when there is an error creating a setup token.                              | `PayPalVaultException` |
+| GetPayPalClientIdException        | Exception thrown when there is an error retrieving the PayPal client ID.                     | `PayPalVaultException` |
+| CreatePaymentTokenException       | Exception thrown when there is an error creating a payment token.                            | `PayPalVaultException` |
+| PayPalSDKException                | Exception thrown during PayPal SDK operations.                                               | `PayPalVaultException` |
+| CancellationException             | Exception thrown when cancelling the PayPal vault flow.                                      | `PayPalVaultException` |
+| UnknownException                  | Exception thrown when an unknown error occurs in PayPal Vault operations.                    | `PayPalVaultException` |
 
 ### 4. Widget Styling
 
