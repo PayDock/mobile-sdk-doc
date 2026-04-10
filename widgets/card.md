@@ -140,14 +140,14 @@ The below table describes the various inline validation errors linked to the `Ca
 
 #### MobileSDK.CardDetailsWidgetConfig
 
-| Name                     | Definition                                                                                       | Type                                               | Mandatory/Optional |
-| ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------  |
-| gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                | String                                             | Optional           |
-| accessToken              |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
-| collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional           |
-| allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question  | `SaveCardConfig`                                   | Optional           |
-| storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `nil`, the parameter is not sent.  | Boolean                       | Optional           |
-| schemeSupport            |  Configures the card scheme support and validation behavior                                      | `SupportedSchemesConfig`                           | Optional           |
+| Name                     | Definition                                                                                                               | Type                                      | Mandatory/Optional |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------ |
+| gatewayId                |  Gateway ID that the merchant can input into the widget to allow for tokenisation                                        | String                                    | Optional           |
+| accessToken              |  The access token used for authentication with the backend service.                                                      | String                                    | Mandatory          |
+| collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                                          | Boolean                                   | Optional           |
+| allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question                          | `SaveCardConfig`                          | Optional           |
+| storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `nil`, the parameter is not sent.  | Boolean                                   | Optional           |
+| schemeSupport            |  Configures the card scheme support and validation behavior                                                              | `SupportedSchemesConfig`                  | Optional           |
 
 #### MobileSDK.SaveCardConfig
 

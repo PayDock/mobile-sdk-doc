@@ -1,6 +1,6 @@
 # Google Pay Widget
 
-The MobileSDK provides a GooglePayWidget composable widget that you can use to interact with GooglePay. The button initializes GooglePay, handles the payment requests, and finalizes the charge through Paydock. The final result is then returned as a callback.
+The MobileSDK provides a GooglePayWidget composable widget that you can use to interact with GooglePay. The button initializes GooglePay, handles the processing of information, and generates an OTT token to be used in transaction processing. The final result is then returned as a callback.
 
 ![GooglePay View](/img/GPay.png)
 
@@ -9,10 +9,6 @@ The MobileSDK provides a GooglePayWidget composable widget that you can use to i
 ### 1. Overview
 
 The GooglePay widget facilitates payments using GooglePay services. This section provides a step-by-step guide on how to initialize and use the `GooglePayWidget` composable in your application. The widget facilitates the payment using GooglePay services.
-
-> **Note**:
->
-> When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide.   
 
 The following sample code demonstrates the definition of the `GooglePayWidget`:
 
@@ -23,10 +19,10 @@ fun GooglePayWidget(
     enabled: Boolean = true,
     config: GooglePayWidgetConfig,
     appearance: GooglePayWidgetAppearance = GooglePayAppearanceDefaults.appearance(),
-    tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit,
     loadingDelegate: WidgetLoadingDelegate? = null,
     eventDelegate: WidgetEventDelegate? = null,
-    completion: (Result<ChargeResponse>) -> Unit
+    completion: (Result<GooglePayResult>) -> Unit,
+    fallbackUi: @Composable (() -> Unit)? = null
 )  {...}
 ```
 
@@ -52,27 +48,16 @@ GooglePayWidget(
         )
     ),
     appearance = currentOrDefaultAppearance,
-    tokenRequest = { callback ->
-        // show widget loader
-        tokenResult.onSuccess { result ->
-            // Handle token success
-            val walletToken = result.token // ... retrieve the token
-            Result.success(WalletTokenResult(token = walletToken))
-        }.onFailure {
-            // Handle token failure success
-            Result.failure(it)
-        }
-    },
     loadingDelegate = DELEGATE_INSTANCE, // optional - Delegate class to handle loading
     eventDelegate = EVENT_DELEGATE_INSTANCE, // optional - Delegate class to handle events
 ) { result ->
     // Handle the result of the payment operation
     result.onSuccess { chargeResponse ->
         // Handle success - Update UI or perform actions
-        Log.d("GooglePayWidget", "Payment successful.")
+        Log.d("GooglePayWidget", "OTT token created successful.")
     }.onFailure { exception ->
         // Handle failure - Show error message or take appropriate action
-        Log.e("GooglePayWidget", "Payment failed. Error: ${exception.message}")
+        Log.e("GooglePayWidget", "Process failed. Error: ${exception.message}")
     }
 }
 ```
@@ -83,22 +68,23 @@ This subsection describes the parameters required by the `GooglePayWidget` compo
 
 #### GooglePayWidget
 
-| Name                  | Definition                                                                               | Type                                                                        | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- | :----------------- |
-| modifier              |  Compose modifier for container modifications                                            | `androidx.compose.ui.Modifier`                                              | Optional           |
-| enabled               |  Controls the enabled state of this Widget.                                             | Boolean                                                                      | Optional           |
-| config                |  The configuration details required for the Google Pay widget                            | `GooglePayWidgetConfig`                                                     | Mandatory          |
-| appearance            |  Customization options for the visual appearance of the widget                           | `GooglePayWidgetAppearance`                                                 | Optional           |
-| tokenRequest          |  A callback to obtain the wallet token result asynchronously                             | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`  | Mandatory          |
-| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                                                  | Optional           |
-| eventDelegate         |  Delegate for handling widget events such as button clicks.                              | `WidgetEventDelegate`                                                       | Optional           |
-| completion            |  Result callback with the Charge creation API response if successful, or error if not.   | `(Result<ChargeResponse>) -> Unit`                                          | Mandatory          |
-
+| Name                  | Definition                                                                                       | Type                                                               | Mandatory/Optional |
+| :-------------------- | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------------| :----------------- |
+| modifier              |  Compose modifier for container modifications.                                                   | `androidx.compose.ui.Modifier`                                     | Optional           |
+| enabled               |  Controls the enabled state of this Widget.                                                      | Boolean                                                            | Optional           |
+| config                |  The configuration details required for the Google Pay widget.                                   | `GooglePayWidgetConfig`                                            | Mandatory          |
+| appearance            |  Customization options for the visual appearance of the widget.                                  | `GooglePayWidgetAppearance`                                        | Optional           |
+| loadingDelegate       |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                                            | Optional           |
+| eventDelegate         |  Delegate for handling widget events such as button clicks.                                      | `WidgetEventDelegate`                                              | Optional           |
+| completion            |  Result callback with the Google Pay result response if successful, or error if not.             | `(Result<GooglePayResult>) -> Unit`                                | Mandatory          |
+| fallbackUi            |  A `Composable` that can be passed to show if Google Pay is not available.                       | Unit                                                               | Optional           |
 
 #### GooglePayWidgetConfig
 
 | Name                  | Definition                                                                     | Type                                     | Mandatory/Optional |
 | --------------------- | ------------------------------------------------------------------------------ | ---------------------------------------- |------------------  |
+| accessToken           |  The access token used for authentication with the backend service.            | String                                   | Mandatory          |
+| serviceId             |  Service ID of Google Pay service registered with Paydock.                     | String                                   | Mandatory          |
 | isReadyToPayRequest   |  GooglePay request for determining if a user is considered ready to pay.       | `JSONObject` → `IsReadyToPayRequest`     | Mandatory          |
 | paymentRequest        |  GooglePay request for providing necessary information to support a payment.   | `JSONObject` → `PaymentDataRequest`      | Mandatory          |
 
@@ -121,8 +107,10 @@ object PaymentsUtil {
   fun createIsReadyToPayRequest(
       allowedCardAuthMethods: List<String> = ALLOWED_CARD_AUTH_METHODS,
       allowedCardNetworks: List<String> = ALLOWED_CARD_NETWORKS,
-      billingAddressRequired: Boolean = true
-  ): JSONObject {...}
+      billingAddressRequired: Boolean = true,
+      billingAddressParameters: GooglePayBillingAddressParameters? = null,
+      phoneNumberRequired: Boolean = true
+  ): GooglePayIsReadyToPayRequest
 
   ... //Other helper methods
 }
@@ -154,8 +142,12 @@ object PaymentsUtil {
       allowedCardAuthMethods: List<String> = ALLOWED_CARD_AUTH_METHODS,
       allowedCardNetworks: List<String> = ALLOWED_CARD_NETWORKS,
       billingAddressRequired: Boolean = true,
+      billingAddressParameters: GooglePayBillingAddressParameters? = null,
       shippingAddressRequired: Boolean = false,
-      shippingAddressParameters: JSONObject? = null
+      allowedShippingCountryCodes: List<String>? = null,
+      shippingAddressParameters: JSONObject? = null,
+      emailRequired: Boolean = false,
+      phoneNumberRequired: Boolean = false
   ): JSONObject {...}
 
   ... //Other helper methods
@@ -175,10 +167,9 @@ PaymentsUtil.createGooglePayRequest(
 PaymentsUtil.createGooglePayRequest(
 	... required parameters
     shippingAddressRequired = true,
-    shippingAddressParameters = JSONObject().apply {
-        put("phoneNumberRequired", true)
-        put("allowedCountryCodes", JSONArray(listOf("US", "GB", "AU")))
-    }
+    shippingAddressParameters = GooglePayShippingAddressParameters(
+        allowedCountryCodes = listOf("US", "GB", "AU")
+    )
 )
 ```
 
@@ -193,78 +184,54 @@ Reference: [IsReadyToPayRequest](https://developers.google.com/pay/api/android/r
 | :----------------------- | :-------------------------------------------------------------------------------- | :----------------- | :----------------- |
 | allowedCardAuthMethods   |  List of allowed card authentication methods ("PAN_ONLY", "CRYPTOGRAM_3DS")       | List<String>       | Optional          |
 | allowedCardNetworks      |  List of allowed card networks ("AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA")  | List<String>       | Optional          |
-| billingAddressRequired   |  Indicates whether billing address is required     | Boolean | Mandatory          | Boolean            | Optional          |
+| billingAddressRequired   |  Indicates whether billing address is required                                    | Boolean            | Optional          |
+| billingAddressParameters |  Billing address requirements                                                     | Boolean            | Optional          |
+| phoneNumberRequired      |  Is phone number required                                                         | Boolean            | Optional          |
 
 #### PaymentDataRequest (JSONObject): PaymentsUtil.createGooglePayRequest()
 Reference: [PaymentDataRequest](https://developers.google.com/android/reference/com/google/android/gms/wallet/PaymentDataRequest)
 
-| Name                        | Definition                                                                        | Type               | Mandatory/Optional |
-| :-------------------------- | :-------------------------------------------------------------------------------- | :----------------- | :----------------- |
-| amount                      |  The charge amount                                                                | BigDecimal         | Mandatory          |
-| amountLabel                 |  The label for the payment amount                                                 | String             | Mandatory          |
-| countryCode                 |  The country code                                                                 | String             | Mandatory          | 
-| currencyCode                |  The currency code                                                                | String             | Mandatory          |
-| merchantName                |  The merchant name                                                                | String             | Optional           |
-| merchantIdentifier          |  The merchant identifier from Paydock                                             | String             | Mandatory          |
-| allowedCardAuthMethods      |  List of allowed card authentication methods ("PAN_ONLY", "CRYPTOGRAM_3DS")       | List<String>       | Optional           |
-| allowedCardNetworks         |  List of allowed card networks ("AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA")  | List<String>       | Optional           |
-| billingAddressRequired      |  Indicates whether billing address is required                                    | Boolean            | Optional           |
-| shippingAddressRequired     |  Indicates whether shipping address is required                                   | Boolean            | Optional           |
-| shippingAddressParameters   |  Parameters for shipping address, if required.                                    | `JSONObject`       | Optional           |
+| Name                        | Definition                                                                        | Type                                 | Mandatory/Optional |
+| :-------------------------- | :-------------------------------------------------------------------------------- | :----------------------------------- | :----------------- |
+| amount                      |  The charge amount                                                                | BigDecimal                           | Mandatory          |
+| amountLabel                 |  The label for the payment amount                                                 | String                               | Mandatory          |
+| countryCode                 |  The country code                                                                 | String                               | Mandatory          | 
+| currencyCode                |  The currency code                                                                | String                               | Mandatory          |
+| merchantName                |  The merchant name                                                                | String                               | Optional           |
+| merchantIdentifier          |  The merchant identifier from Paydock                                             | String                               | Mandatory          |
+| allowedCardAuthMethods      |  List of allowed card authentication methods ("PAN_ONLY", "CRYPTOGRAM_3DS")       | List<String>                         | Optional           |
+| allowedCardNetworks         |  List of allowed card networks ("AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA")  | List<String>                         | Optional           |
+| billingAddressRequired      |  Indicates whether billing address is required                                    | Boolean                              | Optional           |
+| billingAddressParameters    |  Parameters for the billing address, if required                                  | `GooglePayBillingAddressParameters`  | Optional           |
+| shippingAddressRequired     |  Indicates whether shipping address is required                                   | Boolean                              | Optional           |
+| allowedShippingCountryCodes |  List of country codes allowed for shipping.                                      | List<String>                         | Optional           |
+| shippingAddressParameters   |  Parameters for shipping address, if required.                                    | `GooglePayShippingAddressParameters` | Optional           |
+| emailRequired               |  If email is required.                                                            | Boolean                              | Optional           |
+| phoneNumberRequired         |  If phone number is required.                                                     | Boolean                              | Optional           |
 
 #### 7. ChargeResponse
 
 This subsection outlines the structure of the result or response object returned by the `GooglePayWidget` composable. It details the format and components of the object, enabling you to handle the response effectively within your application.
 
-The following sample code demonstrates the response structure:
-
 ```Kotlin
-data class ChargeResponse(
-    val status: Int,
-    val resource: ChargeResource
-) {
-
-    data class ChargeResource(
-        val type: String,
-        val data: ChargeData?
-    )
-    
-    data class ChargeData(
-        val status: String,
-        val id: String,
-        val amount: BigDecimal,
-        val currency: String
-    )
-}
+data class GooglePayResult(
+    val token: String?,
+    val type: String,
+    val email: String? = null,
+    val billingAddress: GooglePayBillingAddress? = null,
+    val shippingAddress: GooglePayBillingAddress? = null
+)
 ```
 
-| Name           | Definition                                                                       | Type                       | 
-| :------------- | :------------------------------------------------------------------------------- | :------------------------- | 
-| status         |  Charge result HTTP status code                                                  | Int                        | 
-| resource       |  Charge resource containing data related to charge                               | `ChargeResponse.Resource`  |
-
-#### ChargeResponse.Resource
-
-| Name           | Definition                                                                                      | Type                       | 
-| :------------- | :---------------------------------------------------------------------------------------------- | :------------------------- | 
-| type           |  Charge result HTTP status code                                                                 | String                     | 
-| data           |  Charge data result containing actual data regarding charge such as amount, currency, and so on.            | `ChargeResponse.Data`      |
-
-#### ChargeResponse.ChargeData
-
-| Name           | Definition                                | Type                 | 
-| :------------- | :---------------------------------------- | :------------------- | 
-| status         |  Charge result status as a string         | String               | 
-| amount         |  Charge amount that was charged           | `BigDecimal`         |
-| currency       |  Charge currency that was used            | String               |
+| Name             | Definition                                                                       | Type                       | 
+| :--------------- | :------------------------------------------------------------------------------- | :------------------------- | 
+| token            |  The OTT token generated by Paydock for payment processing.                      | String                     | 
+| type             |  The type of payment source associated with the token (e.g., "CARD").            | String                     |
+| email            |  The email address associated with the Google Pay account, if provided.          | String                     |
+| billingAddress   |  The billing address associated with the payment method, if provided.            | String                     |
+| shippingAddress  |  The shipping address selected by the user, if provided.                         | String                     |
 
 ### 7. Callback Explanation
-
-#### Token Callback
-
-The `token` callback obtains the wallet token result asynchronously. It receives a callback function `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit` as a parameter, which you must invoke with the result of the wallet token API request once it is obtained. 
-
-The `WalletTokenResult` acts as a token wrapper containing the actual token result.
 
 #### WidgetEventDelegate
 
@@ -305,7 +272,7 @@ The Google Pay Widget triggers the following events:
 
 #### Completion Callback
 
-The `completion` callback is invoked after the payment operation is completed. It receives a `Result<ChargeResponse>` if the payment is successful. The callback is used to handle the outcome of the payment operation.
+The `completion` callback is invoked after the tokenisation operation is completed. It receives a `Result<GooglePayResult>` if a token is successfully generated. The callback is used to handle the outcome of the tokenisation operation.
 
 ### 8. Error/Exceptions Mapping
 
@@ -313,15 +280,15 @@ The following describes the Google Pay exceptions that can be thrown.
 
 **Parent sealed class for exceptions thrown when there's an error related to Google Pay integration.**
 
-| Exception                             | Description                                                                                                                                  | Key Properties / Parameters |
-| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------- |
-| `CapturingChargeException`            | Exception thrown when there is an error capturing the charge for Google Pay. The displayable message is derived from the error response.       | `error: ApiErrorResponse`   |
-| `InitialisationException`           | Exception thrown when there is an initialization error related to Google Pay.                                                                | `displayableMessage: String`|
-| `ResultException`                   | Exception thrown when there is a result error related to Google Pay from Paydock's side after Google Pay.                                      | `displayableMessage: String`|
-| `CancellationException`             | Exception thrown when there is a user-initiated cancellation from Paydock's UI (e.g. close button). This is distinct from `SDKException.CancelledBySdk`. | `displayableMessage: String`|
-| `ParseException`                      | Represents an exception that occurs during the parsing of data from an API call, typically JSON.                                             | `displayableMessage: String`, `errorBody: String?` |
-| `InitialisationWalletTokenException`  | Exception thrown when there is an error during the initialisation of the Google Pay wallet token.                                            | `displayableMessage: String`|
-| `UnknownException`                  | Exception thrown when there is an unknown error related to Google Pay that doesn't fit into other more specific categories.                  | `displayableMessage: String`|
+| Exception                          | Description                                                                                                                                              | Key Properties / Parameters |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------- |
+| `TokenisingGooglePayException`     | Exception thrown when there is an error creating a payment token for Google Pay. The displayable message is derived from the error response.             | `error: ApiErrorResponse`   |
+| `InitialisationException`          | Exception thrown when there is an initialization error related to Google Pay.                                                                            | `displayableMessage: String`|
+| `IsReadyToPayException`            | Exception thrown when the "Is Ready to Pay" check fails or returns false.                                                                                | `displayableMessage: String`|
+| `ResultException`                  | Exception thrown when there is a result error related to Google Pay from Paydock's side after Google Pay.                                                | `displayableMessage: String`|
+| `CancellationException`            | Exception thrown when there is a user-initiated cancellation from Paydock's UI (e.g. close button). This is distinct from `SDKException.CancelledBySdk`. | `displayableMessage: String`|
+| `ParseException`                   | Represents an exception that occurs during the parsing of data from an API call, typically JSON.                                                         | `displayableMessage: String`, `errorBody: String?` |
+| `UnknownException`                 | Exception thrown when there is an unknown error related to Google Pay that doesn't fit into other more specific categories.                              | `displayableMessage: String`|
 
 ---
 

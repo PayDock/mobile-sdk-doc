@@ -8,37 +8,53 @@ The logic of this widget exists as a single view that you can initialise and emb
 
 ## How to use the ApplePay widget
 
-> **Note**:
->
-> When the customer taps the Payment button for your Digital Wallet, the SDK triggers a callback to the Merchant app requesting a `wallet_token`. You must perform a wallet initialization request to receive your `wallet_token`. To do this, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section.  
+1. Use the following to initialise the **ApplePayWidget**:
 
-1. Use the following to initialise the **ApplePayView**:
-
-```Swift
+```Swift    
 ApplePayWidget(
+    config: ApplePayWidgetConfig,
     appearance: ApplePayWidgetAppearance = ApplePayWidgetAppearance(),
     eventDelegate: WidgetEventDelegate? = nil,
-    createPaymentRequest: @escaping (_ createPaymentRequestResult: @escaping (Result<ApplePayRequestResult, ApplePayRequestError>) -> Void) -> Void,
-    completion: @escaping (Result<ChargeResponse, ApplePayError>) -> Void
+    onShippingContactSelected: ((PKContact) -> PKPaymentRequestShippingContactUpdate)? = nil,
+    onShippingMethodSelected: ((PKShippingMethod) -> PKPaymentRequestShippingMethodUpdate)? = nil,
+    completion: @escaping (Result<ApplePayResult, ApplePayError>) -> Void
     ) { ... }
+)
 ```
 
-If the charge is successful, the **ApplePayView** returns a `ChargeResponse` that contains all the relevant information. In case of an error, the `ApplePayError` object is returned with information regarding the failure.
+If the tokenisation is successful, the **ApplePayWidget** returns an `ApplePayResult` that contains all the relevant information. In case of an error, the `ApplePayError` object is returned with information regarding the failure.
 
-2. The **ApplePayRequest** contains all of the required data to enable ApplePay.
+2. The **ApplePayWidgetConfig** contains all of the required data to enable ApplePay.
 
 ```Swift
-public struct ApplePayRequest {
-    public let token: String
-    public let request: PKPaymentRequest
+/// Configuration for Apple Pay widget
+public struct ApplePayWidgetConfig {
 
-    public init(token: String, request: PKPaymentRequest) {
-        self.token = token
-        public let request: PKPaymentRequest
+    /// The Paydock service ID for Apple Pay
+    public let serviceId: String
+
+    /// The widget access token for API authentication
+    public let accessToken: String
+
+    /// The PKPaymentRequest configured with merchant details
+    public let pkPaymentRequest: PKPaymentRequest
+
+    /// Whether to show setup button if no cards configured in wallet for default networks
+    public let showSetUpButtonWhenNoCardsEnrolled: Bool
+
+    public init(serviceId: String,
+                accessToken: String,
+                pkPaymentRequest: PKPaymentRequest,
+                showSetUpButtonWhenNoCardsEnrolled: Bool = false) {
+        self.serviceId = serviceId
+        self.accessToken = accessToken
+        self.pkPaymentRequest = pkPaymentRequest
+        self.showSetUpButtonWhenNoCardsEnrolled = showSetUpButtonWhenNoCardsEnrolled
+    }
 }
 ```
 
-3. The Mobile SDK provides convenient helper methods to initialise the `PKPaymentRequest` object. You can configure this in various ways, depending on your use case:
+3. The Mobile SDK provides convenient helper methods to initialise the `PKPaymentRequest` object. You can then configure this in various ways, depending on your use case:
 
 ```Swift
     public static func createApplePayRequest(
@@ -47,9 +63,9 @@ public struct ApplePayRequest {
         countryCode: String,
         currencyCode: String,
         merchantIdentifier: String,
-        merchantCapabilities: PKMerchantCapability = [.credit, .debit, .threeDSecure],
+        merchantCapabilities: PKMerchantCapability = [.capabilityCredit, .capabilityDebit, .capability3DS],
         supportedNetworks: [PKPaymentNetwork] = [.visa, .masterCard, .amex, .discover],
-        requireBillingAddress: Bool = true,
+        requireBillingAddress: Bool = false,
         requireShippingAddress: Bool = false,
         shippingOptions: [PKShippingMethod]? = nil) -> PKPaymentRequest {
             let item = PKPaymentSummaryItem(label: amountLabel, amount: amount as NSDecimalNumber, type: .final)
@@ -61,85 +77,107 @@ public struct ApplePayRequest {
             paymentRequest.merchantCapabilities = merchantCapabilities
             paymentRequest.supportedNetworks = supportedNetworks
             paymentRequest.requiredBillingContactFields = requireBillingAddress ? [.name, .postalAddress] : []
-            paymentRequest.requiredShippingContactFields = requireShippingAddress ? [.phoneNumber, .emailAddress, .postalAddress, .name] : []
+            paymentRequest.requiredShippingContactFields = requireShippingAddress
+                ? [.phoneNumber, .emailAddress, .postalAddress, .name]
+                : []
             paymentRequest.shippingMethods = shippingOptions
             return paymentRequest
     }
 ```
 
-4. The following is an example of the full **ApplePayView** initialisation. Ensure that you have your `wallet_token`, which you can generate by following the instructions [here](/digital-wallet-widgets/wallettoken):
-
-```Swift
-struct ApplePayExampleView: View {
-    var body: some View {
-        ApplePayWidget { onApplePayButtonTap in
-            onApplePayButtonTap(<Your ApplePayRequest>)
-        } completion: { result in 
-            switch result {
-                case .success(let chargeResponse): // Handle successful result
-                case .failure(let error): // Handle error
-            }
-        }
-    }
-}
-
-func getApplePayRequest() -> ApplePayRequest {
-    let paymentRequest = MobileSDK.createApplePayRequest(
-        amount: 0.01,
-        amountLabel: "Amount",
-        countryCode: "AU",
-        currencyCode: "AUD")
-
-    let applePayRequest = ApplePayRequest(
-        token: <Merchant wallet token>,
-        request: paymentRequest)
-
-    return applePayRequest
-}
-```
-
 ### Parameter Definitions
 
-| Name                  | Definition                                                                                           | Type                                                                                                                  | Mandatory/Optional |
-| :-------------------- | :--------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :----------------- |
-| appearance            |  Object for visual customization of the widget.                                                      | `MobileSDK.ApplePayWidgetAppearance`                                                                                  | Optional           |
-| eventDelegate         |  Delegate for handling widget events such as button clicks.                                          | `MobileSDK.WidgetEventDelegate`                                                                                       | Optional           |
-| completion            |  Result callback with the Charge creation API response if successful, or an error if unsuccessful.   | `(Result<ChargeResponse, ApplePayError>) -> Void)`                                                                    | Mandatory          |
-
-#### Token Callback
-
-> **Note**:
->
-> The `createPaymentRequest` callback obtains the wallet token asynchronously. It receives a callback function `(_ createPaymentRequestResult: @escaping (Result<ApplePayRequestResult, ApplePayRequestError>) -> Void) -> Void` as a parameter, which you must invoke with the success or failure once it is obtained. To obtain the `wallet_token`, follow the instructions in the [generate a wallet_token](/digital-wallet-widgets/wallettoken.md) section of this guide. 
+| Name                        | Definition                                                                                           | Type                                                                                       | Mandatory/Optional |
+| :-------------------------- | :--------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- | :----------------- |
+| config                      |  Configuration options for the Apple Pay widget                                                      | `ApplePayWidgetConfig`                                                                     | Mandatory          |
+| appearance                  |  Object for visual customization of the widget.                                                      | `MobileSDK.ApplePayWidgetAppearance`                                                       | Optional           |
+| eventDelegate               |  Delegate for handling widget events such as button clicks.                                          | `MobileSDK.WidgetEventDelegate`                                                            | Optional           |
+| onShippingContactSelected   |  Callback to allow merchant to react to shipping contact updates within Apple Pay.                   | `(PKContact) -> PKPaymentRequestShippingContactUpdate)`                                    | Optional           |
+| onShippingMethodSelected    |  Callback to allow merchant to react to shipping method selection update within Apple Pay.           | `(PKShippingMethod) -> PKPaymentRequestShippingMethodUpdate`                               | Optional           |
+| completion                  |  Result callback with the toenisation result if successful, or an error if unsuccessful.             | `(Result<ApplePayResult, ApplePayError>) -> Void)`                                         | Mandatory          |
 
 ## Definitions
 
 More in depth definitions of the parameters, as well as potential errors and responses, are as follows:
 
-### MobileSDK.ApplePayRequestResult
-| Name               | Definition                                                                                                               | Type                     | Mandatory/Optional |
-| :----------------- | :----------------------------------------------------------------------------------------------------------------------- | :----------------------- | :----------------  |
-| request            |  Data for configuration of Apple Pay. Can be built manually or using the helper method MobileSDK.createApplePayRequest() | PassKit.PKPaymentRequest | Mandatory          |
-| token              |  Wallet charge token that is generated by merchant backend                                                               | Swift.String             | Mandatory          |
+### MobileSDK.ApplePayWidgetConfig
 
-### MobileSDK.ChargeResponse
-| Name     | Definition                                       | Type          | Mandatory/Optional |
-| :------- | :----------------------------------------------- | :------------ | :----------------  |
-| status   |  Status of an ApplePay payment after completion. | Swift.String  | Mandatory          |
-| amount   |  The amount of money that was charged            | Swift.Decimal | Mandatory          |
-| currency |  Currency of the charge.                         | Swift.String  | Mandatory          |
+| Name                                 | Definition                                                                                       | Type                                               | Mandatory/Optional |
+| :----------------------------------- | :----------------------------------------------------------------------------------------------- | :------------------------------------------------- |:------------------ |
+| serviceId                            |  Service ID for the Apple Pay service registered in Paydock dashboard.                           | String                                             | Mandatory          |
+| accessToken                          |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
+| pkPaymentRequest                     |  The Apple Pay configuration to be used for processing payment.                                  | `PKPaymentRequest`                                 | Mandatory          |
+| showSetUpButtonWhenNoCardsEnrolled   |  Whether to show setup if user has no cards setup in wallet from default support list.           | Bool                                               | Optional           |
+
+For more info on `PKPaymentRequest`. See https://developer.apple.com/documentation/passkit/pkpaymentrequest.                                                      | Swift.String             | Mandatory          |
+
+### MobileSDK.ApplePayResult
+
+| Name             | Definition                                       | Type                   | Mandatory/Optional |
+| :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
+| ottToken         |  The OTT token created using Apple Pay wallet.   | String                 | Mandatory          |
+| cardInfo         |  Info on the selected user's card.               | ApplePayOTTCardInfo    | Optional           |
+| shippingAddress  |  Info on the user's shipping address.            | ApplePayOTTShipping    | Optional           |
+| billingAddress   |  Info on the user's billing address.             | ApplePayOTTBilling     | Optional           |
+
+### MobileSDK.ApplePayOTTCardInfo
+
+| Name             | Definition                                       | Type                   | Mandatory/Optional |
+| :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
+| cardScheme       | Card scheme selected for payment.                | String                 | Mandatory          |
+
+### MobileSDK.ApplePayOTTShipping
+
+| Name             | Definition                                       | Type                   | Mandatory/Optional |
+| :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
+| addressLine1     |  User's shipping address line 1                  | String                 | Optional           |
+| addressLine2     |  User's shipping address line 2                  | String                 | Optional           |
+| addressCountry   |  User's shipping address country                 | String                 | Optional           |
+| addressCity      |  User's shipping address city                    | String                 | Optional           |
+| addressPostcode  |  User's shipping address postcode                | String                 | Optional           |
+| addressState     |  User's shipping address state                   | String                 | Optional           |
+| contact          |  User's shipping address contact details         | ApplePayOTTContact     | Optional           |
+
+### MobileSDK.ApplePayOTTContact
+
+| Name             | Definition                                       | Type                   | Mandatory/Optional |
+| :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
+| firstName        |  User's contact first name                       | String                 | Optional           |
+| lastName         |  User's contact last name                        | String                 | Optional           |
+| email            |  User's contact email                            | String                 | Optional           |
+| phone            |  User's contact phone number                     | String                 | Optional           |
+
+### MobileSDK.ApplePayOTTBilling
+
+| Name             | Definition                                       | Type                   | Mandatory/Optional |
+| :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
+| addressLine1     |  User's billing address line 1                  | String                 | Optional           |
+| addressLine2     |  User's billing address line 2                  | String                 | Optional           |
+| addressCountry   |  User's billing address country                 | String                 | Optional           |
+| addressCity      |  User's billing address city                    | String                 | Optional           |
+| addressPostcode  |  User's billing address postcode                | String                 | Optional           |
+| addressState     |  User's billing address state                   | String                 | Optional           |
+
+### MobileSDK.ApplePayResult
+
+| Name             | Definition                                       | Type                   | Mandatory/Optional |
+| :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
+| ottToken         |  The OTT token created using Apple Pay wallet.   | String                 | Mandatory          |
+| cardInfo         |  Info on the selected user's card.               | ApplePayOTTCardInfo    | Optional           |
+| shippingAddress  |  Info on the user's shipping address.            | ApplePayOTTShipping    | Optional           |
+| billingAddress   |  Info on the user's billing address.             | ApplePayOTTBilling     | Optional           |
 
 ### MobileSDK.ApplePayError
 
-| Name                         | Description                                                                                     | Error Result            |
+| Name                        | Description                                                                                      | Error Result            |
 | :-------------------------- | :----------------------------------------------------------------------------------------------- | :---------------------- |
-| invalidApplePayRequest      |  Error thrown when provided ApplePayRequest object is not valid.                                 |  nil                    |
-| errorInitializingPayment    |  Error thrown when there is an error initializing payment request.                               |  nil                    |
-| errorCompletingPayment      |  Error thrown when there is an error while capturing the charge.                                 |  ErrorRes               |
+| notSupported                |  Error thrown when Apple Pay is not supported.                                                   |  nil                    |
+| noSupportedCardsInWallet    |  Error thrown when there are no supported cards in Apple Wallet for passed config.               |  nil                    |
+| errorCreatingToken          |  Error thrown when there is an error while creating the token.                                   |  ErrorRes               |
 | userCanceledPayment         |  Error thrown when user has canceled the payment flow.                                           |  nil                    |
-| unableToPresentPaymentSheet |  Error thrown when there is an issue presenting the payment usually due to invalid merchant ID.  |  ErrorRes               |
-| creatingPaymentRequest      |  Error thrown when merchant app has failed to create a payment request.                          |  String                 |
-| unknownError                |  Error thrown when there is an unknown error related to ApplePay.                                |  nil                    |
+| unableToPresentPaymentSheet |  Error thrown when there is an issue presenting the payment usually due to invalid merchant ID.  |  nil                    |
+| payloadEncodingFailed       |  Error thrown when failing to encode Apple Pay payment data                                      |  nil                    |
+| unknownError                |  Error thrown when there is an unknown error related to ApplePay.                                |  RequestError?          |
 
 
 ## Widget Styling
@@ -154,6 +192,7 @@ The `ApplePayWidgetAppearance` class encapsulates the configurable style propert
 public struct ApplePayWidgetAppearance {
     public var type: PKPaymentButtonType
     public var style: PKPaymentButtonStyle
+    public var cornerRadius: CGFloat?
 }
 ```
 
@@ -173,7 +212,7 @@ A default appearance is provided by `GlobalTheme` default values. This configure
 
 #### Customising Appearance
 
-You can create a custom `ApplePayWidgetAppearance` by providing a specific `PKPaymentButtonType` and `PKPaymentButtonStyle` configuration.
+You can create a custom `ApplePayWidgetAppearance` by providing a specific `PKPaymentButtonType`,`PKPaymentButtonStyle` and `cornerRadius` configuration.
 
 ```Swift
 struct MyCustomApplePayScreen: View { 
@@ -181,7 +220,7 @@ struct MyCustomApplePayScreen: View {
         let buttonType = PKPaymentButtonType.checkout
         let buttonStyle = PKPaymentButtonStyle.white
         
-        let appearance = ApplePayWidgetAppearance(type: buttonType, style: buttonStyle)
+        let appearance = ApplePayWidgetAppearance(type: buttonType, style: buttonStyle, cornerRadius: 8.0)
         return appearance
     }
     
@@ -201,8 +240,9 @@ The following attributes can be configured within `ApplePayWidgetAppearance`:
 
  Name                | Description                                                    | Type                               | Default Value (from `GlobalTheme`)  |
 -------------------- | -------------------------------------------------------------- | -----------------------------------|-------------------------------------|
- `type`              | Defines the text within the button                             | `PassKit.PKPaymentButtonType`      | `.plain`                            |
- `style`             | Defines the color scheme of the button.                        | `PassKit.PKPaymentButtonStyle`     | `.automatic`                        |
+ `type`              | Defines the text within the button                             | PKPaymentButtonType                | `.plain`                            |
+ `style`             | Defines the color scheme of the button.                        | PKPaymentButtonStyle               | `.automatic`                        |
+ `cornerRadius`      | Defines the corner radius of the button.                       | CGFloat                            | 4.0                                 |
  
 ### WidgetEventDelegate
 
