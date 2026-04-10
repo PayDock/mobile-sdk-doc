@@ -151,12 +151,12 @@ For more info on `PKPaymentRequest`. See https://developer.apple.com/documentati
 
 | Name             | Definition                                       | Type                   | Mandatory/Optional |
 | :--------------- | :----------------------------------------------- | :------------          |:-----------------  |
-| addressLine1     |  User's shipping address line 1                  | String                 | Optional           |
-| addressLine2     |  User's shipping address line 2                  | String                 | Optional           |
-| addressCountry   |  User's shipping address country                 | String                 | Optional           |
-| addressCity      |  User's shipping address city                    | String                 | Optional           |
-| addressPostcode  |  User's shipping address postcode                | String                 | Optional           |
-| addressState     |  User's shipping address state                   | String                 | Optional           |
+| addressLine1     |  User's billing address line 1                  | String                 | Optional           |
+| addressLine2     |  User's billing address line 2                  | String                 | Optional           |
+| addressCountry   |  User's billing address country                 | String                 | Optional           |
+| addressCity      |  User's billing address city                    | String                 | Optional           |
+| addressPostcode  |  User's billing address postcode                | String                 | Optional           |
+| addressState     |  User's billing address state                   | String                 | Optional           |
 
 ### MobileSDK.ApplePayResult
 
