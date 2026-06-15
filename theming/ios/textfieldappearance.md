@@ -13,13 +13,22 @@ public struct TextFieldAppearance {
     public var colors: TextFieldColors
     public var dimensions: TextFieldDimensions
     public var fonts: TextFieldFonts
+    public var placeholderText: String?
+    public var hintText: String?
+    public var accessibilityHintText: String?
 
     public init(colors: TextFieldColors = TextFieldColors(),
                 dimensions: TextFieldDimensions = TextFieldDimensions(),
-                fonts: TextFieldFonts = TextFieldFonts()) {
+                fonts: TextFieldFonts = TextFieldFonts(),
+                placeholderText: String? = nil,
+                hintText: String? = nil,
+                accessibilityHintText: String? = nil) {
         self.colors = colors
         self.dimensions = dimensions
         self.fonts = fonts
+        self.placeholderText = placeholderText
+        self.hintText = hintText
+        self.accessibilityHintText = accessibilityHintText
     }
 }
 ````
@@ -31,6 +40,9 @@ public struct TextFieldAppearance {
 | `colors`     | `TextFieldColors`     | Defines active, inactive, error, and success colors, as well as text and background colors. |
 | `dimensions` | `TextFieldDimensions` | Defines corner radius, border widths, and padding.                                          |
 | `fonts`      | `TextFieldFonts`      | Defines typography for text, title, placeholder, and error messages.                        |
+| `placeholderText` | `String?`        | Optional override for the field's placeholder text. Defaults to `nil` (the field's built-in placeholder is used). |
+| `hintText`   | `String?`             | Optional override for the hint text shown below the field. Defaults to `nil`.               |
+| `accessibilityHintText` | `String?`  | Optional custom VoiceOver hint that replaces only the visual hint in the field's accessibility readout. The placeholder, label, value, and state are still announced. Defaults to `nil`. |
 
 ---
 

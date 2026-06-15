@@ -14,12 +14,22 @@ class TextFieldAppearance(
     val placeholder: TextAppearance, // Appearance of the placeholder text
     val label: TextAppearance, // Appearance of the floating label
     val errorLabel: TextAppearance, // Appearance of the error message text
+    val hintLabel: TextAppearance, // Appearance of the hint message text
     val validIcon: IconAppearance, // Appearance of the icon shown for valid input
     // Properties primarily related to the decoration box (e.g., for OutlinedTextField)
     val singleLine: Boolean, // Whether the text field should be single-line
     val colors: TextFieldColors, // Colors for different states (focused, unfocused, error, etc.)
-    val shape: Shape  // The shape of the text field's container/outline
-) 
+    val shape: Shape, // The shape of the text field's container/outline
+    // Spacing between the field and its error/hint message
+    val topMessageSpacing: Dp,
+    val startMessageSpacing: Dp,
+    // Optional content overrides
+    val placeholderText: String?, // Override the default placeholder text
+    val hintText: String?, // Override the default hint text
+    // Accessibility
+    val hintDescription: String?, // Custom readout that replaces only the hint text for TalkBack
+    val clickableDescription: String? // Custom "double tap to ..." action label for TalkBack
+)
 ```
 
 ### Properties
@@ -30,10 +40,17 @@ class TextFieldAppearance(
 | `placeholder` | `TextAppearance`                         | The appearance of the placeholder text shown when the input field is empty and unfocused.                                                 |
 | `label`       | `TextAppearance`                         | The appearance of the label associated with the text field. This label often floats above the input area when the field is focused or filled. |
 | `errorLabel`  | `TextAppearance`                         | The appearance of the error message displayed below the text field when input validation fails.                                           |
+| `hintLabel`   | `TextAppearance`                         | The appearance of the hint message displayed below the text field when there is no error.                                                 |
 | `validIcon`   | `IconAppearance`                         | The appearance of an icon (e.g., a checkmark) that can be displayed, typically to indicate that the current input is valid.                   |
 | `singleLine`  | `Boolean`                                | If `true`, the text field will be constrained to a single line of input. If `false`, it can expand to multiple lines.                     |
 | `colors`      | `androidx.compose.material3.TextFieldColors` | Defines the colors for various parts of the text field (text, cursor, indicators, container, label, placeholder) across different states (enabled, disabled, focused, unfocused, error). Typically obtained from `OutlinedTextFieldDefaults.colors()` or `TextFieldDefaults.colors()`. |
 | `shape`       | `androidx.compose.ui.graphics.Shape`     | The shape of the text field's outline or background container. Typically obtained from `OutlinedTextFieldDefaults.shape`.                      |
+| `topMessageSpacing` | `androidx.compose.ui.unit.Dp`      | Vertical spacing between the text field and its error/hint message. Default `6.dp`.                                                        |
+| `startMessageSpacing` | `androidx.compose.ui.unit.Dp`    | Start (leading) spacing of the error/hint message. Default `0.dp`.                                                                         |
+| `placeholderText` | `String?`                            | Optional override for the field's placeholder text. Defaults to `null` (the field's built-in placeholder is used).                        |
+| `hintText`    | `String?`                                | Optional override for the field's hint text. Defaults to `null`.                                                                          |
+| `hintDescription` | `String?`                            | Accessibility: a custom readout that replaces only the hint text in the field's TalkBack content description. The label, value, card scheme, valid state, placeholder example and "required" suffix are still announced. Defaults to `null`. |
+| `clickableDescription` | `String?`                       | Accessibility: the action label TalkBack announces for the field's click action (e.g. "double tap to <clickableDescription>"). Defaults to `null`. |
 
 
 ### Default Appearance
@@ -51,15 +68,25 @@ object TextFieldAppearanceDefaults {
             maxLines = 1
         ),
         label = TextAppearanceDefaults.appearance().copy(
-            maxLines = 1,
+            maxLines = 2,
             style = MaterialTheme.typography.labelMedium
         ),
         errorLabel = TextAppearanceDefaults.appearance().copy(
             style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.error)
         ),
+        hintLabel = TextAppearanceDefaults.appearance().copy(
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 2
+        ),
         validIcon = IconAppearanceDefaults.appearance().copy(tint = Success),
         colors = OutlinedTextFieldDefaults.colors(),
         shape = OutlinedTextFieldDefaults.shape,
+        topMessageSpacing = 6.dp,
+        startMessageSpacing = 0.dp,
+        placeholderText = null,
+        hintText = null,
+        hintDescription = null,
+        clickableDescription = null,
     )
 }
 ```

@@ -16,19 +16,22 @@ public struct ButtonAppearance {
     public var loader: ButtonLoader
     public var icon: Image?
     public var text: String
+    public var accessibilityHint: String?
 
     public init(colors: ButtonColors = ButtonColors(),
                 dimensions: ButtonDimensions = ButtonDimensions(),
                 fonts: ButtonFonts = ButtonFonts(),
                 loader: ButtonLoader = ButtonLoader(),
                 icon: Image? = nil,
-                text: String = "") {
+                text: String = "",
+                accessibilityHint: String? = nil) {
         self.colors = colors
         self.dimensions = dimensions
         self.fonts = fonts
         self.loader = loader
         self.icon = icon
         self.text = text
+        self.accessibilityHint = accessibilityHint
     }
 }
 ```
@@ -43,6 +46,7 @@ public struct ButtonAppearance {
 | `loader`     | `ButtonLoader`     | Defines appearance of the loading spinner in the button.     |
 | `icon`       | `Image?`           | Optional icon image to display in the button.                |
 | `text`       | `String`           | The text to display on the button.                           |
+| `accessibilityHint` | `String?`   | Optional custom VoiceOver hint for the button (e.g. `"Double tap to open browser and link account"`). When `nil`, a sensible default derived from the button text is used. |
 
 ---
 

@@ -291,7 +291,8 @@ The Card Details Widget triggers the following events:
   "properties": {
     "name": "TokenisationButton",
     "action": "click", 
-    "text": "(Whatever is set by merchant)"
+    "text": "(Whatever is set by merchant)",
+    "formState": "valid / invalid"
   }
 }
 ```
@@ -328,6 +329,7 @@ The Card Details Widget triggers the following events:
 | `properties.name` | The name identifier of the specific element | String | Required |
 | `properties.action` | The action performed on the element | String (Enum) | Required |
 | `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.formState` | The validation state of the form when the button was clicked (Button events only) | String (Enum: `valid` / `invalid`) | Optional |
 | `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
 | `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
 
@@ -508,7 +510,8 @@ The Card Details Widget triggers the following events:
   "properties": {
     "name": "TokenisationButton",
     "action": "click", 
-    "text": "(Whatever is set by merchant)"
+    "text": "(Whatever is set by merchant)",
+    "formState": "valid / invalid"
   }
 }
 ```
@@ -545,6 +548,7 @@ The Card Details Widget triggers the following events:
 | `properties.name` | The name identifier of the specific element | String | Required |
 | `properties.action` | The action performed on the element | String (Enum) | Required |
 | `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.formState` | The validation state of the form when the button was clicked (Button events only) | String (Enum: `valid` / `invalid`) | Optional |
 | `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
 | `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
 

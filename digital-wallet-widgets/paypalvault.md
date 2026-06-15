@@ -154,7 +154,7 @@ public struct PayPalVaultAppearance {
 
 #### Default Appearance & Customisation
 
-A default appearance is provided by `GlobalTheme`. This configures a specific button appearance intended to be visually compatible with the resot of the SDK buttons.
+A default appearance is provided by `GlobalTheme`. This configures a specific button appearance intended to be visually compatible with the rest of the SDK buttons. The default action button uses the text `"Link PayPal account"`, a link icon, and a VoiceOver `accessibilityHint` of `"Double tap to open browser and link account"`.
 
 ##### Using Default Appearance
 
