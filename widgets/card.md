@@ -44,6 +44,7 @@ CardDetailsWidget(viewState: ViewState? = nil
                   appearance: CardDetailsWidgetAppearance = CardDetailsWidgetAppearance(),
                   loadingDelegate: WidgetLoadingDelegate? = nil,
                   eventDelegate: WidgetEventDelegate? = nil,
+                  onScrollToField: ((CardDetailsFocusable) -> Void)? = nil,
                   completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
 
@@ -129,6 +130,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | appearance               |  Customization options for the visual appearance of the widget                                   | `CardDetailsWidgetAppearance`                      | Optional           |
 | loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                            | Optional           |
 | eventDelegate            |  Delegate for handling widget events such as button clicks.                                      | `MobileSDK.WidgetEventDelegate`                    | Optional           |
+| onScrollToField          |  Callback invoked with the field the widget wants scrolled into view. Provide this when the widget is hosted inside a scroll container so the widget can bring the first field with an error into view (and move VoiceOver focus to it) when the user submits an invalid form. | `((CardDetailsFocusable) -> Void)?` | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
 #### MobileSDK.ViewState
@@ -332,6 +334,42 @@ The Card Details Widget triggers the following events:
 | `properties.formState` | The validation state of the form when the button was clicked (Button events only) | String (Enum: `valid` / `invalid`) | Optional |
 | `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
 | `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
+
+### 5. Scroll-to-error support (`onScrollToField`)
+
+When the `CardDetailsWidget` is placed inside a scroll container, provide an `onScrollToField` callback so the widget can bring a specific field into view. After the user submits an invalid form, the widget announces the number of errors to VoiceOver, then asks the host to scroll to the first field with an error and moves accessibility focus to it. The widget identifies the field via the `CardDetailsFocusable` enum:
+
+```Swift
+public enum CardDetailsFocusable: Hashable {
+    case cardholderName
+    case cardNumber
+    case expiryDate
+    case securityCode
+}
+```
+
+Implement the callback with a `ScrollViewReader`, scrolling to the field's matching `.id(...)`:
+
+```Swift
+ScrollViewReader { proxy in
+    ScrollView {
+        CardDetailsWidget(
+            config: getConfig(),
+            onScrollToField: { field in
+                withAnimation {
+                    proxy.scrollTo(field, anchor: .center)
+                }
+            },
+            completion: { result in
+                // handle result
+            }
+        )
+        .padding()
+    }
+}
+```
+
+If `onScrollToField` is not provided, the widget still validates and announces the error count, but cannot scroll an off-screen field into view — so on a long form the first errored field may remain off-screen for VoiceOver users. Providing it is recommended whenever the widget can scroll.
 
 ## Android
 
