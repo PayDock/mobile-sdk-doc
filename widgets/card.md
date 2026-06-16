@@ -480,10 +480,9 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------------------  |
 | accessToken              |  Widget access token used for internal API communication                                         | String                                             | Mandatory                      |
 | gatewayId                |  Gateway ID used for the card tokenisation.                                                      | String                                             | Optional                       |
-| actionText               |  The text to display on the action button (default is "Submit").                                 | String                                             | Optional                       |
-| showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional                       |
 | collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional                       |
 | allowSaveCard            |  Configuration for showing the save card UI toggle.                                              | `SaveCardConfig`                                   | Optional                       |  
+| storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `null`, the parameter is not sent. | Boolean                             | Optional                       |
 | schemeSupport            |  Configuration for supported card schemes and scheme validation behavior.                        | `SupportedSchemeConfig`                            | Optional                       |  
 | activePrimaryButton      |  Whether the submit button is enabled by default. If `true` (default), the button is always enabled and validation runs when it is tapped; if `false`, the button stays disabled until all fields are valid. | Boolean | Optional |
 
