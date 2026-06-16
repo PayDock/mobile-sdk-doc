@@ -87,7 +87,8 @@ struct CardDetailsWidgetView: View {
             collectCardholderName: true, // whether to show cardholder name field
             allowSaveCard: saveCardConfig,
             storeSecurityCode: true, // optional - whether to store CVV when tokenizing
-            schemeSupport: supportedSchemesConfig)
+            schemeSupport: supportedSchemesConfig,
+            activePrimaryButton: true) // optional - submit enabled by default; validation runs on tap
         
         return config
     }
@@ -148,6 +149,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question                          | `SaveCardConfig`                          | Optional           |
 | storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `nil`, the parameter is not sent.  | Boolean                                   | Optional           |
 | schemeSupport            |  Configures the card scheme support and validation behavior                                                              | `SupportedSchemesConfig`                  | Optional           |
+| activePrimaryButton      |  Whether the submit button is enabled by default. If `true` (default), the button is always enabled and validation runs when it is tapped; if `false`, the button stays disabled until all fields are valid. | Boolean | Optional |
 
 #### MobileSDK.SaveCardConfig
 
@@ -259,7 +261,7 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 | `cardNameTextField`            | Defines the appearance of the cardholder name input field.                                                 | `TextFieldAppearance`          | `GlobalTheme.textField` (hint "Enter your cardholder name") |
 | `cardNumberTextField`          | Defines the appearance of the card number input field.                                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXXX XXXX XXXX XXXX") |
 | `cardExpiryTextField`          | Defines the appearance of the expiry date input field.                                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "MM/YY")  |
-| `cardSecurityTextField`        | Defines the appearance of the security code (CVV/CVC/CID) input field.                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXX")    |
+| `cardSecurityTextField`        | Defines the appearance of the security code (CVV) input field.                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXX")    |
 | `actionButton`                 | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
 | `toolbarButton`                | Defines the appearance of the keyboard accessory button.                                                   | `ButtonAppearance`             | `GlobalTheme.toolbarButton`       |
 | `toggle`                       | Defines the appearance of the toggle element.                                                              | `ToggleAppearance`             | `GlobalTheme.toggle`              |
@@ -407,22 +409,22 @@ CardDetailsWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
-    enabled: Boolean, // optional
+    enabled = true, // optional
     config = CardDetailsWidgetConfig(
         accessToken = ACCESS_TOKEN, // required
         gatewayId = GATEWAY_ID, // optional
-        actionText: "<override default action button text>",
-        showCardTitle: true, // whether to show card title view
-        collectCardholderName: true, // whether to show cardholder name field
+        collectCardholderName = true, // whether to show cardholder name field
         allowSaveCard = SaveCardConfig(
             privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
                 privacyPolicyURL = "https://www.privacypolicy.com"
             )
         ),
+        storeSecurityCode = true, // optional - whether to store CVV when tokenizing
         schemeSupport = SupportedSchemeConfig(
             supportedSchemes = CardScheme.entries.toSet(),
             enableValidation = true // optional
-        )
+        ),
+        activePrimaryButton = true // optional - submit enabled by default; validation runs on tap
     ),
     appearance = currentOrDefaultAppearance, // optional
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
@@ -483,6 +485,7 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional                       |
 | allowSaveCard            |  Configuration for showing the save card UI toggle.                                              | `SaveCardConfig`                                   | Optional                       |  
 | schemeSupport            |  Configuration for supported card schemes and scheme validation behavior.                        | `SupportedSchemeConfig`                            | Optional                       |  
+| activePrimaryButton      |  Whether the submit button is enabled by default. If `true` (default), the button is always enabled and validation runs when it is tapped; if `false`, the button stays disabled until all fields are valid. | Boolean | Optional |
 
 #### SaveCardConfig
 | Name                | Definition                                                                                                   | Type                     | Mandatory/Optional |
@@ -706,7 +709,7 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 | `cardNameTextField`           | Defines the appearance of the cardholder name input field.                                                                                   | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with hint "Enter your cardholder name"          |
 | `cardNumberTextField`         | Defines the appearance of the card number input field.                                                                                       | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with the card-number placeholder and hint       |
 | `cardExpiryTextField`         | Defines the appearance of the expiry date input field.                                                                                       | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with the expiry placeholder and hint            |
-| `cardSecurityCodeTextField`   | Defines the appearance of the security code (CVV/CVC/CID) input field.                                                                        | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with placeholder "XXX" (widened to "XXXX" for Amex) |
+| `cardSecurityCodeTextField`   | Defines the appearance of the security code (CVV) input field.                                                                        | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with placeholder "XXX" (widened to "XXXX" for Amex) |
 | `actionButton`                | Defines the appearance of the primary submit/action button.                                                                                  | `ButtonAppearance`           | `ButtonAppearanceDefaults.filledButtonAppearance()`                                                                |
 | `toggle`                      | Defines the appearance of the switch or checkbox used for options like "Save card".                                                          | `ToggleAppearance`             | `ToggleAppearanceDefaults.appearance()`                                                                            |
 | `toggleText`                  | Defines the text appearance for the label associated with the toggle (e.g., "Save this card for future payments").                             | `TextAppearance`             | `TextAppearanceDefaults.appearance()` with `bodyMedium` style.                                                     |
