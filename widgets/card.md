@@ -594,6 +594,10 @@ The Card Details Widget triggers the following events:
 
 The `completion` callback is invoked after the card tokenisation operation is completed. It receives a `Result<CardResult>`. The `Result<CardResult>` contains the token and the toggled state flag of the user selection to save the card details.
 
+#### Accessibility: scroll-to-first-error (automatic)
+
+When the user submits an invalid form, the widget announces the number of errors to TalkBack and then moves accessibility focus to the first field with an error, scrolling it into view automatically. If the widget is placed inside a scrolling parent (e.g. a `Column` with `Modifier.verticalScroll(...)` or a `LazyColumn`), the fields use `BringIntoViewRequester`, which walks up to the nearest scroll container on its own — so you do not need to pass a scroll reference or any callback into the widget. Simply place `CardDetailsWidget` inside your scroll container and the behaviour works out of the box.
+
 ### 4. Error/Exceptions Mapping
 
 The following describes Card Details exceptions that can be thrown. 
