@@ -13,12 +13,10 @@ The Card Tokenisation Widget supports the following card schemes:
 | Card Scheme   | Display Name              |
 |---------------|---------------------------|
 | AMEX          | American Express          |
-| AUSBC         | Australian Bank Card      |
 | DINERS        | Diners Club               |
 | DISCOVER      | Discover                  |
 | JAPCB         | JCB                       |
 | MASTERCARD    | MasterCard                |
-| SOLO          | Solo                      |
 | VISA          | Visa                      |
 | UNIONPAY      | UnionPay International    |
 
@@ -192,8 +190,10 @@ public struct CardDetailsWidgetAppearance {
     public var verticalSpacing: CGFloat
     public var horizontalSpacing: CGFloat
     public var textFieldVerticalSpacing: CGFloat
-    public var title: Theme.TextAppearance
-    public var textField: Theme.TextFieldAppearance
+    public var cardNameTextField: Theme.TextFieldAppearance
+    public var cardNumberTextField: Theme.TextFieldAppearance
+    public var cardExpiryTextField: Theme.TextFieldAppearance
+    public var cardSecurityTextField: Theme.TextFieldAppearance
     public var actionButton: Theme.ButtonAppearance
     public var toolbarButton: Theme.ButtonAppearance
     public var toggle: Theme.ToggleAppearance
@@ -222,14 +222,17 @@ You can create a custom `CardDetailsWidgetAppearance` or modify the default one.
 ```Swift
 struct MyCustomCardDetailsScreen: View { 
     private func myCustomAppearance() -> CardDetailsWidgetAppearance {
-        let title = Theme.TextAppearance.init(text: .init(font: .init(name: "CustomFont", size: 20), isUnderlined: true, underlineColor: .black))
         let textField = Theme.TextFieldAppearance.init(colors: .init(active: .blue), dimensions: .init(cornerRadius: 20.0))
         let actionButton = Theme.ButtonAppearance.init(colors: .init(background: .blue))
+        // Each input field has its own appearance; pass the same value to style them uniformly,
+        // or customise them individually. Any omitted parameter keeps its default.
         let appearance = CardDetailsWidgetAppearance(
             verticalSpacing: 10,
             horizontalSpacing: 16,
-            title: title,
-            textField: textField,
+            cardNameTextField: textField,
+            cardNumberTextField: textField,
+            cardExpiryTextField: textField,
+            cardSecurityTextField: textField,
             actionButton: actionButton)
         return appearance
     }
@@ -253,8 +256,10 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 | `verticalSpacing`              | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
 | `horizontalSpacing`            | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `16.0`                             |
 | `textFieldVerticalSpacing`     | The vertical space between the textfields in the widget.                                                   | `CGFloat`                      | `8.0`                             |
-| `title`                        | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
-| `textField`                    | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
+| `cardNameTextField`            | Defines the appearance of the cardholder name input field.                                                 | `TextFieldAppearance`          | `GlobalTheme.textField` (hint "Enter your cardholder name") |
+| `cardNumberTextField`          | Defines the appearance of the card number input field.                                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXXX XXXX XXXX XXXX") |
+| `cardExpiryTextField`          | Defines the appearance of the expiry date input field.                                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "MM/YY")  |
+| `cardSecurityTextField`        | Defines the appearance of the security code (CVV/CVC/CID) input field.                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXX")    |
 | `actionButton`                 | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
 | `toolbarButton`                | Defines the appearance of the keyboard accessory button.                                                   | `ButtonAppearance`             | `GlobalTheme.toolbarButton`       |
 | `toggle`                       | Defines the appearance of the toggle element.                                                              | `ToggleAppearance`             | `GlobalTheme.toggle`              |
@@ -626,8 +631,10 @@ class CardDetailsWidgetAppearance(
     val horizontalSpacing: Dp,
     val textFieldVerticalSpacing: Dp,
     val textFieldHorizontalSpacing: Dp,
-    val title: TextAppearance,
-    val textField: TextFieldAppearance,
+    val cardNameTextField: TextFieldAppearance,
+    val cardNumberTextField: TextFieldAppearance,
+    val cardExpiryTextField: TextFieldAppearance,
+    val cardSecurityCodeTextField: TextFieldAppearance,
     val actionButton: ButtonAppearance,
     val toggle: ToggleAppearance,
     val toggleText: TextAppearance,
@@ -659,8 +666,7 @@ fun MyCustomCardDetailsScreen() {
     // Create appearance by using provided defaults, with custom changes
     val customAppearance = CardDetailsAppearanceDefaults.appearance().copy( 
         verticalSpacing = 12.dp, 
-        title = TextAppearanceDefaults.appearance().copy( style = MaterialTheme.typography.headlineSmall.copy( // color = MyAppColors.primary ) ), 
-        textField = TextFieldAppearanceDefaults.outlineAppearance().copy( // Example: Customizing text field label color // labelColor = MyAppColors.onSurfaceVariant ), 
+        cardNumberTextField = TextFieldAppearanceDefaults.appearance().copy( // Example: customise the card number field // colors = ... ), 
         toggleText = TextAppearanceDefaults.appearance().copy( style = MaterialTheme.typography.labelMedium.copy( // color = MyAppColors.secondary ) ) 
     )
 
@@ -668,8 +674,12 @@ fun MyCustomCardDetailsScreen() {
     val completelyCustomAppearance = CardDetailsWidgetAppearance(
         verticalSpacing = 10.dp,
         horizontalSpacing = 6.dp,
-        title = TextAppearanceDefaults.appearance(/*...custom title params...*/),
-        textField = TextFieldAppearanceDefaults.filledAppearance(/*...custom text field params...*/),
+        textFieldVerticalSpacing = 8.dp,
+        textFieldHorizontalSpacing = 8.dp,
+        cardNameTextField = TextFieldAppearanceDefaults.appearance(/*...custom card name field...*/),
+        cardNumberTextField = TextFieldAppearanceDefaults.appearance(/*...custom card number field...*/),
+        cardExpiryTextField = TextFieldAppearanceDefaults.appearance(/*...custom expiry field...*/),
+        cardSecurityCodeTextField = TextFieldAppearanceDefaults.appearance(/*...custom security code field...*/),
         actionButton = ButtonAppearanceDefaults.textButtonAppearance(/*...custom button params...*/),
         toggle = ToggleAppearanceDefaults.appearance(/*...custom toggle params...*/),
         toggleText = TextAppearanceDefaults.appearance(/*...custom toggle text params...*/),
@@ -693,8 +703,10 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 | `horizontalSpacing`           | The horizontal spacing within composite elements (e.g., between the two text fields in the expiry/CVV row if they were side-by-side).           | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
 | `textFieldVerticalSpacing`    | The vertical spacing between text input fields.                                                                                              | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
 | `textFieldHorizontalSpacing`  | The horizontal spacing between text input fields.                                                                                            | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
-| `title`                       | Defines the text appearance for the widget's main title (e.g., "Card Information").                                                          | `TextAppearance`               | `TextAppearanceDefaults.appearance()` with `bodyMedium` style and `onSurface` color.                               |
-| `textField`                   | Defines the appearance for all card input text fields (card number, expiry, CVV, cardholder name).                                            | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                                                 |
+| `cardNameTextField`           | Defines the appearance of the cardholder name input field.                                                                                   | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with hint "Enter your cardholder name"          |
+| `cardNumberTextField`         | Defines the appearance of the card number input field.                                                                                       | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with the card-number placeholder and hint       |
+| `cardExpiryTextField`         | Defines the appearance of the expiry date input field.                                                                                       | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with the expiry placeholder and hint            |
+| `cardSecurityCodeTextField`   | Defines the appearance of the security code (CVV/CVC/CID) input field.                                                                        | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with placeholder "XXX" (widened to "XXXX" for Amex) |
 | `actionButton`                | Defines the appearance of the primary submit/action button.                                                                                  | `ButtonAppearance`           | `ButtonAppearanceDefaults.filledButtonAppearance()`                                                                |
 | `toggle`                      | Defines the appearance of the switch or checkbox used for options like "Save card".                                                          | `ToggleAppearance`             | `ToggleAppearanceDefaults.appearance()`                                                                            |
 | `toggleText`                  | Defines the text appearance for the label associated with the toggle (e.g., "Save this card for future payments").                             | `TextAppearance`             | `TextAppearanceDefaults.appearance()` with `bodyMedium` style.                                                     |
