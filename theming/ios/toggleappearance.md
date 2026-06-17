@@ -29,11 +29,9 @@ public struct ToggleAppearance {
 A default `ToggleAppearance` instance uses the SDK default primary color for the active state.
 
 ```swift
-public init(
-    activeColor: Color = .defaultPrimary
-    inactiveColor: Color? = nil,
-    toggleColor: Color? = nil) {
-)
+public init(activeColor: Color = .defaultPrimary,
+            inactiveColor: Color? = nil,
+            toggleColor: Color? = nil)
 ```
 
 ### Usage & Customization

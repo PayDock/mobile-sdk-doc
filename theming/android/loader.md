@@ -98,3 +98,63 @@ val modifiedLoaderAppearance = LoaderAppearanceDefaults.appearance().copy(
 // Assuming SdkLoader is a component that uses LoaderAppearance 
 SdkLoader(appearance = modifiedLoaderAppearance )
 ```
+
+---
+
+# OverlayLoaderAppearance
+
+The `OverlayLoaderAppearance` class defines the full-screen overlay loader shown while a widget is processing (for example, during 3DS or tokenisation). It controls the dimmed background, an optional card container, the spinner, and the loading text.
+
+### Appearance Definition
+
+```Kotlin
+@Immutable
+class OverlayLoaderAppearance(
+    val backgroundColor: Color,
+    val showCard: Boolean = true,
+    val cardSize: DpSize? = null,
+    val cardAppearance: CardAppearance,
+    val loaderAppearance: LoaderAppearance,
+    val loaderSize: Dp,
+    val loaderSpacing: Dp,
+    val loaderText: String,
+    val loaderTextAppearance: TextAppearance,
+)
+```
+
+### Properties
+
+| Property               | Type                                       | Description                                                                                                                            |
+|------------------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `backgroundColor`      | `androidx.compose.ui.graphics.Color`       | The dimmed full-screen background behind the loader.                                                                                  |
+| `showCard`             | `Boolean`                                  | Whether the spinner and text sit inside a card container. Default `true`.                                                             |
+| `cardSize`             | `androidx.compose.ui.unit.DpSize?`         | The card size. When `null` (default) the card dynamically hugs its content (spinner + text + padding); set a `DpSize` for a fixed, centered card. |
+| `cardAppearance`       | `CardAppearance`                           | Styling of the card container (corner radius, color, content padding) when `showCard` is `true`.                                      |
+| `loaderAppearance`     | `LoaderAppearance`                         | Styling of the spinner itself.                                                                                                         |
+| `loaderSize`           | `androidx.compose.ui.unit.Dp`              | The size of the spinner. Default `32.dp`.                                                                                             |
+| `loaderSpacing`        | `androidx.compose.ui.unit.Dp`              | Spacing between the spinner and the loading text. Default `16.dp`.                                                                    |
+| `loaderText`           | `String`                                   | The text shown beneath the spinner. Default `"Loading..."`.                                                                          |
+| `loaderTextAppearance` | `TextAppearance`                           | Typography for the loading text.                                                                                                      |
+
+### Default Appearance
+
+```Kotlin
+object OverlayLoaderAppearanceDefaults {
+    @Composable
+    fun appearance(): OverlayLoaderAppearance = OverlayLoaderAppearance(
+        backgroundColor = Color.Black.copy(alpha = 0.45f),
+        showCard = true,
+        // null = dynamic sizing: the card hugs its content (spinner + text + padding).
+        // Set a DpSize for a fixed card.
+        cardSize = null,
+        cardAppearance = CardAppearanceDefaults.appearance().copy(
+            contentPadding = PaddingValues(32.dp)
+        ),
+        loaderAppearance = LoaderAppearanceDefaults.appearance(),
+        loaderSize = 32.dp,
+        loaderSpacing = 16.dp,
+        loaderText = "Loading...",
+        loaderTextAppearance = TextAppearanceDefaults.appearance()
+    )
+}
+```

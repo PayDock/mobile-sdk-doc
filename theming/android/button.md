@@ -19,9 +19,15 @@ sealed class ButtonAppearance(
     open val border: BorderStroke?,
     open val contentPadding: PaddingValues,
     // Content Appearance
+    open val text: String?,
+    open val icon: ButtonIcon?,
     open val iconAppearance: IconAppearance?,
     open val textAppearance: TextAppearance?,
     open val loaderAppearance: LoaderAppearance,
+    // Accessibility
+    open val iconDescription: String? = null,
+    open val clickableDescription: String? = null,
+    open val hintDescription: String? = null,
 )
 ```
 
@@ -34,9 +40,14 @@ sealed class ButtonAppearance(
  `elevation`      | `androidx.compose.material3.ButtonElevation`?              | Defines the elevation (shadow) for the button in different states. Nullable, as not all button types (e.g., text, outlined) have elevation. Typically obtained from `ButtonDefaults.buttonElevation()`.                               |
  `border`         | `androidx.compose.foundation.BorderStroke`?                | Defines the border stroke for the button. Nullable, as not all button types (e.g., filled, text) have a visible border by default.                                                                                                   |
  `contentPadding` | `androidx.compose.foundation.layout.PaddingValues`         | The padding around the button's content (text, icon, loader).                                                                                                                                                                          |
+ `text`           | `String`?                                                  | The text content displayed on the button. Nullable for button types that do not display text (e.g., `IconButtonAppearance`).                                                                                                          |
+ `icon`           | `ButtonIcon`?                                              | The icon content displayed on the button (e.g. a drawable resource or vector). Nullable when the button has no icon.                                                                                                                   |
  `iconAppearance` | `IconAppearance`?                                          | The appearance of the icon within the button (size, tint). Nullable for button types that might not have an icon (e.g., `IconButtonAppearance` might consider the main image content, not a separate "icon"). See `IconAppearance`. |
  `textAppearance` | `TextAppearance`?                                          | The appearance of the text within the button (style, color, etc.). Nullable for button types that might not display text (e.g., `IconButtonAppearance`). See `TextAppearance`.                                                           |
  `loaderAppearance`| `LoaderAppearance`                                         | The appearance of the loading indicator (e.g., a circular progress bar) displayed when the button is in a loading state. See `LoaderAppearance`.                                                                                        |
+ `iconDescription`| `String`?                                                  | Accessibility: description announced by TalkBack for the button's icon. Read before the text description. Defaults to `null`.                                                                                                          |
+ `clickableDescription`| `String`?                                             | Accessibility: the action label TalkBack announces for the button's click action (e.g. "double tap to <clickableDescription>"). Defaults to `null`.                                                                                   |
+ `hintDescription`| `String`?                                                  | Accessibility: an optional hint announced by TalkBack after the button's label. Defaults to `null`.                                                                                                                                    |
 
 ### Concrete Subclasses
 

@@ -62,6 +62,8 @@ public init(font: CustomFont = CustomFont(type: .system, size: 14.0),
             isItalic: Bool = false)
 ```
 
+> **Note:** The initializer parameter is named `font`, which sets the `customFont` property.
+
 ### Usage & Customization
 
 `TextAttributes` can be customized for individual UI components by modifying properties such as font, color, and decorations.

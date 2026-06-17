@@ -42,14 +42,21 @@ public struct ApplePayWidgetConfig {
     /// Whether to show setup button if no cards configured in wallet for default networks
     public let showSetUpButtonWhenNoCardsEnrolled: Bool
 
+    /// Whether the widget performs its own Apple Pay availability checks before initialising.
+    /// Set to `false` if you have already verified availability yourself (see the availability
+    /// helpers below) and want to skip the widget's internal checks.
+    public let performAvailabilityChecks: Bool
+
     public init(serviceId: String,
                 accessToken: String,
                 pkPaymentRequest: PKPaymentRequest,
-                showSetUpButtonWhenNoCardsEnrolled: Bool = false) {
+                showSetUpButtonWhenNoCardsEnrolled: Bool = false,
+                performAvailabilityChecks: Bool = true) {
         self.serviceId = serviceId
         self.accessToken = accessToken
         self.pkPaymentRequest = pkPaymentRequest
         self.showSetUpButtonWhenNoCardsEnrolled = showSetUpButtonWhenNoCardsEnrolled
+        self.performAvailabilityChecks = performAvailabilityChecks
     }
 }
 ```
@@ -85,6 +92,37 @@ public struct ApplePayWidgetConfig {
     }
 ```
 
+4. Optionally, you can check whether the device supports Apple Pay **before** initialising the widget — for example to decide whether to render the widget at all, or to show an `ApplePaySetupWidget` (see below) when the device supports Apple Pay but has no eligible card enrolled. When you perform these checks yourself, set `performAvailabilityChecks: false` on the `ApplePayWidgetConfig` so the widget doesn't repeat them.
+
+```Swift
+    /// Returns whether the device hardware can make Apple Pay payments, regardless of whether any
+    /// cards are enrolled in the Wallet.
+    public static func deviceSupportsApplePay() -> Bool
+
+    /// Returns whether the device can make Apple Pay payments with at least one card enrolled in
+    /// the Wallet for the given networks and merchant capabilities. The defaults match
+    /// `createApplePayRequest(...)`.
+    public static func canMakeApplePayPayments(
+        supportedNetworks: [PKPaymentNetwork] = [.visa, .masterCard, .amex, .discover],
+        merchantCapabilities: PKMerchantCapability = [.capabilityCredit, .capabilityDebit, .capability3DS]) -> Bool
+
+    /// Convenience overload that checks availability against the networks and merchant capabilities
+    /// of an already-built `PKPaymentRequest`.
+    public static func canMakeApplePayPayments(for request: PKPaymentRequest) -> Bool
+```
+
+```Swift
+// Example: only offer Apple Pay when the device supports it, and skip the widget's own checks.
+if MobileSDK.deviceSupportsApplePay() && MobileSDK.canMakeApplePayPayments(for: paymentRequest) {
+    let config = ApplePayWidgetConfig(
+        serviceId: serviceId,
+        accessToken: accessToken,
+        pkPaymentRequest: paymentRequest,
+        performAvailabilityChecks: false)
+    // ... render ApplePayWidget(config: config) { ... }
+}
+```
+
 ### Parameter Definitions
 
 | Name                        | Definition                                                                                           | Type                                                                                       | Mandatory/Optional |
@@ -108,6 +146,7 @@ More in depth definitions of the parameters, as well as potential errors and res
 | accessToken                          |  The access token used for authentication with the backend service.                              | String                                             | Mandatory          |
 | pkPaymentRequest                     |  The Apple Pay configuration to be used for processing payment.                                  | `PKPaymentRequest`                                 | Mandatory          |
 | showSetUpButtonWhenNoCardsEnrolled   |  Whether to show setup if user has no cards setup in wallet from default support list.           | Bool                                               | Optional           |
+| performAvailabilityChecks            |  Whether the widget runs its own Apple Pay availability checks before initialising. Set to `false` to skip them when you have already checked availability yourself. Default `true`. | Bool      | Optional           |
 
 For more info on `PKPaymentRequest`. See https://developer.apple.com/documentation/passkit/pkpaymentrequest.                                                      | Swift.String             | Mandatory          |
 
@@ -178,6 +217,30 @@ For more info on `PKPaymentRequest`. See https://developer.apple.com/documentati
 | unableToPresentPaymentSheet |  Error thrown when there is an issue presenting the payment usually due to invalid merchant ID.  |  nil                    |
 | payloadEncodingFailed       |  Error thrown when failing to encode Apple Pay payment data                                      |  nil                    |
 | unknownError                |  Error thrown when there is an unknown error related to ApplePay.                                |  RequestError?          |
+
+
+## ApplePaySetupWidget
+
+`ApplePaySetupWidget` renders an Apple Pay "Set Up" button. Tapping it opens the Wallet (via `PKPassLibrary().openPaymentSetup()`) so the user can add a card. Use it when you want to offer Apple Pay card enrollment yourself — for example when `MobileSDK.deviceSupportsApplePay()` is `true` but `MobileSDK.canMakeApplePayPayments(...)` is `false` (the device supports Apple Pay but has no eligible card enrolled). This is the same button `ApplePayWidget` shows internally when `showSetUpButtonWhenNoCardsEnrolled` is enabled, exposed here for standalone use.
+
+```Swift
+public struct ApplePaySetupWidget: View {
+    /// - Parameter appearance: Optional appearance for the button. The button type is always
+    ///   forced to `.setUp`; the `style` and `cornerRadius` are honoured.
+    public init(appearance: ApplePayWidgetAppearance = ApplePayWidgetAppearance())
+}
+```
+
+```Swift
+// Example
+if MobileSDK.deviceSupportsApplePay() && !MobileSDK.canMakeApplePayPayments(for: paymentRequest) {
+    ApplePaySetupWidget()
+}
+```
+
+| Name        | Definition                                                | Type                        | Mandatory/Optional |
+| :---------- | :-------------------------------------------------------- | :-------------------------- | :----------------- |
+| appearance  |  Visual customization of the setup button. The button type is forced to `.setUp`. | `MobileSDK.ApplePayWidgetAppearance` | Optional |
 
 
 ## Widget Styling

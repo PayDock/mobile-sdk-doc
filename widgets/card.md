@@ -13,12 +13,10 @@ The Card Tokenisation Widget supports the following card schemes:
 | Card Scheme   | Display Name              |
 |---------------|---------------------------|
 | AMEX          | American Express          |
-| AUSBC         | Australian Bank Card      |
 | DINERS        | Diners Club               |
 | DISCOVER      | Discover                  |
 | JAPCB         | JCB                       |
 | MASTERCARD    | MasterCard                |
-| SOLO          | Solo                      |
 | VISA          | Visa                      |
 | UNIONPAY      | UnionPay International    |
 
@@ -44,6 +42,7 @@ CardDetailsWidget(viewState: ViewState? = nil
                   appearance: CardDetailsWidgetAppearance = CardDetailsWidgetAppearance(),
                   loadingDelegate: WidgetLoadingDelegate? = nil,
                   eventDelegate: WidgetEventDelegate? = nil,
+                  onScrollToField: ((CardDetailsFocusable) -> Void)? = nil,
                   completion: @escaping (Result<CardResult, CardDetailsError>) -> Void)
 ``` 
 
@@ -88,7 +87,8 @@ struct CardDetailsWidgetView: View {
             collectCardholderName: true, // whether to show cardholder name field
             allowSaveCard: saveCardConfig,
             storeSecurityCode: true, // optional - whether to store CVV when tokenizing
-            schemeSupport: supportedSchemesConfig)
+            schemeSupport: supportedSchemesConfig,
+            activePrimaryButton: true) // optional - submit enabled by default; validation runs on tap
         
         return config
     }
@@ -129,6 +129,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | appearance               |  Customization options for the visual appearance of the widget                                   | `CardDetailsWidgetAppearance`                      | Optional           |
 | loadingDelegate          |  Delegate control of showing loaders to this instance. When set, internal loaders are not shown. | `WidgetLoadingDelegate`                            | Optional           |
 | eventDelegate            |  Delegate for handling widget events such as button clicks.                                      | `MobileSDK.WidgetEventDelegate`                    | Optional           |
+| onScrollToField          |  Callback invoked with the field the widget wants scrolled into view. Provide this when the widget is hosted inside a scroll container so the widget can bring the first field with an error into view (and move VoiceOver focus to it) when the user submits an invalid form. | `((CardDetailsFocusable) -> Void)?` | Optional           |
 | completion               |  Completion handler that returns success or failure depending on the widget outcome              | `(Result<CardResult, CardDetailsError>) -> Void)`  | Mandatory          |
 
 #### MobileSDK.ViewState
@@ -148,6 +149,7 @@ The below table describes the various inline validation errors linked to the `Ca
 | allowSaveCard            |  Configures the widget component that allows the user to toggle the switch for desired question                          | `SaveCardConfig`                          | Optional           |
 | storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `nil`, the parameter is not sent.  | Boolean                                   | Optional           |
 | schemeSupport            |  Configures the card scheme support and validation behavior                                                              | `SupportedSchemesConfig`                  | Optional           |
+| activePrimaryButton      |  Whether the submit button is enabled by default. If `true` (default), the button is always enabled and validation runs when it is tapped; if `false`, the button stays disabled until all fields are valid. | Boolean | Optional |
 
 #### MobileSDK.SaveCardConfig
 
@@ -190,8 +192,10 @@ public struct CardDetailsWidgetAppearance {
     public var verticalSpacing: CGFloat
     public var horizontalSpacing: CGFloat
     public var textFieldVerticalSpacing: CGFloat
-    public var title: Theme.TextAppearance
-    public var textField: Theme.TextFieldAppearance
+    public var cardNameTextField: Theme.TextFieldAppearance
+    public var cardNumberTextField: Theme.TextFieldAppearance
+    public var cardExpiryTextField: Theme.TextFieldAppearance
+    public var cardSecurityTextField: Theme.TextFieldAppearance
     public var actionButton: Theme.ButtonAppearance
     public var toolbarButton: Theme.ButtonAppearance
     public var toggle: Theme.ToggleAppearance
@@ -220,14 +224,17 @@ You can create a custom `CardDetailsWidgetAppearance` or modify the default one.
 ```Swift
 struct MyCustomCardDetailsScreen: View { 
     private func myCustomAppearance() -> CardDetailsWidgetAppearance {
-        let title = Theme.TextAppearance.init(text: .init(font: .init(name: "CustomFont", size: 20), isUnderlined: true, underlineColor: .black))
         let textField = Theme.TextFieldAppearance.init(colors: .init(active: .blue), dimensions: .init(cornerRadius: 20.0))
         let actionButton = Theme.ButtonAppearance.init(colors: .init(background: .blue))
+        // Each input field has its own appearance; pass the same value to style them uniformly,
+        // or customise them individually. Any omitted parameter keeps its default.
         let appearance = CardDetailsWidgetAppearance(
             verticalSpacing: 10,
             horizontalSpacing: 16,
-            title: title,
-            textField: textField,
+            cardNameTextField: textField,
+            cardNumberTextField: textField,
+            cardExpiryTextField: textField,
+            cardSecurityTextField: textField,
             actionButton: actionButton)
         return appearance
     }
@@ -251,8 +258,10 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 | `verticalSpacing`              | The vertical space between the groups of different elements on the screen.                                 | `CGFloat`                      | `16.0`                            |
 | `horizontalSpacing`            | The horizontal space between the card number input field and the PIN input field within their shared row.  | `CGFloat`                      | `16.0`                             |
 | `textFieldVerticalSpacing`     | The vertical space between the textfields in the widget.                                                   | `CGFloat`                      | `8.0`                             |
-| `title`                        | Defines the appearance of the section titles on the screen.                                                | `TextAppearance`               | `GlobalTheme.title`               |
-| `textField`                    | Defines the appearance of the card number and PIN input text fields.                                       | `TextFieldAppearance`          | `GlobalTheme.textField`           |
+| `cardNameTextField`            | Defines the appearance of the cardholder name input field.                                                 | `TextFieldAppearance`          | `GlobalTheme.textField` (hint "Enter your cardholder name") |
+| `cardNumberTextField`          | Defines the appearance of the card number input field.                                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXXX XXXX XXXX XXXX") |
+| `cardExpiryTextField`          | Defines the appearance of the expiry date input field.                                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "MM/YY")  |
+| `cardSecurityTextField`        | Defines the appearance of the security code (CVV) input field.                                     | `TextFieldAppearance`          | `GlobalTheme.textField` (placeholder "XXX")    |
 | `actionButton`                 | Defines the appearance of the primary submit button.                                                       | `ButtonAppearance`             | `GlobalTheme.actionButton`        |
 | `toolbarButton`                | Defines the appearance of the keyboard accessory button.                                                   | `ButtonAppearance`             | `GlobalTheme.toolbarButton`       |
 | `toggle`                       | Defines the appearance of the toggle element.                                                              | `ToggleAppearance`             | `GlobalTheme.toggle`              |
@@ -291,7 +300,8 @@ The Card Details Widget triggers the following events:
   "properties": {
     "name": "TokenisationButton",
     "action": "click", 
-    "text": "(Whatever is set by merchant)"
+    "text": "(Whatever is set by merchant)",
+    "formState": "valid / invalid"
   }
 }
 ```
@@ -328,8 +338,45 @@ The Card Details Widget triggers the following events:
 | `properties.name` | The name identifier of the specific element | String | Required |
 | `properties.action` | The action performed on the element | String (Enum) | Required |
 | `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.formState` | The validation state of the form when the button was clicked (Button events only) | String (Enum: `valid` / `invalid`) | Optional |
 | `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
 | `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
+
+### 5. Scroll-to-error support (`onScrollToField`)
+
+When the `CardDetailsWidget` is placed inside a scroll container, provide an `onScrollToField` callback so the widget can bring a specific field into view. After the user submits an invalid form, the widget announces the number of errors to VoiceOver, then asks the host to scroll to the first field with an error and moves accessibility focus to it. The widget identifies the field via the `CardDetailsFocusable` enum:
+
+```Swift
+public enum CardDetailsFocusable: Hashable {
+    case cardholderName
+    case cardNumber
+    case expiryDate
+    case securityCode
+}
+```
+
+Implement the callback with a `ScrollViewReader`, scrolling to the field's matching `.id(...)`:
+
+```Swift
+ScrollViewReader { proxy in
+    ScrollView {
+        CardDetailsWidget(
+            config: getConfig(),
+            onScrollToField: { field in
+                withAnimation {
+                    proxy.scrollTo(field, anchor: .center)
+                }
+            },
+            completion: { result in
+                // handle result
+            }
+        )
+        .padding()
+    }
+}
+```
+
+If `onScrollToField` is not provided, the widget still validates and announces the error count, but cannot scroll an off-screen field into view — so on a long form the first errored field may remain off-screen for VoiceOver users. Providing it is recommended whenever the widget can scroll.
 
 ## Android
 
@@ -362,22 +409,22 @@ CardDetailsWidget(
     modifier = Modifier
         .fillMaxWidth()
         .padding(16.dp), // optional
-    enabled: Boolean, // optional
+    enabled = true, // optional
     config = CardDetailsWidgetConfig(
         accessToken = ACCESS_TOKEN, // required
         gatewayId = GATEWAY_ID, // optional
-        actionText: "<override default action button text>",
-        showCardTitle: true, // whether to show card title view
-        collectCardholderName: true, // whether to show cardholder name field
+        collectCardholderName = true, // whether to show cardholder name field
         allowSaveCard = SaveCardConfig(
             privacyPolicyConfig = SaveCardConfig.PrivacyPolicyConfig(
                 privacyPolicyURL = "https://www.privacypolicy.com"
             )
         ),
+        storeSecurityCode = true, // optional - whether to store CVV when tokenizing
         schemeSupport = SupportedSchemeConfig(
             supportedSchemes = CardScheme.entries.toSet(),
             enableValidation = true // optional
-        )
+        ),
+        activePrimaryButton = true // optional - submit enabled by default; validation runs on tap
     ),
     appearance = currentOrDefaultAppearance, // optional
     loadingDelegate = DELEGATE_INSTANCE, // Delegate class to handle loading
@@ -433,11 +480,11 @@ This subsection describes the parameters required by the `CardDetailsWidget` com
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |------------------------------  |
 | accessToken              |  Widget access token used for internal API communication                                         | String                                             | Mandatory                      |
 | gatewayId                |  Gateway ID used for the card tokenisation.                                                      | String                                             | Optional                       |
-| actionText               |  The text to display on the action button (default is "Submit").                                 | String                                             | Optional                       |
-| showCardTitle            |  A flag indicating whether to show the card title (default is true).                             | Boolean                                            | Optional                       |
 | collectCardholderName    |  A flag indicating whether to show the cardholder name input (default is true).                  | Boolean                                            | Optional                       |
 | allowSaveCard            |  Configuration for showing the save card UI toggle.                                              | `SaveCardConfig`                                   | Optional                       |  
+| storeSecurityCode        |  Specifies whether the security code (CVV) should be saved when tokenizing a card. If `null`, the parameter is not sent. | Boolean                             | Optional                       |
 | schemeSupport            |  Configuration for supported card schemes and scheme validation behavior.                        | `SupportedSchemeConfig`                            | Optional                       |  
+| activePrimaryButton      |  Whether the submit button is enabled by default. If `true` (default), the button is always enabled and validation runs when it is tapped; if `false`, the button stays disabled until all fields are valid. | Boolean | Optional |
 
 #### SaveCardConfig
 | Name                | Definition                                                                                                   | Type                     | Mandatory/Optional |
@@ -508,7 +555,8 @@ The Card Details Widget triggers the following events:
   "properties": {
     "name": "TokenisationButton",
     "action": "click", 
-    "text": "(Whatever is set by merchant)"
+    "text": "(Whatever is set by merchant)",
+    "formState": "valid / invalid"
   }
 }
 ```
@@ -545,12 +593,17 @@ The Card Details Widget triggers the following events:
 | `properties.name` | The name identifier of the specific element | String | Required |
 | `properties.action` | The action performed on the element | String (Enum) | Required |
 | `properties.text` | The text content of the element (Button events only) | String | Optional |
+| `properties.formState` | The validation state of the form when the button was clicked (Button events only) | String (Enum: `valid` / `invalid`) | Optional |
 | `properties.state` | The toggle state (Toggle events only) | Boolean | Required (Toggle only) |
 | `properties.url` | The URL associated with the link (LinkText events only) | String | Required (LinkText only) |
 
 #### Completion Callback
 
 The `completion` callback is invoked after the card tokenisation operation is completed. It receives a `Result<CardResult>`. The `Result<CardResult>` contains the token and the toggled state flag of the user selection to save the card details.
+
+#### Accessibility: scroll-to-first-error (automatic)
+
+When the user submits an invalid form, the widget announces the number of errors to TalkBack and then moves accessibility focus to the first field with an error, scrolling it into view automatically. If the widget is placed inside a scrolling parent (e.g. a `Column` with `Modifier.verticalScroll(...)` or a `LazyColumn`), the fields use `BringIntoViewRequester`, which walks up to the nearest scroll container on its own — so you do not need to pass a scroll reference or any callback into the widget. Simply place `CardDetailsWidget` inside your scroll container and the behaviour works out of the box.
 
 ### 4. Error/Exceptions Mapping
 
@@ -580,8 +633,10 @@ class CardDetailsWidgetAppearance(
     val horizontalSpacing: Dp,
     val textFieldVerticalSpacing: Dp,
     val textFieldHorizontalSpacing: Dp,
-    val title: TextAppearance,
-    val textField: TextFieldAppearance,
+    val cardNameTextField: TextFieldAppearance,
+    val cardNumberTextField: TextFieldAppearance,
+    val cardExpiryTextField: TextFieldAppearance,
+    val cardSecurityCodeTextField: TextFieldAppearance,
     val actionButton: ButtonAppearance,
     val toggle: ToggleAppearance,
     val toggleText: TextAppearance,
@@ -613,8 +668,7 @@ fun MyCustomCardDetailsScreen() {
     // Create appearance by using provided defaults, with custom changes
     val customAppearance = CardDetailsAppearanceDefaults.appearance().copy( 
         verticalSpacing = 12.dp, 
-        title = TextAppearanceDefaults.appearance().copy( style = MaterialTheme.typography.headlineSmall.copy( // color = MyAppColors.primary ) ), 
-        textField = TextFieldAppearanceDefaults.outlineAppearance().copy( // Example: Customizing text field label color // labelColor = MyAppColors.onSurfaceVariant ), 
+        cardNumberTextField = TextFieldAppearanceDefaults.appearance().copy( // Example: customise the card number field // colors = ... ), 
         toggleText = TextAppearanceDefaults.appearance().copy( style = MaterialTheme.typography.labelMedium.copy( // color = MyAppColors.secondary ) ) 
     )
 
@@ -622,8 +676,12 @@ fun MyCustomCardDetailsScreen() {
     val completelyCustomAppearance = CardDetailsWidgetAppearance(
         verticalSpacing = 10.dp,
         horizontalSpacing = 6.dp,
-        title = TextAppearanceDefaults.appearance(/*...custom title params...*/),
-        textField = TextFieldAppearanceDefaults.filledAppearance(/*...custom text field params...*/),
+        textFieldVerticalSpacing = 8.dp,
+        textFieldHorizontalSpacing = 8.dp,
+        cardNameTextField = TextFieldAppearanceDefaults.appearance(/*...custom card name field...*/),
+        cardNumberTextField = TextFieldAppearanceDefaults.appearance(/*...custom card number field...*/),
+        cardExpiryTextField = TextFieldAppearanceDefaults.appearance(/*...custom expiry field...*/),
+        cardSecurityCodeTextField = TextFieldAppearanceDefaults.appearance(/*...custom security code field...*/),
         actionButton = ButtonAppearanceDefaults.textButtonAppearance(/*...custom button params...*/),
         toggle = ToggleAppearanceDefaults.appearance(/*...custom toggle params...*/),
         toggleText = TextAppearanceDefaults.appearance(/*...custom toggle text params...*/),
@@ -647,8 +705,10 @@ The following attributes can be configured within `CardDetailsWidgetAppearance`:
 | `horizontalSpacing`           | The horizontal spacing within composite elements (e.g., between the two text fields in the expiry/CVV row if they were side-by-side).           | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
 | `textFieldVerticalSpacing`    | The vertical spacing between text input fields.                                                                                              | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
 | `textFieldHorizontalSpacing`  | The horizontal spacing between text input fields.                                                                                            | `androidx.compose.ui.unit.Dp`                                   | `WidgetDefaults.Spacing`                                                                                           |
-| `title`                       | Defines the text appearance for the widget's main title (e.g., "Card Information").                                                          | `TextAppearance`               | `TextAppearanceDefaults.appearance()` with `bodyMedium` style and `onSurface` color.                               |
-| `textField`                   | Defines the appearance for all card input text fields (card number, expiry, CVV, cardholder name).                                            | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)`                                                 |
+| `cardNameTextField`           | Defines the appearance of the cardholder name input field.                                                                                   | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with hint "Enter your cardholder name"          |
+| `cardNumberTextField`         | Defines the appearance of the card number input field.                                                                                       | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with the card-number placeholder and hint       |
+| `cardExpiryTextField`         | Defines the appearance of the expiry date input field.                                                                                       | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with the expiry placeholder and hint            |
+| `cardSecurityCodeTextField`   | Defines the appearance of the security code (CVV) input field.                                                                        | `TextFieldAppearance`       | `TextFieldAppearanceDefaults.appearance().copy(singleLine = true)` with placeholder "XXX" (widened to "XXXX" for Amex) |
 | `actionButton`                | Defines the appearance of the primary submit/action button.                                                                                  | `ButtonAppearance`           | `ButtonAppearanceDefaults.filledButtonAppearance()`                                                                |
 | `toggle`                      | Defines the appearance of the switch or checkbox used for options like "Save card".                                                          | `ToggleAppearance`             | `ToggleAppearanceDefaults.appearance()`                                                                            |
 | `toggleText`                  | Defines the text appearance for the label associated with the toggle (e.g., "Save this card for future payments").                             | `TextAppearance`             | `TextAppearanceDefaults.appearance()` with `bodyMedium` style.                                                     |
