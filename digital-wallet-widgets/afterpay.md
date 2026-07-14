@@ -60,6 +60,10 @@ AfterpayWidget(
 }
 ```
 
+> **Note — Button sizing:**
+>
+> The width of the Afterpay payment button is controlled by you, not enforced by the SDK. Use the optional `buttonWidth` parameter to set a preferred width that fits your layout. Afterpay's branding guidelines recommend the button width **does not exceed `256` points** to keep the logo legible.
+
 ### 2. Parameter Definitions
 
 This subsection describes the parameters required by the `AfterpayWidget` view. It provides information on the purpose of each parameter and its significance in configuring the behavior of the `AfterpayWidget`.
@@ -303,12 +307,12 @@ The following is the `AfterpayWidget` code populated with example values. This d
 ```Kotlin
 // Initialize the AfterpaySDKConfig
 val configuration = AfterpaySDKConfig(
-    config = AfterpaySDKConfig.AfterpayConfiguration(
-        maximumAmount = "100",
-        currency = AU_CURRENCY_CODE,
-        language = "en",
-        country = AU_COUNTRY_CODE
-    ),
+    // Optional. When null, defaults to en-AU (classic Afterpay/mint branding).
+    // The locale drives the SDK's currency/amount localisation as well as the
+    // payment button's language, brand (Afterpay/Cash App) and logo. Note that
+    // en-US resolves to Cash App Afterpay branding; all other locales use the
+    // classic Afterpay (mint) styling.
+    locale = Locale("en", "AU"),
     options = AfterpaySDKConfig.CheckoutOptions(
         shippingOptionRequired = true,
         enableSingleShippingOptionUpdate = true
@@ -333,7 +337,7 @@ AfterpayWidget(
     }
     config = configuration,
     selectAddress = { _, provideShippingOptions ->
-        val currency = Currency.getInstance(configuration.config.currency)
+        val currency = Currency.getInstance(configuration.locale ?: Locale.getDefault())
         val shippingOptions = listOf(
             AfterpayShippingOption(
                 "standard",
@@ -357,7 +361,7 @@ AfterpayWidget(
         provideShippingOptions(shippingOptions)
     },
     selectShippingOption = { shippingOption, provideShippingOptionUpdateResult ->
-        val currency = Currency.getInstance(configuration.config.currency)
+        val currency = Currency.getInstance(configuration.locale ?: Locale.getDefault())
         // if standard shipping was selected, update the amounts
         // otherwise leave as is by passing null
         val result: AfterpayShippingOptionUpdate? =
@@ -386,6 +390,21 @@ AfterpayWidget(
 }
 ```
 
+> **Note — Button sizing:**
+>
+> The Afterpay payment button renders a fixed-aspect-ratio logo (it scales with `FIT_CENTER`), so its width is controlled entirely by the container you give it via the `modifier`. The SDK does not constrain the button width — this is intentional so you can fit it to your layout.
+>
+> Afterpay's branding guidelines recommend the button width **does not exceed `256dp`** to keep the logo legible. If you apply `Modifier.fillMaxWidth()` on a wide screen, the button stretches to the full width with the logo centered in a large background. To follow the guideline, cap the width in your own layout, for example:
+>
+> ```Kotlin
+> AfterpayWidget(
+>     modifier = Modifier
+>         .fillMaxWidth()
+>         .widthIn(max = 256.dp), // keeps the button within Afterpay's recommended width
+>     // ...
+> )
+> ```
+
 ### 2. Parameter Definitions
 
 This subsection describes the parameters required by the `AfterpayWidget` composable. It provides information on the purpose of each parameter and the parameters' significance in configuring the behavior of the `AfterpayWidget`.
@@ -397,6 +416,7 @@ This subsection describes the parameters required by the `AfterpayWidget` compos
 | modifier              |  Compose modifier for container modifications.                                           | `androidx.compose.ui.Modifier`                                                                                                               | Optional           |
 | config                |  The configuration for the Afterpay SDK.                                                 | `AfterpaySDKConfig`                                                                                                                          | Mandatory          |
 | enabled               |  A boolean to enable or disable the payment button.                                      | Boolean                                                                                                                 | Optional           |
+| appearance            |  Object for visual customization of the widget (button text, style and loader).          | `AfterpayWidgetAppearance`                                                                                              | Optional           |
 | tokenRequest          |  A callback to obtain the wallet token result asynchronously                      | `tokenRequest: (tokenResult: (Result<WalletTokenResult>) -> Unit) -> Unit`     | Mandatory          |
 | selectAddress         |  A callback to handle selection of shipping address.                                     | `(address: BillingAddress, provideShippingOptions: (List<AfterpayShippingOption>) -> Unit) -> Unit`                                          | Optional           |
 | selectShippingOption  |  A callback to handle selection of shipping option.                                      | `selectShippingOption: (shippingOption: AfterpayShippingOption, provideShippingOptionUpdateResult: (AfterpayShippingOptionUpdate?) -> Unit)` | Optional           |
@@ -406,37 +426,21 @@ This subsection describes the parameters required by the `AfterpayWidget` compos
 
 #### AfterpaySDKConfig
 
-| Name           | Definition                                                   | Type                      | Mandatory/Optional    |
-| :------------- | :----------------------------------------------------------- | :------------------------ | :-------------------- |
-| buttonTheme    |  The theme settings for Afterpay payment button.             | `ButtonTheme`             | Optional              |
-| config         |  The main configuration settings for Afterpay.               | `AfterpayConfiguration`   | Mandatory             |
-| options        |  Additional checkout options for Afterpay.                   | `CheckoutOptions`         | Optional              |
+| Name           | Definition                                                                                                                                                       | Type                      | Mandatory/Optional    |
+| :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------ | :-------------------- |
+| locale         |  Locale used for the widget's currency/amount localisation and colour scheme. When `null`, defaults to `en-AU`. Note: the payment button's **brand wordmark** (classic Afterpay vs Cash App Afterpay) is fixed once at SDK initialisation — controlled by `MobileSDK.Builder().afterpayLocale(...)` (defaults to the device locale) — so this per-widget `locale` drives currency/colour scheme rather than the brand artwork. | `java.util.Locale`        | Optional              |
+| options        |  Additional checkout options for Afterpay.                                                                                                                       | `CheckoutOptions`         | Optional              |
 
-#### ButtonTheme
-
-| Name           | Definition                                                   | Type                                        | Mandatory/Optional    |
-| :------------- | :----------------------------------------------------------- | :------------------------------------------ | :-------------------- |
-| buttonText     |  The text displayed on the payment button.                   | Enum: `AfterpayPaymentButton.ButtonText`    | Optional              |
-| colorScheme    |  The color scheme of the payment button.                     | Enum: `AfterpayColorScheme`                 | Optional              |
-
-#### AfterpayConfiguration
-
-| Name           | Definition                                                       | Type       | Mandatory/Optional    |
-| :------------- | :--------------------------------------------------------------- | :--------- | :-------------------- |
-| minimumAmount  |  The minimum transaction amount allowed.                         | String     | Optional              |
-| maximumAmount  |  The maximum transaction amount allowed.                         | String     | Mandatory             |
-| currency       |  The currency for transactions.                                  | String     | Mandatory             |
-| language       |  The language for localization, default is device's language.    | String     | Optional              |
-| country        |  The country for localization, default is device's country.      | String     | Optional              |
+> **Note:** The payment button's text and style are configured via the `appearance` parameter (`AfterpayWidgetAppearance`), not via `AfterpaySDKConfig`. See [Widget Styling](#5-widget-styling-1) below.
 
 #### CheckoutOptions
 
 | Name                              | Definition                                                       | Type       | Mandatory/Optional    |
 | :-------------------------------- | :--------------------------------------------------------------- | :--------- | :-------------------- |
-| pickup                            |  Indicates whether pickup option is enabled.                     | String     | Optional              |
-| buyNow                            |  Indicates whether buy now option is enabled.                    | String     | Mandatory             |
-| shippingOptionRequired            |  Indicates whether shipping option is required.                  | String     | Mandatory             |
-| enableSingleShippingOptionUpdate  |  Indicates whether single shipping option update is enabled.     | String     | Optional              |
+| pickup                            |  Indicates whether pickup option is enabled.                     | Boolean    | Optional              |
+| buyNow                            |  Indicates whether buy now option is enabled.                    | Boolean    | Optional              |
+| shippingOptionRequired            |  Indicates whether shipping option is required.                  | Boolean    | Optional              |
+| enableSingleShippingOptionUpdate  |  Indicates whether single shipping option update is enabled.     | Boolean    | Optional              |
 
 #### BillingAddress
 
@@ -640,14 +644,14 @@ The `AfterpayWidgetAppearance` class encapsulates the configurable style propert
 @Immutable
 class AfterpayWidgetAppearance(
     val buttonText: AfterpayPaymentButton.ButtonText,
-    val colorScheme: AfterpayColorScheme,
+    val style: AfterpayWidgetStyle,
     val loader: LoaderAppearance
 )
 ```
 
 #### Default Appearance & Customisation
 
-A default appearance is provided by `AfterpayAppearanceDefaults`. This uses Afterpay's default button text, the `BLACK_ON_MINT` color scheme, and a standard loader. Adherence to Afterpay's branding guidelines is crucial when customizing.
+A default appearance is provided by `AfterpayAppearanceDefaults`. This uses Afterpay's default button text (`ButtonText.DEFAULT`), the `AfterpayWidgetStyle.Default` style, and a standard loader. Adherence to Afterpay's branding guidelines is crucial when customizing.
 
 ##### Using Default Appearance
 
@@ -661,15 +665,15 @@ A default appearance is provided by `AfterpayAppearanceDefaults`. This uses Afte
 
 ##### Customising Appearance
 
-You can create a custom `AfterpayWidgetAppearance` by specifying the button text, color scheme (from `AfterpayColorScheme`), and loader appearance.
+You can create a custom `AfterpayWidgetAppearance` by specifying the button text, style (from `AfterpayWidgetStyle`), and loader appearance.
 
 ```Kotlin
 @Composable 
 fun MyCustomAfterpayScreen() { 
     // Create appearance by using provided defaults, with custom changes
     val customAppearanceFromDefaults = AfterpayAppearanceDefaults.appearance().copy( // Ensure this copy method exists on your AfterpayWidgetAppearance 
-        buttonText = AfterpayPaymentButton.ButtonText.PAY_NOW, // Change button text 
-        colorScheme = AfterpayColorScheme.WHITE_ON_BLACK, // Change color scheme 
+        buttonText = AfterpayPaymentButton.ButtonText.PAY, // Change button text 
+        style = AfterpayWidgetStyle.MonochromeDark, // Change style 
         loader = LoaderAppearanceDefaults.appearance().copy( // Example: Change loader color 
             color = Color.Magenta 
         ) 
@@ -677,8 +681,8 @@ fun MyCustomAfterpayScreen() {
 
     // Alternatively, create entirely from scratch:
     val completelyCustomAppearance = AfterpayWidgetAppearance(
-        buttonText = AfterpayPaymentButton.ButtonText.BUY_NOW,
-        colorScheme = AfterpayColorScheme.MINT_ON_BLACK,
+        buttonText = AfterpayPaymentButton.ButtonText.BUY,
+        style = AfterpayWidgetStyle.Alt,
         loader = LoaderAppearance( // Assuming constructor or defaults exist
             color = Color.Cyan
             // ... other LoaderAppearance properties
@@ -698,12 +702,12 @@ The following attributes can be configured within `AfterpayWidgetAppearance`:
 
  Name                | Description                                                                                              | Type                               | Default Value (from `AfterpayAppearanceDefaults`)   |
 ---------------------|----------------------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------------|
-| `buttonText`  | The text displayed on the Afterpay payment button. Options are defined in `AfterpayPaymentButton.ButtonText` (e.g., `DEFAULT`, `PAY_NOW`, `BUY_NOW`). See Afterpay SDK docs. | `com.afterpay.android.AfterpayPaymentButton.ButtonText`    | `AfterpayPaymentButton.ButtonText.DEFAULT`                                                   |
-| `colorScheme` | The color scheme for the Afterpay payment button (e.g., `BLACK_ON_MINT`, `WHITE_ON_BLACK`, `MINT_ON_BLACK`). Options defined in `AfterpayColorScheme`. See Afterpay SDK docs.  | `com.afterpay.android.model.AfterpayColorScheme`           | `AfterpayColorScheme.BLACK_ON_MINT`                                                          |
+| `buttonText`  | The text displayed on the Afterpay payment button. Options are defined in `AfterpayPaymentButton.ButtonText`: `DEFAULT`, `PAY`, `BUY`, `CHECKOUT`, `CONTINUE`. See Afterpay SDK docs. | `com.afterpay.android.view.AfterpayPaymentButton.ButtonText`    | `AfterpayPaymentButton.ButtonText.DEFAULT`                                                   |
+| `style`       | The visual style for the Afterpay payment button: `Default`, `Alt`, `MonochromeDark`, `MonochromeLight`. The concrete colours/brand are resolved by the Afterpay SDK from the configured locale. Options defined in `AfterpayWidgetStyle`. See Afterpay SDK docs.  | `com.afterpay.android.view.AfterpayWidgetStyle`           | `AfterpayWidgetStyle.Default`                                                          |
  `loader`            | Defines the appearance of the loading indicator shown when the widget is processing or waiting for results from the Afterpay SDK.  | `LoaderAppearance`         | `LoaderAppearanceDefaults.appearance()`           |
 
 ---
 
 **Note:**
-*   The `buttonText` and `colorScheme` are from the official Afterpay Android SDK. Refer to the [Afterpay Developer Documentation](https://developers.afterpay.com/afterpay-online/docs/display-afterpay-messaging#display-payment-button) for branding guidelines and available options.
+*   The `buttonText` and `style` are from the official Afterpay Android SDK. Refer to the [Afterpay Developer Documentation](https://developers.afterpay.com/afterpay-online/docs/display-afterpay-messaging#display-payment-button) for branding guidelines and available options.
 *   The `LoaderAppearance` would have its own detailed documentation.

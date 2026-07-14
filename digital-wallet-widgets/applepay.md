@@ -306,7 +306,22 @@ The following attributes can be configured within `ApplePayWidgetAppearance`:
  `type`              | Defines the text within the button                             | PKPaymentButtonType                | `.plain`                            |
  `style`             | Defines the color scheme of the button.                        | PKPaymentButtonStyle               | `.automatic`                        |
  `cornerRadius`      | Defines the corner radius of the button.                       | CGFloat                            | 4.0                                 |
- 
+
+> **Note — Button sizing & Dynamic Type:**
+>
+> The Apple Pay widget renders Apple's native `PKPaymentButton` (PassKit). Its logo/label is a fixed-size brand asset that, by design, **does not scale with Dynamic Type** — so, unlike the SDK's own SwiftUI buttons, it will not grow at larger accessibility text sizes on its own, and `ApplePayWidgetAppearance` intentionally does not expose a height.
+>
+> The button's height is controlled by you, via the `.frame(...)` you apply. If you want it to track the system text size (e.g. to stay visually consistent with other buttons in a stacked layout at large text sizes), drive the height with `@ScaledMetric` and cap it so it doesn't become an oversized empty pill around the fixed-size logo:
+>
+> ```Swift
+> @ScaledMetric private var applePayHeight: CGFloat = 50
+> // ...
+> ApplePayWidget(...)
+>     .frame(height: min(applePayHeight, 64)) // scales with Dynamic Type, capped
+> ```
+>
+> A fixed `.frame(height:)` is perfectly valid too — the default 50pt already satisfies Apple's minimum size and the 44pt touch-target guideline.
+
 ### WidgetEventDelegate
 
 This `eventDelegate` allows the calling app to receive notifications of user interactions within the widget, such as button clicks. This is useful for analytics and tracking purposes.
